@@ -1,0 +1,12 @@
+.env
+.env.example
+.gitignore
+.prettierignore
+*.sh
+www/*.png
+www/*.txt
+www/css/font-awesome.css
+www/css/video-js.css
+www/fonts
+www/js/js.cookie.js
+www/js/video.js

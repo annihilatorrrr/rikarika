@@ -1,0 +1,39 @@
+{
+  "name": "rikarika",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prettier": "prettier",
+    "format": "prettier --write \"**/*.*\"",
+    "lint": "prettier --check \"**/*.*\"",
+    "test": "prettier --check \"**/*.*\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soruly/rikarika.git"
+  },
+  "author": "soruly",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/soruly/rikarika/issues"
+  },
+  "homepage": "https://github.com/soruly/rikarika#readme",
+  "dependencies": {
+    "aniep": "^0.2.0",
+    "body-parser": "^1.19.0",
+    "chokidar": "^3.3.1",
+    "cookie-parser": "^1.4.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "fs-extra": "^9.0.0",
+    "knex": "^0.21.0",
+    "mysql": "^2.18.1",
+    "node-fetch": "^2.6.0",
+    "opencc": "^1.0.6",
+    "web-push": "^3.4.3"
+  },
+  "devDependencies": {
+    "prettier": "^2.0.5"
+  }
+}
