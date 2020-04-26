@@ -11,7 +11,6 @@ const {
   DB_HOST,
   ANIME_PATH,
   ANIME_NEW_PATH,
-  ANIME_ANILIST_PATH,
   ANIME_THUMB_PATH,
   ANIME_ADD_PATH,
 } = process.env;
@@ -28,20 +27,12 @@ const {
   });
 
   const season = await knex("anime").distinct("season");
-  const titleList = await knex("anime").select(
-    "id",
-    "anilist_id",
-    "season",
-    "title"
-  );
+  const titleList = await knex("anime").select("id", "season", "title");
   const list = titleList.map((e) => path.join(ANIME_PATH, `${e.id}`));
   const seasonList = season.map((e) => path.join(ANIME_NEW_PATH, e.season));
   const newList = titleList.map((e) =>
     path.join(ANIME_NEW_PATH, e.season, e.title)
   );
-  const anilist = titleList
-    .filter((e) => e.anilist_id)
-    .map((e) => path.join(ANIME_ANILIST_PATH, `${e.anilist_id}`));
   const thumbList = titleList.map((e) =>
     path.join(ANIME_THUMB_PATH, `${e.id}`)
   );
@@ -58,11 +49,6 @@ const {
     }
   }
   for (const entry of newList) {
-    if (!fs.existsSync(entry) || !fs.statSync(entry).isDirectory()) {
-      console.log(entry);
-    }
-  }
-  for (const entry of anilist) {
     if (!fs.existsSync(entry) || !fs.statSync(entry).isDirectory()) {
       console.log(entry);
     }
@@ -104,16 +90,6 @@ const {
     .toString()
     .split("\n")
     .filter((e) => !newList.includes(e))) {
-    console.log(entry);
-  }
-
-  for (const entry of child_process
-    .execSync(`find ${ANIME_ANILIST_PATH}/*`, {
-      maxBuffer: 1024 * 1024 * 100,
-    })
-    .toString()
-    .split("\n")
-    .filter((e) => !anilist.includes(e))) {
     console.log(entry);
   }
 

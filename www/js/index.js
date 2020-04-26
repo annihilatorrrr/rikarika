@@ -1471,7 +1471,7 @@ window.getListing = async (scroll) => {
       } else {
         div7.className = "folder";
         a4.href = `${encodeURIComponent(entry.name)}/`;
-        a4.dataset.anilistId = entry.anime_id;
+        a4.dataset.anime_id = entry.anime_id;
         i5.className = "fa fa-folder";
         a4.appendChild(i5);
         a4.appendChild(document.createTextNode(entry.name));
@@ -1571,7 +1571,7 @@ window.getListing = async (scroll) => {
       document.querySelectorAll(".folder a").forEach((entry) => {
         if (
           window.location.pathname.split("/").length === 3 &&
-          window.vjs.src().split("/")[3] === entry.dataset.anilistId
+          window.vjs.src().split("/")[3] === entry.dataset.anime_id
         ) {
           entry.parentNode.classList.add("highlight");
         }

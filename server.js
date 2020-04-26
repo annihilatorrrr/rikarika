@@ -17,7 +17,6 @@ const {
   ES_PORT,
   ANIME_PATH,
   ANIME_NEW_PATH,
-  ANIME_ANILIST_PATH,
   ANIME_THUMB_PATH,
   RUTORRENT_HOST,
   RUTORRENT_HOST_2,
@@ -396,16 +395,6 @@ app.post("/admin/add_series", async (req, res) => {
     if (!fs.existsSync(src)) {
       console.log(`Creating directory ${src}`);
       fs.ensureDirSync(src);
-    }
-
-    const anilistDest = path.join(ANIME_ANILIST_PATH, anilist_id.toString());
-    if (!fs.existsSync(anilistDest)) {
-      console.log(`Creating symlink ${anilistDest}`);
-      fs.symlinkSync(
-        path.relative(path.dirname(anilistDest), src),
-        anilistDest,
-        fs.S_IFLNK
-      );
     }
 
     const animeNewDest = path.join(ANIME_NEW_PATH, season, title);

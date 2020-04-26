@@ -64,7 +64,7 @@ const { DB_NAME, DB_USER, DB_PASS, DB_HOST, ANIME_PATH } = process.env;
     if (missing.length) {
       if (missing.length < 10) {
         const rows = await knex("anime")
-          .select("id", "anilist_id", "season", "title")
+          .select("id", "season", "title")
           .where("id", dir);
         if (
           !["Sukebei", "HKTVBJ2", "OVA"].includes(rows[0].season) &&

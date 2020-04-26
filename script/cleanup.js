@@ -11,7 +11,6 @@ const {
   DB_HOST,
   ANIME_PATH,
   ANIME_NEW_PATH,
-  ANIME_ANILIST_PATH,
   ANIME_THUMB_PATH,
   ANIME_ADD_PATH,
 } = process.env;
