@@ -224,12 +224,12 @@ window.getListing = async () => {
         a2.appendChild(document.createTextNode("▲ .."));
         div4.appendChild(a2);
         div4.appendChild(document.createElement("br"));
-        const div5 = document.createElement("div");
-        div5.className = "details";
-        div5.innerText = decodeURIComponent(
+        const span1 = document.createElement("span");
+        span1.className = "details";
+        span1.innerText = decodeURIComponent(
           window.location.pathname.split("/").slice(-2, -1)
         );
-        div4.appendChild(div5);
+        div4.appendChild(span1);
         document.querySelector("#list").appendChild(div4);
       }
       dirEntries.sort();
@@ -265,11 +265,11 @@ window.getListing = async () => {
     dirEntries.forEach((entry) => {
       const div7 = document.createElement("div");
       const a4 = document.createElement("a");
-      const div8 = document.createElement("div");
-      div8.className = "details_modified";
-      div8.dataset.modified = entry.modified;
-      div8.style.opacity = getDateTimeOpacity(entry.modified);
-      div8.innerText = formatDateTime(entry.modified);
+      const span1 = document.createElement("span");
+      span1.className = "details_modified";
+      span1.dataset.modified = entry.modified;
+      span1.style.opacity = getDateTimeOpacity(entry.modified);
+      span1.innerText = formatDateTime(entry.modified);
       if (entry.name.slice(-4) === ".mp4") {
         let watched = "";
         if (
@@ -287,7 +287,7 @@ window.getListing = async () => {
         a4.appendChild(document.createTextNode(`▶ ${entry.name.slice(0, -4)}`));
         div7.appendChild(a4);
         div7.appendChild(document.createElement("br"));
-        div7.appendChild(div8);
+        div7.appendChild(span1);
         const div9 = document.createElement("div");
         div9.className = "details_filesize";
         div9.innerText = formatFilesize(entry.size);
@@ -303,7 +303,7 @@ window.getListing = async () => {
         );
         div7.appendChild(a4);
         div7.appendChild(document.createElement("br"));
-        div7.appendChild(div8);
+        div7.appendChild(span1);
         const div9 = document.createElement("div");
         div9.className = "details_filesize";
         div9.innerText = formatFilesize(entry.size);
@@ -315,7 +315,7 @@ window.getListing = async () => {
         a4.appendChild(document.createTextNode(`📁 ${entry.name}`));
         div7.appendChild(a4);
         div7.appendChild(document.createElement("br"));
-        div7.appendChild(div8);
+        div7.appendChild(span1);
       }
       document.querySelector("#list").appendChild(div7);
     });
@@ -431,10 +431,10 @@ window.search = async function () {
         a1.appendChild(document.createTextNode(`📁 ${entry.title}`));
         div1.appendChild(a1);
         div1.appendChild(document.createElement("br"));
-        const div2 = document.createElement("div");
-        div2.className = "details";
-        div2.innerText = entry.season;
-        div1.appendChild(div2);
+        const span1 = document.createElement("span");
+        span1.className = "details";
+        span1.innerText = entry.season;
+        div1.appendChild(span1);
         document.querySelector("#list").appendChild(div1);
       }
     });
