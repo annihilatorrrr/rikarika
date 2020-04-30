@@ -18,9 +18,9 @@ const updatePlayerSettingUI = function () {
 
 const changePlayer = function () {
   if (this.dataset.app) {
-    window.localStorage.setItem("player", this.dataset.app);
+    localStorage.setItem("player", this.dataset.app);
   } else {
-    window.localStorage.removeItem("player");
+    localStorage.removeItem("player");
   }
   updatePlayerSettingUI();
 };
@@ -111,19 +111,15 @@ const playfile = function (event) {
   this.classList.add("watched");
   localStorage.setItem(href, 1);
 
-  if (
-    android &&
-    window.localStorage.getItem("player") &&
-    href.slice(-4) === ".mp4"
-  ) {
+  if (android && localStorage.getItem("player") && href.slice(-4) === ".mp4") {
     const url = this.querySelector("a").href;
     const a = document.createElement("a");
-    a.href = `intent:${url}#Intent;package=${window.localStorage.getItem(
+    a.href = `intent:${url}#Intent;package=${localStorage.getItem(
       "player"
     )};S.browser_fallback_url=${url};end`;
     a.click();
   } else {
-    window.location.href = href;
+    location.href = href;
   }
 };
 
@@ -131,7 +127,7 @@ const urlBase64ToUint8Array = (base64String) => {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
 
-  const rawData = window.atob(base64);
+  const rawData = atob(base64);
   const outputArray = new Uint8Array(rawData.length);
 
   for (let i = 0; i < rawData.length; ++i) {
@@ -148,18 +144,16 @@ const navfolder = function (event) {
     each.onmouseup = null;
   });
   history.pushState(null, null, this.querySelector("a").href);
-  window.getListing();
+  getListing();
 };
 
-window.getListing = async () => {
+const getListing = async () => {
   window.animeID = 0;
-  if (window.location.pathname.split("/").length <= 2) {
+  if (location.pathname.split("/").length <= 2) {
     document.title = "カリ(仮)";
   } else {
     document.title = decodeURIComponent(
-      window.location.pathname.split("/")[
-        window.location.pathname.split("/").length - 2
-      ]
+      location.pathname.split("/")[location.pathname.split("/").length - 2]
     );
   }
 
@@ -181,16 +175,16 @@ window.getListing = async () => {
     div3.appendChild(document.createTextNode("Loading..."));
     document.querySelector("#list").appendChild(div3);
   }, 300);
-  if (window.location.pathname.indexOf("/search/") === 0) {
+  if (location.pathname.indexOf("/search/") === 0) {
     clearTimeout(slowload);
     document.querySelector("#search").value = decodeURIComponent(
-      window.location.pathname.split("/")[2]
+      location.pathname.split("/")[2]
     );
-    window.search();
+    search();
     document.querySelector("#list .search").style.display = "inherit";
   } else {
     const dirEntries = await fetch(
-      `/ls?path=${encodeURIComponent(window.location.pathname)}`
+      `/ls?path=${encodeURIComponent(location.pathname)}`
     ).then((res) => res.json());
 
     clearTimeout(slowload);
@@ -206,7 +200,7 @@ window.getListing = async () => {
     if (document.querySelector("#search").value.length === 0) {
       document.querySelector("#list .search").style.display = "none";
     }
-    if (window.location.pathname === "/") {
+    if (location.pathname === "/") {
       dirEntries.reverse();
       document.querySelector("#list .search").style.display = "inherit";
     } else {
@@ -215,10 +209,10 @@ window.getListing = async () => {
         div4.className = "folder";
         div4.id = "back";
         const a2 = document.createElement("a");
-        a2.href = `${window.location.pathname.slice(
+        a2.href = `${location.pathname.slice(
           0,
-          window.location.pathname
-            .slice(0, window.location.pathname.lastIndexOf("/"))
+          location.pathname
+            .slice(0, location.pathname.lastIndexOf("/"))
             .lastIndexOf("/")
         )}/`;
         a2.appendChild(document.createTextNode("▲ .."));
@@ -227,7 +221,7 @@ window.getListing = async () => {
         const span1 = document.createElement("span");
         span1.className = "details";
         span1.innerText = decodeURIComponent(
-          window.location.pathname.split("/").slice(-2, -1)
+          location.pathname.split("/").slice(-2, -1)
         );
         div4.appendChild(span1);
         document.querySelector("#list").appendChild(div4);
@@ -236,14 +230,14 @@ window.getListing = async () => {
     }
 
     if (
-      window.location.pathname === "/2019-10/" ||
-      window.location.pathname === "/2020-01/" ||
-      window.location.pathname === "/2020-04/"
+      location.pathname === "/2019-10/" ||
+      location.pathname === "/2020-01/" ||
+      location.pathname === "/2020-04/"
     ) {
       dirEntries.sort((a, b) =>
         b.modified > a.modified ? 1 : b.modified < a.modified ? -1 : 0
       );
-    } else if (window.location.pathname === "/") {
+    } else if (location.pathname === "/") {
       dirEntries.sort((a, b) =>
         b.name > a.name ? 1 : b.name < a.name ? -1 : 0
       );
@@ -252,7 +246,7 @@ window.getListing = async () => {
         a.name > b.name ? 1 : a.name < b.name ? -1 : 0
       );
     }
-    if (window.location.pathname === "/") {
+    if (location.pathname === "/") {
       const div6 = document.createElement("div");
       div6.className = "file";
       const a3 = document.createElement("a");
@@ -320,7 +314,7 @@ window.getListing = async () => {
       document.querySelector("#list").appendChild(div7);
     });
 
-    if (window.location.pathname === "/") {
+    if (location.pathname === "/") {
       if (android) {
         const div10 = document.createElement("div");
         div10.className = "item";
@@ -358,7 +352,7 @@ window.getListing = async () => {
       div13.className = "item";
       div13.onclick = (event) => {
         event.preventDefault();
-        window.location.href = "/logout";
+        location.href = "/logout";
       };
       div13.appendChild(document.createTextNode("💨 登出"));
       document.querySelector("#list").appendChild(div13);
@@ -398,12 +392,12 @@ const navSearchFolder = function (event) {
   history.pushState(
     null,
     null,
-    this.querySelector("a").href.replace(window.location.origin, "")
+    this.querySelector("a").href.replace(location.origin, "")
   );
-  window.getListing();
+  getListing();
 };
 
-window.search = async function () {
+const search = async function () {
   const keyword = document.querySelector("#search").value;
   if (keyword.length > 0) {
     document.querySelectorAll(".folder").forEach((each) => {
@@ -451,11 +445,11 @@ window.search = async function () {
   }
 };
 
-window.getListing();
+getListing();
 
 const prepareSearch = function () {
   if (document.querySelector("#search").value.length > 0) {
-    window.search();
+    search();
     history.replaceState(
       null,
       null,
@@ -463,7 +457,7 @@ const prepareSearch = function () {
     );
   } else {
     history.replaceState(null, null, "/");
-    window.getListing();
+    getListing();
   }
 };
 
@@ -471,7 +465,7 @@ window.onpopstate = function (event) {
   if (document.querySelector("#search").value.length > 0) {
     prepareSearch();
   } else {
-    window.getListing();
+    getListing();
   }
 };
 
@@ -482,7 +476,7 @@ document.querySelector("#search").oninput = () => {
     typing = setTimeout(prepareSearch, 500);
   } else {
     history.replaceState(null, null, "/");
-    window.getListing();
+    getListing();
   }
 };
 
