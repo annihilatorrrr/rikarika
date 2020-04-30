@@ -62,9 +62,14 @@ app.get(/.*\/$/, (req, res) => {
     req.cookies.session ===
       crypto.createHmac("sha256", WEB_PASSWORD).update(WEB_SECRET).digest("hex")
   ) {
+    const htmlFile = /(Android|iPad|iPhone|iPod)/g.test(
+      req.headers["user-agent"]
+    )
+      ? "mobile.html"
+      : "index.html";
     res.send(
       fs
-        .readFileSync(path.join(__dirname, "view/index.html"), "utf8")
+        .readFileSync(path.join(__dirname, "view", htmlFile), "utf8")
         .replace("WEBPUSH_PUBLIC_KEY", WEBPUSH_PUBLIC_KEY)
     );
   } else {
