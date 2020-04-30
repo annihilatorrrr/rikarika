@@ -205,8 +205,6 @@ app.get("/ls", async (req, res) => {
       .limit(1)
       .offset(0);
     if (!rows || !rows.length || !rows[0].id) {
-      console.log(req.query.path.split("/"));
-      console.log(rows);
       return res.send([]);
     }
     const [{ id, anilist_id }] = rows;

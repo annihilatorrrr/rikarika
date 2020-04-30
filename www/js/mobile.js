@@ -9,9 +9,9 @@ const updatePlayerSettingUI = function () {
         item.dataset.app.indexOf(localStorage.getItem("player")) >= 0 ||
         (item.dataset.app === "" && !localStorage.getItem("player"))
       ) {
-        item.querySelector("i").classList.add("fa-check");
+        item.querySelector("span").style.visibility = "visible";
       } else {
-        item.querySelector("i").classList.remove("fa-check");
+        item.querySelector("span").style.visibility = "hidden";
       }
     });
 };
@@ -147,14 +147,7 @@ const navfolder = function (event) {
   document.querySelectorAll(".folder").forEach((each) => {
     each.onmouseup = null;
   });
-  history.pushState(
-    null,
-    null,
-    `${
-      window.location.pathname +
-      encodeURIComponent(this.querySelector("a").innerText)
-    }/`
-  );
+  history.pushState(null, null, this.querySelector("a").href);
   window.getListing();
 };
 
@@ -228,12 +221,7 @@ window.getListing = async () => {
             .slice(0, window.location.pathname.lastIndexOf("/"))
             .lastIndexOf("/")
         )}/`;
-        const i3 = document.createElement("i");
-        i3.className = "fa fa-level-up";
-        i3.style =
-          "transform: scale(-1.3, 1); transform-origin:-30% 50%;-webkit-transform: scale(-1.3, 1); -webkit-transform-origin:-50% 50%";
-        a2.appendChild(i3);
-        a2.appendChild(document.createTextNode(".."));
+        a2.appendChild(document.createTextNode("▲ .."));
         div4.appendChild(a2);
         div4.appendChild(document.createElement("br"));
         const div5 = document.createElement("div");
@@ -269,10 +257,7 @@ window.getListing = async () => {
       div6.className = "file";
       const a3 = document.createElement("a");
       a3.href = "/list.txt";
-      const i4 = document.createElement("i");
-      i4.className = "fa fa-file-text";
-      a3.appendChild(i4);
-      a3.appendChild(document.createTextNode("動畫列表"));
+      a3.appendChild(document.createTextNode("📄 動畫列表"));
       div6.appendChild(a3);
       div6.appendChild(document.createElement("br"));
       document.querySelector("#list").appendChild(div6);
@@ -280,7 +265,6 @@ window.getListing = async () => {
     dirEntries.forEach((entry) => {
       const div7 = document.createElement("div");
       const a4 = document.createElement("a");
-      const i5 = document.createElement("i");
       const div8 = document.createElement("div");
       div8.className = "details_modified";
       div8.dataset.modified = entry.modified;
@@ -300,9 +284,7 @@ window.getListing = async () => {
         a4.dataset.thumb = `/${entry.anime_id}/${encodeURIComponent(
           entry.thumb
         )}`;
-        i5.className = "fa fa-toggle-right";
-        a4.appendChild(i5);
-        a4.appendChild(document.createTextNode(entry.name.slice(0, -4)));
+        a4.appendChild(document.createTextNode(`▶ ${entry.name.slice(0, -4)}`));
         div7.appendChild(a4);
         div7.appendChild(document.createElement("br"));
         div7.appendChild(div8);
@@ -310,12 +292,15 @@ window.getListing = async () => {
         div9.className = "details_filesize";
         div9.innerText = formatFilesize(entry.size);
         div7.appendChild(div9);
-      } else if (entry.name.slice(-4) === ".txt") {
+      } else if (
+        entry.name.slice(-4) === ".txt" ||
+        entry.name.slice(-4) === ".ass"
+      ) {
         div7.className = "file";
         a4.href = encodeURIComponent(entry.name);
-        i5.className = "fa fa-file-text";
-        a4.appendChild(i5);
-        a4.appendChild(document.createTextNode(entry.name.slice(0, -4)));
+        a4.appendChild(
+          document.createTextNode(`📄 ${entry.name.slice(0, -4)}`)
+        );
         div7.appendChild(a4);
         div7.appendChild(document.createElement("br"));
         div7.appendChild(div8);
@@ -327,9 +312,7 @@ window.getListing = async () => {
         div7.className = "folder";
         a4.href = `${encodeURIComponent(entry.name)}/`;
         a4.dataset.anime_id = entry.anime_id;
-        i5.className = "fa fa-folder";
-        a4.appendChild(i5);
-        a4.appendChild(document.createTextNode(entry.name));
+        a4.appendChild(document.createTextNode(`📁 ${entry.name}`));
         div7.appendChild(a4);
         div7.appendChild(document.createElement("br"));
         div7.appendChild(div8);
@@ -343,9 +326,9 @@ window.getListing = async () => {
         div10.className = "item";
         div10.dataset.app = "";
         div10.onclick = changePlayer;
-        const i6 = document.createElement("i");
-        i6.className = "fa";
-        div10.appendChild(i6);
+        const span6 = document.createElement("span");
+        span6.appendChild(document.createTextNode("✅ "));
+        div10.appendChild(span6);
         div10.appendChild(document.createTextNode("使用預設播放器"));
         document.querySelector("#list").appendChild(div10);
 
@@ -353,9 +336,9 @@ window.getListing = async () => {
         div11.className = "item";
         div11.dataset.app = "com.mxtech.videoplayer.ad";
         div11.onclick = changePlayer;
-        const i7 = document.createElement("i");
-        i7.className = "fa";
-        div11.appendChild(i7);
+        const span7 = document.createElement("span");
+        span7.appendChild(document.createTextNode("✅ "));
+        div11.appendChild(span7);
         div11.appendChild(document.createTextNode("使用 MXPlayer"));
         document.querySelector("#list").appendChild(div11);
 
@@ -363,9 +346,9 @@ window.getListing = async () => {
         div12.className = "item";
         div12.dataset.app = "com.mxtech.videoplayer.pro";
         div12.onclick = changePlayer;
-        const i8 = document.createElement("i");
-        i8.className = "fa";
-        div12.appendChild(i8);
+        const span8 = document.createElement("span");
+        span8.appendChild(document.createTextNode("✅ "));
+        div12.appendChild(span8);
         div12.appendChild(document.createTextNode("使用 MXPlayer Pro"));
         document.querySelector("#list").appendChild(div12);
         updatePlayerSettingUI();
@@ -377,10 +360,7 @@ window.getListing = async () => {
         event.preventDefault();
         window.location.href = "/logout";
       };
-      const i9 = document.createElement("i");
-      i9.className = "fa fa-sign-out";
-      div13.appendChild(i9);
-      div13.appendChild(document.createTextNode("登出"));
+      div13.appendChild(document.createTextNode("💨 登出"));
       document.querySelector("#list").appendChild(div13);
     }
     toggleFileSizeDisplay();
@@ -448,10 +428,7 @@ window.search = async function () {
         div1.className = "folder";
         const a1 = document.createElement("a");
         a1.href = `/${entry.season}/${encodeURIComponent(entry.title)}/`;
-        const i1 = document.createElement("i");
-        i1.className = "fa fa-folder";
-        a1.appendChild(i1);
-        a1.appendChild(document.createTextNode(entry.title));
+        a1.appendChild(document.createTextNode(`📁 ${entry.title}`));
         div1.appendChild(a1);
         div1.appendChild(document.createElement("br"));
         const div2 = document.createElement("div");
