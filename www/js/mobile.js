@@ -6,7 +6,7 @@ const updatePlayerSettingUI = function () {
     .filter((each) => typeof each.dataset.app === "string")
     .forEach((item) => {
       if (
-        item.dataset.app.indexOf(localStorage.getItem("player")) >= 0 ||
+        item.dataset.app.includes(localStorage.getItem("player")) ||
         (item.dataset.app === "" && !localStorage.getItem("player"))
       ) {
         item.querySelector("span").style.visibility = "visible";
@@ -25,7 +25,7 @@ const changePlayer = function () {
   updatePlayerSettingUI();
 };
 
-const formatFilesize = function (bytes) {
+const formatFileSize = function (bytes) {
   let size = parseInt(bytes, 10);
   if (bytes > 1000000000) {
     size = `${parseFloat(size / 1024 / 1024 / 1024).toFixed(2)}GB`;
@@ -39,23 +39,23 @@ const formatFilesize = function (bytes) {
   return size;
 };
 
-const toggleFileSizeDisplay = function () {
+const renderFileSizeStyle = function () {
   if (navigator.connection && navigator.connection.type === "cellular") {
-    document.querySelectorAll(".details_filesize").forEach((each) => {
+    document.querySelectorAll(".file .details_size").forEach((each) => {
       each.style.visibility = "visible";
     });
   } else {
-    document.querySelectorAll(".details_filesize").forEach((each) => {
+    document.querySelectorAll(".details_size").forEach((each) => {
       each.style.visibility = "hidden";
     });
   }
 };
 if (navigator.connection) {
-  navigator.connection.ontypechange = toggleFileSizeDisplay;
+  navigator.connection.ontypechange = renderFileSizeStyle;
 }
 
-const getDateTimeOpacity = function (timestringUTC) {
-  const lastModified = new Date(timestringUTC);
+const getDateTimeOpacity = function (timeStringUTC) {
+  const lastModified = new Date(timeStringUTC);
   const seconds = Math.floor((new Date() - lastModified) / 1000);
   let opacity = 0.3 + 0.7 * (1 - seconds / (86400 * 7));
   if (opacity > 1) {
@@ -67,9 +67,9 @@ const getDateTimeOpacity = function (timestringUTC) {
   return opacity;
 };
 
-const formatDateTime = function (timestringUTC) {
-  const lastModified = new Date(timestringUTC);
-  const formatedDate = `${lastModified.getFullYear()}-${(
+const formatDateTime = function (timeStringUTC) {
+  const lastModified = new Date(timeStringUTC);
+  const formattedDate = `${lastModified.getFullYear()}-${(
     lastModified.getMonth() + 1
   )
     .toString()
@@ -77,15 +77,15 @@ const formatDateTime = function (timestringUTC) {
   const seconds = Math.floor((new Date() - lastModified) / 1000);
   let interval = Math.floor(seconds / 31536000);
   if (interval >= 1) {
-    return formatedDate;
+    return formattedDate;
   }
   interval = Math.floor(seconds / 2592000);
   if (interval >= 1) {
-    return formatedDate;
+    return formattedDate;
   }
   interval = Math.floor(seconds / 86400);
   if (interval >= 10) {
-    return formatedDate;
+    return formattedDate;
   } else if (interval >= 1) {
     return `${interval} 日前`;
   }
@@ -103,26 +103,6 @@ const formatDateTime = function (timestringUTC) {
   return "剛剛更新";
 };
 
-const playfile = function (event) {
-  if (event && event.which !== 1) {
-    return;
-  }
-  const href = this.querySelector("a").getAttribute("href");
-  this.classList.add("watched");
-  localStorage.setItem(href, 1);
-
-  if (android && localStorage.getItem("player") && href.slice(-4) === ".mp4") {
-    const url = this.querySelector("a").href;
-    const a = document.createElement("a");
-    a.href = `intent:${url}#Intent;package=${localStorage.getItem(
-      "player"
-    )};S.browser_fallback_url=${url};end`;
-    a.click();
-  } else {
-    location.href = href;
-  }
-};
-
 const urlBase64ToUint8Array = (base64String) => {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
@@ -136,355 +116,282 @@ const urlBase64ToUint8Array = (base64String) => {
   return outputArray;
 };
 
-const navfolder = function (event) {
-  if (event.which !== 1) {
+const render = async () => {
+  const [season, title] = location.pathname
+    .split("/")
+    .filter((e) => e)
+    .map((e) => decodeURIComponent(e));
+
+  if (season === "search" && !title) {
+    history.replaceState(null, null, "/");
+    render();
     return;
+  }
+
+  document.title = title || season || "カリ(仮)";
+  if (season === "search") {
+    document.querySelector("#search").value = title;
   }
   document.querySelectorAll(".folder").forEach((each) => {
     each.onmouseup = null;
   });
-  history.pushState(null, null, this.querySelector("a").href);
-  getListing();
-};
 
-const getListing = async () => {
-  window.animeID = 0;
-  if (location.pathname.split("/").length <= 2) {
-    document.title = "カリ(仮)";
-  } else {
-    document.title = decodeURIComponent(
-      location.pathname.split("/")[location.pathname.split("/").length - 2]
-    );
-  }
-
-  const slowload = setTimeout(() => {
-    document.querySelectorAll("#list .item").forEach((each) => {
+  const loadingTimer = setTimeout(() => {
+    document.querySelectorAll("#list > div:not(.search)").forEach((each) => {
       each.remove();
     });
-    document.querySelectorAll("#list .folder").forEach((each) => {
-      each.remove();
-    });
-    document.querySelectorAll("#list .file").forEach((each) => {
-      each.remove();
-    });
-    if (document.querySelector("#search").value.length === 0) {
-      document.querySelector("#list .search").style.display = "none";
-    }
     const div3 = document.createElement("div");
     div3.className = "folder";
     div3.appendChild(document.createTextNode("Loading..."));
     document.querySelector("#list").appendChild(div3);
   }, 300);
-  if (location.pathname.indexOf("/search/") === 0) {
-    clearTimeout(slowload);
-    document.querySelector("#search").value = decodeURIComponent(
-      location.pathname.split("/")[2]
-    );
-    search();
-    document.querySelector("#list .search").style.display = "inherit";
-  } else {
-    const dirEntries = await fetch(
-      `/ls?path=${encodeURIComponent(location.pathname)}`
-    ).then((res) => res.json());
+  const dirEntries = await fetch(
+    season === "search"
+      ? `/search?q=${title}`
+      : `/ls?path=${encodeURIComponent(location.pathname)}`
+  ).then((res) => res.json());
+  clearTimeout(loadingTimer);
 
-    clearTimeout(slowload);
-    document.querySelectorAll("#list .item").forEach((each) => {
-      each.remove();
-    });
-    document.querySelectorAll("#list .folder").forEach((each) => {
-      each.remove();
-    });
-    document.querySelectorAll("#list .file").forEach((each) => {
-      each.remove();
-    });
-    if (document.querySelector("#search").value.length === 0) {
-      document.querySelector("#list .search").style.display = "none";
-    }
-    if (location.pathname === "/") {
-      dirEntries.reverse();
-      document.querySelector("#list .search").style.display = "inherit";
-    } else {
-      if (document.querySelector("#search").value.length === 0) {
-        const div4 = document.createElement("div");
-        div4.className = "folder";
-        div4.id = "back";
-        const a2 = document.createElement("a");
-        a2.href = `${location.pathname.slice(
-          0,
-          location.pathname
-            .slice(0, location.pathname.lastIndexOf("/"))
-            .lastIndexOf("/")
-        )}/`;
-        a2.appendChild(document.createTextNode("▲ .."));
-        div4.appendChild(a2);
-        div4.appendChild(document.createElement("br"));
-        const span1 = document.createElement("span");
-        span1.className = "details";
-        span1.innerText = decodeURIComponent(
-          location.pathname.split("/").slice(-2, -1)
-        );
-        div4.appendChild(span1);
-        document.querySelector("#list").appendChild(div4);
-      }
-      dirEntries.sort();
-    }
+  document.querySelectorAll("#list > div:not(.search)").forEach((each) => {
+    each.remove();
+  });
 
-    if (
-      location.pathname === "/2019-10/" ||
-      location.pathname === "/2020-01/" ||
-      location.pathname === "/2020-04/"
-    ) {
-      dirEntries.sort((a, b) =>
-        b.modified > a.modified ? 1 : b.modified < a.modified ? -1 : 0
-      );
-    } else if (location.pathname === "/") {
-      dirEntries.sort((a, b) =>
-        b.name > a.name ? 1 : b.name < a.name ? -1 : 0
-      );
-    } else {
-      dirEntries.sort((a, b) =>
-        a.name > b.name ? 1 : a.name < b.name ? -1 : 0
-      );
-    }
-    if (location.pathname === "/") {
-      const div6 = document.createElement("div");
-      div6.className = "file";
-      const a3 = document.createElement("a");
-      a3.href = "/list.txt";
-      a3.appendChild(document.createTextNode("📄 動畫列表"));
-      div6.appendChild(a3);
-      div6.appendChild(document.createElement("br"));
-      document.querySelector("#list").appendChild(div6);
-    }
-    dirEntries.forEach((entry) => {
-      const div7 = document.createElement("div");
-      const a4 = document.createElement("a");
-      const span1 = document.createElement("span");
-      span1.className = "details_modified";
-      span1.dataset.modified = entry.modified;
-      span1.style.opacity = getDateTimeOpacity(entry.modified);
-      span1.innerText = formatDateTime(entry.modified);
-      if (entry.name.slice(-4) === ".mp4") {
-        let watched = "";
-        if (
-          localStorage.getItem(
-            `/${entry.anime_id}/${encodeURIComponent(entry.name)}`
-          )
-        ) {
-          watched = "watched";
-        }
-        div7.className = `file ${watched}`;
-        a4.href = `/${entry.anime_id}/${encodeURIComponent(entry.name)}`;
-        a4.dataset.thumb = `/${entry.anime_id}/${encodeURIComponent(
-          entry.thumb
-        )}`;
-        a4.appendChild(document.createTextNode(`▶ ${entry.name.slice(0, -4)}`));
-        div7.appendChild(a4);
-        div7.appendChild(document.createElement("br"));
-        div7.appendChild(span1);
-        const div9 = document.createElement("div");
-        div9.className = "details_filesize";
-        div9.innerText = formatFilesize(entry.size);
-        div7.appendChild(div9);
-      } else if (
-        entry.name.slice(-4) === ".txt" ||
-        entry.name.slice(-4) === ".ass"
-      ) {
-        div7.className = "file";
-        a4.href = encodeURIComponent(entry.name);
-        a4.appendChild(
-          document.createTextNode(`📄 ${entry.name.slice(0, -4)}`)
-        );
-        div7.appendChild(a4);
-        div7.appendChild(document.createElement("br"));
-        div7.appendChild(span1);
-        const div9 = document.createElement("div");
-        div9.className = "details_filesize";
-        div9.innerText = formatFilesize(entry.size);
-        div7.appendChild(div9);
-      } else {
-        div7.className = "folder";
-        a4.href = `${encodeURIComponent(entry.name)}/`;
-        a4.dataset.anime_id = entry.anime_id;
-        a4.appendChild(document.createTextNode(`📁 ${entry.name}`));
-        div7.appendChild(a4);
-        div7.appendChild(document.createElement("br"));
-        div7.appendChild(span1);
-      }
-      document.querySelector("#list").appendChild(div7);
-    });
-
-    if (location.pathname === "/") {
-      if (android) {
-        const div10 = document.createElement("div");
-        div10.className = "item";
-        div10.dataset.app = "";
-        div10.onclick = changePlayer;
-        const span6 = document.createElement("span");
-        span6.appendChild(document.createTextNode("✅ "));
-        div10.appendChild(span6);
-        div10.appendChild(document.createTextNode("使用預設播放器"));
-        document.querySelector("#list").appendChild(div10);
-
-        const div11 = document.createElement("div");
-        div11.className = "item";
-        div11.dataset.app = "com.mxtech.videoplayer.ad";
-        div11.onclick = changePlayer;
-        const span7 = document.createElement("span");
-        span7.appendChild(document.createTextNode("✅ "));
-        div11.appendChild(span7);
-        div11.appendChild(document.createTextNode("使用 MXPlayer"));
-        document.querySelector("#list").appendChild(div11);
-
-        const div12 = document.createElement("div");
-        div12.className = "item";
-        div12.dataset.app = "com.mxtech.videoplayer.pro";
-        div12.onclick = changePlayer;
-        const span8 = document.createElement("span");
-        span8.appendChild(document.createTextNode("✅ "));
-        div12.appendChild(span8);
-        div12.appendChild(document.createTextNode("使用 MXPlayer Pro"));
-        document.querySelector("#list").appendChild(div12);
-        updatePlayerSettingUI();
-      }
-
-      const div13 = document.createElement("div");
-      div13.className = "item";
-      div13.onclick = (event) => {
-        event.preventDefault();
-        location.href = "/logout";
-      };
-      div13.appendChild(document.createTextNode("💨 登出"));
-      document.querySelector("#list").appendChild(div13);
-    }
-    toggleFileSizeDisplay();
-
-    document.querySelectorAll(".folder").forEach((each) => {
-      each.onmouseup = navfolder;
-    });
-    document.querySelectorAll(".folder a").forEach((each) => {
-      each.onclick = (event) => {
-        if (event.which === 1) {
-          event.preventDefault();
-        }
-      };
-    });
-    document.querySelectorAll(".file").forEach((each) => {
-      each.onmouseup = playfile;
-    });
-    document.querySelectorAll(".file a").forEach((each) => {
-      each.onclick = (event) => {
-        if (event.which === 1) {
-          event.preventDefault();
-        }
-      };
-    });
-  }
-};
-
-const navSearchFolder = function (event) {
-  if (event.which !== 1) {
+  if (season === "search") {
+    renderSearchResult(dirEntries);
     return;
   }
+
+  if (["2019-10", "2020-01", "2020-04"].includes(season)) {
+    dirEntries.sort((a, b) => (a.modified > b.modified ? -1 : 1));
+  } else if (season) {
+    dirEntries.sort((a, b) => (a.name > b.name ? 1 : -1));
+  } else {
+    dirEntries.sort((a, b) => (a.name > b.name ? -1 : 1));
+  }
+
+  if (season) {
+    const div4 = document.createElement("div");
+    div4.className = "folder";
+    div4.id = "back";
+    const a2 = document.createElement("a");
+    a2.href = title ? `/${season}/` : "/";
+    a2.appendChild(document.createTextNode("▲ .."));
+    div4.appendChild(a2);
+    div4.appendChild(document.createElement("br"));
+    const span1 = document.createElement("span");
+    span1.className = "details_title";
+    span1.innerText = title || season;
+    div4.appendChild(span1);
+    document.querySelector("#list").appendChild(div4);
+  } else {
+    const div6 = document.createElement("div");
+    div6.className = "file";
+    const a3 = document.createElement("a");
+    a3.href = "/list.txt";
+    a3.appendChild(document.createTextNode("📄 動畫列表"));
+    div6.appendChild(a3);
+    div6.appendChild(document.createElement("br"));
+    document.querySelector("#list").appendChild(div6);
+  }
+
+  for (const { name, modified, size, anime_id } of dirEntries) {
+    const div7 = document.createElement("div");
+    const a4 = document.createElement("a");
+    const span1 = document.createElement("span");
+    const span2 = document.createElement("span");
+    span1.className = "details_modified";
+    span1.dataset.modified = modified;
+    span1.style.opacity = getDateTimeOpacity(modified);
+    span1.innerText = formatDateTime(modified);
+    span2.className = "details_size";
+    span2.innerText = formatFileSize(size || 0);
+    switch (name.slice(-4)) {
+      case ".mp4":
+        div7.className = "file";
+        if (localStorage.getItem(`/${anime_id}/${name}`)) {
+          div7.classList.add("watched");
+        }
+        a4.href = `/${anime_id}/${encodeURIComponent(name)}`;
+        a4.appendChild(document.createTextNode(`▶ ${name.slice(0, -4)}`));
+        break;
+      case ".txt":
+      case ".ass":
+        div7.className = "file";
+        a4.href = encodeURIComponent(name);
+        a4.appendChild(document.createTextNode(`📄 ${name.slice(0, -4)}`));
+        break;
+      default:
+        div7.className = "folder";
+        a4.href = `${encodeURIComponent(name)}/`;
+        a4.appendChild(document.createTextNode(`📁 ${name}`));
+    }
+    div7.appendChild(a4);
+    div7.appendChild(document.createElement("br"));
+    div7.appendChild(span1);
+    div7.appendChild(span2);
+    document.querySelector("#list").appendChild(div7);
+  }
+
+  if (!season && android) {
+    const div10 = document.createElement("div");
+    div10.className = "item";
+    div10.dataset.app = "";
+    div10.onclick = changePlayer;
+    const span6 = document.createElement("span");
+    span6.appendChild(document.createTextNode("✅ "));
+    div10.appendChild(span6);
+    div10.appendChild(document.createTextNode("使用預設播放器"));
+    document.querySelector("#list").appendChild(div10);
+
+    const div11 = document.createElement("div");
+    div11.className = "item";
+    div11.dataset.app = "com.mxtech.videoplayer.ad";
+    div11.onclick = changePlayer;
+    const span7 = document.createElement("span");
+    span7.appendChild(document.createTextNode("✅ "));
+    div11.appendChild(span7);
+    div11.appendChild(document.createTextNode("使用 MXPlayer"));
+    document.querySelector("#list").appendChild(div11);
+
+    const div12 = document.createElement("div");
+    div12.className = "item";
+    div12.dataset.app = "com.mxtech.videoplayer.pro";
+    div12.onclick = changePlayer;
+    const span8 = document.createElement("span");
+    span8.appendChild(document.createTextNode("✅ "));
+    div12.appendChild(span8);
+    div12.appendChild(document.createTextNode("使用 MXPlayer Pro"));
+    document.querySelector("#list").appendChild(div12);
+    updatePlayerSettingUI();
+  }
+  if (!season) {
+    const div13 = document.createElement("div");
+    div13.className = "item";
+    div13.onclick = (event) => {
+      event.preventDefault();
+      location.href = "/logout";
+    };
+    div13.appendChild(document.createTextNode("💨 登出"));
+    document.querySelector("#list").appendChild(div13);
+  }
+  renderFileSizeStyle();
+
   document.querySelectorAll(".folder").forEach((each) => {
-    each.onmouseup = null;
+    each.onmouseup = function (event) {
+      if (event.which !== 1) {
+        return;
+      }
+      document.querySelectorAll(".folder").forEach((each) => {
+        each.onmouseup = null;
+      });
+      history.pushState(null, null, this.querySelector("a").pathname);
+      render();
+    };
   });
+  document.querySelectorAll(".folder a").forEach((each) => {
+    each.onclick = (event) => {
+      if (event.which === 1) {
+        event.preventDefault();
+      }
+    };
+  });
+  document.querySelectorAll(".file").forEach((each) => {
+    each.onmouseup = function (event) {
+      if (event && event.which !== 1) {
+        return;
+      }
+      const href = this.querySelector("a").pathname;
+      this.classList.add("watched");
+      localStorage.setItem(decodeURIComponent(href), 1);
+
+      if (
+        android &&
+        localStorage.getItem("player") &&
+        href.slice(-4) === ".mp4"
+      ) {
+        const url = this.querySelector("a").href;
+        const a = document.createElement("a");
+        a.href = `intent:${url}#Intent;package=${localStorage.getItem(
+          "player"
+        )};S.browser_fallback_url=${url};end`;
+        a.click();
+      } else {
+        location.href = href;
+      }
+    };
+  });
+  document.querySelectorAll(".file a").forEach((each) => {
+    each.onclick = (event) => {
+      if (event.which === 1) {
+        event.preventDefault();
+      }
+    };
+  });
+};
+
+const renderSearchResult = async function (results) {
+  for (const { season, title } of results) {
+    if (season === "Sukebei") {
+      continue;
+    }
+    const div1 = document.createElement("div");
+    div1.className = "folder";
+    const a1 = document.createElement("a");
+    a1.href = `/${season}/${encodeURIComponent(title)}/`;
+    a1.appendChild(document.createTextNode(`📁 ${title}`));
+    div1.appendChild(a1);
+    div1.appendChild(document.createElement("br"));
+    const span1 = document.createElement("span");
+    span1.className = "details_title";
+    span1.innerText = season;
+    div1.appendChild(span1);
+    document.querySelector("#list").appendChild(div1);
+  }
+  document.querySelectorAll(".folder").forEach((each) => {
+    each.onmouseup = function (event) {
+      if (event.which !== 1) {
+        return;
+      }
+      history.pushState(null, null, this.querySelector("a").pathname);
+      render();
+    };
+  });
+  document.querySelectorAll(".folder a").forEach((each) => {
+    each.onclick = (event) => {
+      if (event.which === 1) {
+        event.preventDefault();
+      }
+    };
+  });
+};
+
+render();
+
+window.onpopstate = render;
+
+let typing = null;
+document.querySelector("#search").oninput = (e) => {
+  clearTimeout(typing);
+  if (!e.target.value) {
+    history.pushState(null, null, "/");
+    render();
+    return;
+  }
+  history.replaceState(
+    null,
+    null,
+    `/search/${encodeURIComponent(e.target.value)}/`
+  );
+  typing = setTimeout(render, 300);
+};
+
+document.querySelector("#search").onclick = (e) => {
   history.pushState(
     null,
     null,
-    this.querySelector("a").href.replace(location.origin, "")
+    `/search/${encodeURIComponent(e.target.value)}/`
   );
-  getListing();
-};
-
-const search = async function () {
-  const keyword = document.querySelector("#search").value;
-  if (keyword.length > 0) {
-    document.querySelectorAll(".folder").forEach((each) => {
-      each.onmouseup = null;
-    });
-    document.querySelectorAll("#list .item").forEach((each) => {
-      each.remove();
-    });
-    document.querySelectorAll("#list .folder").forEach((each) => {
-      each.remove();
-    });
-    document.querySelectorAll("#list .file").forEach((each) => {
-      each.remove();
-    });
-
-    const anime_list = await fetch(`/search?q=${keyword}`).then((res) =>
-      res.json()
-    );
-    anime_list.forEach((entry) => {
-      if (entry.season !== "Sukebei") {
-        const div1 = document.createElement("div");
-        div1.className = "folder";
-        const a1 = document.createElement("a");
-        a1.href = `/${entry.season}/${encodeURIComponent(entry.title)}/`;
-        a1.appendChild(document.createTextNode(`📁 ${entry.title}`));
-        div1.appendChild(a1);
-        div1.appendChild(document.createElement("br"));
-        const span1 = document.createElement("span");
-        span1.className = "details";
-        span1.innerText = entry.season;
-        div1.appendChild(span1);
-        document.querySelector("#list").appendChild(div1);
-      }
-    });
-    document.querySelectorAll(".folder").forEach((each) => {
-      each.onmouseup = navSearchFolder;
-    });
-    document.querySelectorAll(".folder a").forEach((each) => {
-      each.onclick = (event) => {
-        if (event.which === 1) {
-          event.preventDefault();
-        }
-      };
-    });
-  }
-};
-
-getListing();
-
-const prepareSearch = function () {
-  if (document.querySelector("#search").value.length > 0) {
-    search();
-    history.replaceState(
-      null,
-      null,
-      `/search/${encodeURIComponent(document.querySelector("#search").value)}/`
-    );
-  } else {
-    history.replaceState(null, null, "/");
-    getListing();
-  }
-};
-
-window.onpopstate = function (event) {
-  if (document.querySelector("#search").value.length > 0) {
-    prepareSearch();
-  } else {
-    getListing();
-  }
-};
-
-let typing = null;
-document.querySelector("#search").oninput = () => {
-  clearTimeout(typing);
-  if (document.querySelector("#search").value.length > 0) {
-    typing = setTimeout(prepareSearch, 500);
-  } else {
-    history.replaceState(null, null, "/");
-    getListing();
-  }
-};
-
-document.querySelector("#search").onclick = () => {
-  clearTimeout(typing);
-  if (document.querySelector("#search").value.length > 0) {
-    typing = setTimeout(prepareSearch, 30);
-  }
+  render();
 };
 
 (async () => {

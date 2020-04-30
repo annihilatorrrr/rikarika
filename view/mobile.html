@@ -39,18 +39,19 @@
       background-color: #f6f6f6;
     }
 
-    .details,
+    .details_title,
     .details_modified,
-    .details_filesize {
+    .details_size {
       float: right;
       font-size: 0.8rem;
       margin: -0.7rem 0 -0.7rem 0;
-    }
-    .details,
-    .details_filesize {
       color: #999;
     }
-    .details_filesize {
+    .details_modified {
+      color: #000;
+    }
+    .details_size {
+      visibility: hidden;
       margin: -0.7rem 0.5rem -0.7rem 0rem;
     }
 
@@ -60,7 +61,6 @@
     }
 
     .search {
-      display: none;
       padding: 0.7rem 0.4rem 0.7rem 2rem;
       font-size: 1rem;
     }
@@ -83,7 +83,6 @@
         autocomplete="off"
       />
     </div>
-    <div class="folder">Loading...</div>
   </div>
   <script src="/js/mobile.js" async defer></script>
 </html>
