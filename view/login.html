@@ -60,17 +60,9 @@
     }
   </style>
   <div id="login">
-    <form>
+    <form action="/login" method="POST">
       <div id="title">カリ(仮)</div>
       <div id="field">
-        <input
-          id="username"
-          name="username"
-          type="text"
-          placeholder="Username"
-          autocomplete="on"
-          style="display: none;"
-        />
         <input
           id="password"
           name="password"
@@ -84,30 +76,4 @@
       <button id="enter">ENTER</button>
     </form>
   </div>
-  <script src="/js/js.cookie.js"></script>
-  <script>
-    document.querySelector("form").onsubmit = async (e) => {
-      e.preventDefault();
-      const clearListTimer = setTimeout(() => {
-        document.querySelector("#message").innerText = "Logging in...";
-      }, 300);
-
-      const token = await fetch("/login", {
-        method: "POST",
-        body: new URLSearchParams({
-          username: document.querySelector("#username").value,
-          password: document.querySelector("#password").value,
-        }),
-      }).then((res) => res.text());
-      clearTimeout(clearListTimer);
-      if (token) {
-        document.querySelector("#message").innerText =
-          "Logged in, redirecting...";
-        Cookies.set("session", token, { expires: 6 });
-        window.location.reload();
-      } else {
-        document.querySelector("#message").innerText = "Login error";
-      }
-    };
-  </script>
 </html>

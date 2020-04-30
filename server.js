@@ -73,17 +73,30 @@ app.get(/.*\/$/, (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  if (req.body.password === WEB_PASSWORD) {
-    return res.send(
-      crypto.createHmac("sha256", WEB_PASSWORD).update(WEB_SECRET).digest("hex")
+  if (
+    req.body.password === WEB_PASSWORD ||
+    req.headers["x-real-ip"] === WEB_WHITELIST_IP
+  ) {
+    res.setHeader(
+      "Set-Cookie",
+      `session=${crypto
+        .createHmac("sha256", WEB_PASSWORD)
+        .update(WEB_SECRET)
+        .digest("hex")}; Secure; HttpOnly; SameSite=Strict`
     );
   }
-  if (req.headers["x-real-ip"] === WEB_WHITELIST_IP) {
-    return res.send(
-      crypto.createHmac("sha256", WEB_PASSWORD).update(WEB_SECRET).digest("hex")
-    );
-  }
-  return res.send("");
+  return res.redirect(
+    302,
+    req.headers["referer"] ? new URL(req.headers["referer"]).pathname : "/"
+  );
+});
+
+app.get("/logout", (req, res) => {
+  res.setHeader("Set-Cookie", `session=; Secure; HttpOnly; SameSite=Strict`);
+  return res.redirect(
+    302,
+    req.headers["referer"] ? new URL(req.headers["referer"]).pathname : "/"
+  );
 });
 
 // path without extension and not end with /

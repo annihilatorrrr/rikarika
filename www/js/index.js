@@ -8,11 +8,6 @@ let audioCtx = null;
 let mediaSource = null;
 let compressor = null;
 
-const logout = function () {
-  Cookies.remove("session");
-  window.location.reload();
-};
-
 const center = (element) => {
   element.style.position = "absolute";
   element.style.top = `${
@@ -1525,7 +1520,7 @@ window.getListing = async (scroll) => {
       div13.className = "item";
       div13.onclick = (event) => {
         event.preventDefault();
-        logout();
+        window.location.href = "/logout";
       };
       const i9 = document.createElement("i");
       i9.className = "fa fa-sign-out";
