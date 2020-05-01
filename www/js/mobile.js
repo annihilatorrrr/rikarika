@@ -382,16 +382,18 @@ document.querySelector("#search").oninput = (e) => {
     null,
     `/search/${encodeURIComponent(e.target.value)}/`
   );
-  typing = setTimeout(render, 300);
+  typing = setTimeout(render, 200);
 };
 
-document.querySelector("#search").onclick = (e) => {
-  history.pushState(
-    null,
-    null,
-    `/search/${encodeURIComponent(e.target.value)}/`
-  );
-  render();
+document.querySelector("#search").onfocus = (e) => {
+  if (e.target.value) {
+    history.pushState(
+      null,
+      null,
+      `/search/${encodeURIComponent(e.target.value)}/`
+    );
+    render();
+  }
 };
 
 (async () => {
