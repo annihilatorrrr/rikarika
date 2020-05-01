@@ -265,6 +265,17 @@ const render = async () => {
     updatePlayerSettingUI();
   }
   if (!season) {
+    const div14 = document.createElement("div");
+    div14.className = "item";
+    div14.onclick = (event) => {
+      event.preventDefault();
+      location.href = document
+        .querySelector("meta[name=donate-url]")
+        .getAttribute("content");
+    };
+    div14.appendChild(document.createTextNode("❤️ PayMe 捐助"));
+    document.querySelector("#list").appendChild(div14);
+
     const div13 = document.createElement("div");
     div13.className = "item";
     div13.onclick = (event) => {

@@ -25,6 +25,7 @@ const {
   WEB_WHITELIST_IP,
   WEB_SECRET,
   WEBPUSH_PUBLIC_KEY,
+  DONATE_URL,
 } = process.env;
 
 const knex = require("knex")({
@@ -70,6 +71,7 @@ app.get(/.*\/$/, (req, res) => {
       fs
         .readFileSync(path.join(__dirname, `view/${view}.html`), "utf8")
         .replace("WEBPUSH_PUBLIC_KEY", WEBPUSH_PUBLIC_KEY)
+        .replace("DONATE_URL", DONATE_URL)
     );
   } else {
     res.send(fs.readFileSync(path.join(__dirname, "view/login.html")));
