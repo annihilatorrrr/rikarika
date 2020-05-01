@@ -29,6 +29,7 @@
     }
 
     #list > div {
+      position: relative;
       cursor: pointer;
       word-wrap: break-word;
       margin: 0;
@@ -43,9 +44,12 @@
     .details_title,
     .details_modified,
     .details_size {
-      float: right;
+      position: absolute;
+      bottom: 0.1rem;
+      left: auto;
+      right: 0.4rem;
       font-size: 0.8rem;
-      margin: -0.7rem 0 -0.7rem 0;
+      line-height: 0.8rem;
       color: #999;
     }
     .details_modified {
@@ -53,7 +57,8 @@
     }
     .details_size {
       visibility: hidden;
-      margin: -0.7rem 0.5rem -0.7rem 0rem;
+      left: 0.4rem;
+      right: auto;
     }
 
     .file a:visited,
