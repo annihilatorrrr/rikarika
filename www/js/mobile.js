@@ -161,12 +161,12 @@ const render = async () => {
     return;
   }
 
-  if (["2019-10", "2020-01", "2020-04"].includes(season)) {
+  if (["2020-01", "2020-04"].includes(season) && !title) {
     dirEntries.sort((a, b) => (a.modified > b.modified ? -1 : 1));
-  } else if (season) {
-    dirEntries.sort((a, b) => (a.name > b.name ? 1 : -1));
-  } else {
+  } else if (!season) {
     dirEntries.sort((a, b) => (a.name > b.name ? -1 : 1));
+  } else {
+    dirEntries.sort((a, b) => (a.name > b.name ? 1 : -1));
   }
 
   if (season) {
