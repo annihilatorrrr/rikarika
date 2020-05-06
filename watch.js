@@ -284,6 +284,11 @@ chokidar
       animeID,
       `${path.basename(fileName, path.extname(fileName))}.mp4`
     );
+    // remove incoming file if same file name already exist
+    if (fs.existsSync(newFilePath)) {
+      console.log(`Existed  ${newFilePath}`);
+      fs.removeSync(filePath);
+    }
     // remove incoming CHS file if CHT version already exist
     for (const [cht, chs] of CHMap) {
       if (
