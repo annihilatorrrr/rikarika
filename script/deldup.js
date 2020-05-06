@@ -17,6 +17,9 @@ const fileList = child_process
   .filter((each) => each);
 
 const db = new Set(fileList);
+const hashLessDB = new Set(
+  fileList.map((e) => e.replace(/[0-9A-Fa-f]{6,10}/g, ""))
+);
 console.log(`Found ${db.size} files`);
 
 const getReplacementMap = (fileName) =>
@@ -56,37 +59,62 @@ for (let key of getReplacementMap("").keys()) {
   };
 }
 
+const cleanup = (id, altFilePath) => {
+  stat.total.size += fs.statSync(altFilePath).size;
+  stat.total.count += 1;
+  stat[id].size += fs.statSync(altFilePath).size;
+  stat[id].count += 1;
+  if (process.argv.slice(2).includes("--verbose")) {
+    console.log(altFilePath);
+  }
+  if (process.argv.slice(2).includes("--delete")) {
+    console.log(`Deleting ${altFilePath}`);
+    const { atime, mtime } = fs.statSync(path.dirname(altFilePath));
+    fs.removeSync(altFilePath);
+    fs.utimesSync(path.dirname(altFilePath), atime, mtime);
+
+    const jpgPath = path.join(
+      path.dirname(altFilePath.replace(ANIME_PATH, ANIME_THUMB_PATH)),
+      `${path.basename(altFilePath, ".mp4")}.jpg`
+    );
+    if (fs.existsSync(jpgPath)) {
+      console.log(`Deleting ${jpgPath}`);
+      fs.removeSync(jpgPath);
+    }
+  }
+};
+
 for (let filePath of fileList) {
   const fileName = path.basename(filePath);
+  const dirName = path.dirname(filePath);
   for (let [id, replacement] of getReplacementMap(fileName).entries()) {
     const altFilePath = path.join(
       path.dirname(filePath),
       fileName.replace(fileName, replacement)
     );
-    if (filePath !== altFilePath && db.has(altFilePath)) {
-      stat.total.size += fs.statSync(altFilePath).size;
-      stat.total.count += 1;
-      stat[id].size += fs.statSync(altFilePath).size;
-      stat[id].count += 1;
-      if (process.argv.slice(2).includes("--verbose")) {
-        console.log(altFilePath);
-      }
-      if (process.argv.slice(2).includes("--delete")) {
-        console.log(`Deleting ${altFilePath}`);
-        const { atime, mtime } = fs.statSync(path.dirname(altFilePath));
-        fs.removeSync(altFilePath);
-        fs.utimesSync(path.dirname(altFilePath), atime, mtime);
-
-        const jpgPath = path.join(
-          path.dirname(altFilePath.replace(ANIME_PATH, ANIME_THUMB_PATH)),
-          `${path.basename(altFilePath, ".mp4")}.jpg`
-        );
-        if (fs.existsSync(jpgPath)) {
-          console.log(`Deleting ${jpgPath}`);
-          fs.removeSync(jpgPath);
-        }
-      }
-      break;
+    if (filePath === altFilePath) {
+      continue;
+    }
+    if (db.has(altFilePath)) {
+      cleanup(id, altFilePath);
+      continue;
+    }
+    if (!fileName.match(/[0-9A-Fa-f]{6,10}/g)) {
+      continue;
+    }
+    if (!hashLessDB.has(altFilePath.replace(/[0-9A-Fa-f]{6,10}/g, ""))) {
+      continue;
+    }
+    const similarFile = fileList
+      .filter((e) => e.startsWith(dirName))
+      .find(
+        (e) =>
+          e.replace(/[0-9A-Fa-f]{6,10}/g, "") ===
+          altFilePath.replace(/[0-9A-Fa-f]{6,10}/g, "")
+      );
+    if (similarFile) {
+      cleanup(id, similarFile);
+      continue;
     }
   }
 }
