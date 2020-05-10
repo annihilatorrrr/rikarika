@@ -1,3 +1,10 @@
+const v8 = require("v8");
+console.log(
+  `${(v8.getHeapStatistics().total_available_size / 1024 / 1024).toFixed(
+    0
+  )} MB Available Memory`
+);
+
 const cluster = require("cluster");
 
 if (!cluster.isMaster) {
@@ -63,7 +70,8 @@ const concurrency = Math.ceil(os.cpus().length / 8);
 for (let i = 0; i < concurrency; i++) {
   const worker = cluster.fork();
   worker.on("message", (filePath) => {
-    console.log(`Complete ${filePath}`);
+    if (typeof filePath === "object") return;
+    console.log(`Complete ${JSON.stringify(filePath)}`);
     if (taskList.length > 0) {
       worker.send(taskList.pop());
     } else {

@@ -4,6 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "pm2 start ecosystem.config.js",
+    "stop": "pm2 stop ecosystem.config.js",
+    "restart": "pm2 restart ecosystem.config.js",
+    "reload": "pm2 reload ecosystem.config.js",
+    "delete": "pm2 delete ecosystem.config.js",
+    "restart-workers": "pm2 restart ecosystem.config.js --only rikarika-workers",
     "prettier": "prettier",
     "format": "prettier --write \"**/*.*\"",
     "lint": "prettier --check \"**/*.*\"",
