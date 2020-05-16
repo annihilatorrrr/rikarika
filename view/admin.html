@@ -96,6 +96,12 @@
     Score:
     <input type="number" ng-model="score" min="-1" max="99" /> Popularity:
     <input type="number" ng-model="popularity" min="-1" max="100000" />
+    isAdult:
+    <select ng-model="isAdult">
+      <option>any</option>
+      <option>true</option>
+      <option>false</option>
+    </select>
     <button ng-click="search('filter')">Search</button>
     {{ hits.length }} results, {{ (hits | filter: {anime_id: ""}).length }}
     collected ({{ 100 * (hits | filter: {anime_id: ""}).length / hits.length |

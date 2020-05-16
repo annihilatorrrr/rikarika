@@ -12,6 +12,7 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
   $scope.start_to_month = 12;
   $scope.score = -1;
   $scope.popularity = -1;
+  $scope.isAdult = "any";
   $scope.types = [
     { value: "*" },
     { value: "TV*" },
@@ -121,6 +122,10 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
       request.query = {
         bool: {
           must: must,
+          filter:
+            $scope.isAdult === "any"
+              ? []
+              : [{ match: { isAdult: $scope.isAdult === "true" } }],
         },
       };
       request.sort = {};
