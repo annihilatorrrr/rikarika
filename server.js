@@ -286,7 +286,7 @@ app.get("/info", async (req, res) => {
     }
   ).then((response) => response.json());
 
-  return res.send(result.hits.hits);
+  return res.send(result.hits ? result.hits.hits : []);
 });
 
 app.get("/search", async (req, res) => {
