@@ -45,7 +45,9 @@ module.exports = (input, output) => {
       "-strict experimental",
       "-map_metadata -1",
       "-map_chapters -1",
-      skipTranscode ? "-c:v copy" : "-c:v libx264",
+      skipTranscode
+        ? "-c:v copy"
+        : "-c:v libx264 -r 24000/1001 -pix_fmt yuv420p -profile:v high -preset medium",
       "-c:a aac",
       "-b:a 128k",
       "-movflags",
