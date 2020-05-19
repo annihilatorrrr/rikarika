@@ -71,7 +71,7 @@ for (let i = 0; i < concurrency; i++) {
   const worker = cluster.fork();
   worker.on("message", (filePath) => {
     if (typeof filePath === "object") return;
-    console.log(`Complete ${JSON.stringify(filePath)}`);
+    console.log(`Complete ${filePath}`);
     if (taskList.length > 0) {
       worker.send(taskList.pop());
     } else {
