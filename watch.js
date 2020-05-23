@@ -211,7 +211,9 @@ chokidar
           chat_id: TELEGRAM_ID,
           parse_mode: "Markdown",
           text: [
-            `[${title}](https://${WEB_HOST}/${season}/${title}/)`,
+            `[${title}](https://${WEB_HOST}/${season}/${encodeURIComponent(
+              title
+            )}/)`,
             `[${season}](https://${WEB_HOST}/${season}/)`,
             `\`${fileName}\``,
           ].join("\n"),
