@@ -1388,6 +1388,9 @@ window.getListing = async (scroll) => {
     }
 
     if (
+      window.location.pathname === "/Movie/" ||
+      window.location.pathname === "/OVA/" ||
+      window.location.pathname === "/Sukebei/" ||
       window.location.pathname === "/2019-10/" ||
       window.location.pathname === "/2020-01/" ||
       window.location.pathname === "/2020-04/"
