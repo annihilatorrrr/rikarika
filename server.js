@@ -125,7 +125,7 @@ app.get("/motd", async (req, res) => {
   );
 });
 
-app.get("/list.txt", async (req, res) => {
+app.get("/list", async (req, res) => {
   res.type("text/plain");
   return res.send(
     [

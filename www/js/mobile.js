@@ -190,7 +190,7 @@ const render = async () => {
     const div6 = document.createElement("div");
     div6.className = "file";
     const a3 = document.createElement("a");
-    a3.href = "/list.txt";
+    a3.href = "/list";
     a3.appendChild(document.createTextNode("📄 動畫列表"));
     div6.appendChild(a3);
     div6.appendChild(document.createElement("br"));

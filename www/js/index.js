@@ -598,7 +598,7 @@ const playfile = function (event, file = null) {
   }
   localStorage.setItem(href, 1);
 
-  if (href.slice(-4) === ".txt") {
+  if (href.slice(-4) === ".txt" || href.slice(-5) === "/list") {
     window.open(href, "_blank");
   } else if (android) {
     const a = document.createElement("a");
@@ -1411,7 +1411,7 @@ window.getListing = async (scroll) => {
       const div6 = document.createElement("div");
       div6.className = "file";
       const a3 = document.createElement("a");
-      a3.href = "/list.txt";
+      a3.href = "/list";
       const i4 = document.createElement("i");
       i4.className = "fa fa-file-text";
       a3.appendChild(i4);
