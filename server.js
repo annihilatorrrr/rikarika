@@ -118,6 +118,13 @@ app.use(/\/[^\.\/]+$/, (req, res, next) => {
   }
 });
 
+app.get("/motd", async (req, res) => {
+  res.type("text/plain");
+  return res.send(
+    fs.readFileSync(path.join(__dirname, "www", "message.txt"), "utf8")
+  );
+});
+
 app.get("/list.txt", async (req, res) => {
   res.type("text/plain");
   return res.send(

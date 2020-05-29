@@ -1193,7 +1193,7 @@ const getInfo = async function (dirEntries) {
       document.querySelector("#info").style.opacity = 1;
     }
   } else if (window.location.pathname.split("/").length === 2) {
-    const data = await fetch("/message.txt", {
+    const data = await fetch("/motd", {
       cache: "no-cache",
     }).then((res) => res.text());
     document.querySelector("#info").innerHTML = "";
