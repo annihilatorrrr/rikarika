@@ -220,7 +220,7 @@ const render = async () => {
       case ".txt":
       case ".ass":
         div7.className = "file";
-        a4.href = encodeURIComponent(name);
+        a4.href = `/${anime_id}/${encodeURIComponent(name)}`;
         a4.appendChild(document.createTextNode(`📄 ${name.slice(0, -4)}`));
         break;
       default:

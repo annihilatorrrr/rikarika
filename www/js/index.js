@@ -598,7 +598,11 @@ const playfile = function (event, file = null) {
   }
   localStorage.setItem(href, 1);
 
-  if (href.slice(-4) === ".txt" || href.slice(-5) === "/list") {
+  if (
+    href.slice(-4) === ".txt" ||
+    href.slice(-4) === ".ass" ||
+    href.slice(-5) === "/list"
+  ) {
     window.open(href, "_blank");
   } else if (android) {
     const a = document.createElement("a");
@@ -1453,9 +1457,12 @@ window.getListing = async (scroll) => {
         div9.className = "details_filesize";
         div9.innerText = formatFilesize(entry.size);
         div7.appendChild(div9);
-      } else if (entry.name.slice(-4) === ".txt") {
+      } else if (
+        entry.name.slice(-4) === ".txt" ||
+        entry.name.slice(-4) === ".ass"
+      ) {
         div7.className = "file";
-        a4.href = encodeURIComponent(entry.name);
+        a4.href = `/${entry.anime_id}/${encodeURIComponent(entry.name)}`;
         i5.className = "fa fa-file-text";
         a4.appendChild(i5);
         a4.appendChild(document.createTextNode(entry.name.slice(0, -4)));
