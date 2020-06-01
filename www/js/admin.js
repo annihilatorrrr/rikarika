@@ -150,6 +150,18 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
         },
       };
     }
+    request._source = [
+      "id",
+      "title.*",
+      "synonyms",
+      "format",
+      "episodes",
+      "isAdult",
+      "startDate.*",
+      "endDate.*",
+      "averageScore",
+      "popularity",
+    ];
     const anilist = (
       await $http.post("anilist/anime/_search", request)
     ).data.hits.hits.map((e) => e._source);
