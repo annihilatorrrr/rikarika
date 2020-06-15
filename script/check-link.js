@@ -102,5 +102,16 @@ const {
     .filter((e) => !thumbList.includes(e))) {
     console.log(entry);
   }
+
+  for (const entry of child_process
+    .execSync(`find ${ANIME_THUMB_PATH}/* -type f`, {
+      maxBuffer: 1024 * 1024 * 100,
+    })
+    .toString()
+    .split("\n")
+    .map((e) => e.replace(ANIME_THUMB_PATH, ANIME_PATH).replace(".jpg", ".mp4"))
+    .filter((e) => !fs.existsSync(e))) {
+    console.log(entry);
+  }
   knex.destroy();
 })();
