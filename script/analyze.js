@@ -19,7 +19,7 @@ if (cluster.isMaster) {
     .filter((each) => each);
 
   let finished = 0;
-  const concurrency = os.cpus().length;
+  const concurrency = 8;
   const displayInterval = 500; // ms
   let speedRecord = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   let time = 0;
