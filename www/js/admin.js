@@ -46,7 +46,7 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
   };
   $scope.search = async function (type, path) {
     var request = {
-      size: 200,
+      size: 500,
       from: 0,
     };
     if (type === "rss") {
