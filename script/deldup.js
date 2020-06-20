@@ -17,9 +17,7 @@ const fileList = child_process
   .filter((each) => each);
 
 const db = new Set(fileList);
-const hashLessDB = new Set(
-  fileList.map((e) => e.replace(/[0-9A-Fa-f]{6,10}/g, ""))
-);
+const hashLessDB = new Set(fileList.map((e) => e.replace(/[0-9A-Fa-f]{6,10}/g, "")));
 console.log(`Found ${db.size} files`);
 
 const getReplacementMap = (fileName) =>
@@ -88,10 +86,7 @@ for (let filePath of fileList) {
   const fileName = path.basename(filePath);
   const dirName = path.dirname(filePath);
   for (let [id, replacement] of getReplacementMap(fileName).entries()) {
-    const altFilePath = path.join(
-      path.dirname(filePath),
-      fileName.replace(fileName, replacement)
-    );
+    const altFilePath = path.join(path.dirname(filePath), fileName.replace(fileName, replacement));
     if (filePath === altFilePath) {
       continue;
     }
@@ -108,9 +103,7 @@ for (let filePath of fileList) {
     const similarFile = fileList
       .filter((e) => e.startsWith(dirName))
       .find(
-        (e) =>
-          e.replace(/[0-9A-Fa-f]{6,10}/g, "") ===
-          altFilePath.replace(/[0-9A-Fa-f]{6,10}/g, "")
+        (e) => e.replace(/[0-9A-Fa-f]{6,10}/g, "") === altFilePath.replace(/[0-9A-Fa-f]{6,10}/g, "")
       );
     if (similarFile) {
       cleanup(id, similarFile);

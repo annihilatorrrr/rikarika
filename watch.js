@@ -1,8 +1,6 @@
 const v8 = require("v8");
 console.log(
-  `${(v8.getHeapStatistics().total_available_size / 1024 / 1024).toFixed(
-    0
-  )} MB Available Memory`
+  `${(v8.getHeapStatistics().total_available_size / 1024 / 1024).toFixed(0)} MB Available Memory`
 );
 
 const cluster = require("cluster");
@@ -57,11 +55,7 @@ const knex = require("knex")({
 
 const webpush = require("web-push");
 webpush.setGCMAPIKey(WEBPUSH_GCM_API_KEY);
-webpush.setVapidDetails(
-  WEBPUSH_SUBJECT,
-  WEBPUSH_PUBLIC_KEY,
-  WEBPUSH_PRIVATE_KEY
-);
+webpush.setVapidDetails(WEBPUSH_SUBJECT, WEBPUSH_PUBLIC_KEY, WEBPUSH_PRIVATE_KEY);
 
 console.log("Scanning folder...");
 const taskList = [];
@@ -103,8 +97,7 @@ const isSP = (fileName) =>
   fileName.match(/\WSP\W{0,1}\d{1,2}/i) ||
   aniep(fileName) === null;
 
-const isRAW = (fileName) =>
-  fileName.match(/.*(?:Ohys-Raws|Leopard-Raws|ZhuixinFan).*/i);
+const isRAW = (fileName) => fileName.match(/.*(?:Ohys-Raws|Leopard-Raws|ZhuixinFan).*/i);
 
 const isNewEP = (fileName, dirEntries) => {
   const ep = aniep(fileName); // number, array or string
@@ -143,10 +136,7 @@ chokidar
 
     // remove existing CHS file if CHT version added
     for (const [cht, chs] of CHMap) {
-      if (
-        filePath.replace(cht, chs) !== filePath &&
-        fs.existsSync(filePath.replace(cht, chs))
-      ) {
+      if (filePath.replace(cht, chs) !== filePath && fs.existsSync(filePath.replace(cht, chs))) {
         console.log(`Existed  ${filePath}`);
         fs.removeSync(filePath.replace(cht, chs));
         return;
@@ -186,10 +176,7 @@ chokidar
       );
       return;
     }
-    if (
-      !isRAW(fileName) &&
-      (isSP(fileName) || isNewEP(fileName, fs.readdirSync(dirName)))
-    ) {
+    if (!isRAW(fileName) && (isSP(fileName) || isNewEP(fileName, fs.readdirSync(dirName)))) {
       fs.utimesSync(
         path.dirname(filePath),
         fs.statSync(filePath).atime,
@@ -211,9 +198,7 @@ chokidar
           chat_id: TELEGRAM_ID,
           parse_mode: "Markdown",
           text: [
-            `[${title}](https://${WEB_HOST}/${season}/${encodeURIComponent(
-              title
-            )}/)`,
+            `[${title}](https://${WEB_HOST}/${season}/${encodeURIComponent(title)}/)`,
             `[${season}](https://${WEB_HOST}/${season}/)`,
             `\`${fileName}\``,
           ].join("\n"),
@@ -231,9 +216,7 @@ chokidar
               tag: fileName,
               icon: "/favicon.png",
               data: {
-                url: `https://${WEB_HOST}/${season}/${encodeURIComponent(
-                  title
-                )}/`,
+                url: `https://${WEB_HOST}/${season}/${encodeURIComponent(title)}/`,
               },
             })
           )
@@ -311,10 +294,7 @@ chokidar
       }
     }
     for (const [cht, chs] of CHMap) {
-      if (
-        filePath.replace(chs, cht) !== filePath &&
-        fs.existsSync(filePath.replace(chs, cht))
-      ) {
+      if (filePath.replace(chs, cht) !== filePath && fs.existsSync(filePath.replace(chs, cht))) {
         console.log(`Existed  ${filePath}`);
         fs.removeSync(filePath);
         return;

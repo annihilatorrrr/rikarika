@@ -10,9 +10,7 @@ for (const season of fs.readdirSync(ANIME_NEW_PATH)) {
     console.log(path.join(ANIME_NEW_PATH, season, anime));
     const [lastModifiedFile] = fs
       .readdirSync(path.join(ANIME_NEW_PATH, season, anime))
-      .map((file) =>
-        fs.statSync(path.join(ANIME_NEW_PATH, season, anime, file))
-      )
+      .map((file) => fs.statSync(path.join(ANIME_NEW_PATH, season, anime, file)))
       .sort((a, b) => b.mtimeMs - a.mtimeMs);
     if (lastModifiedFile) {
       fs.utimesSync(
@@ -28,10 +26,6 @@ for (const season of fs.readdirSync(ANIME_NEW_PATH)) {
     .map((dir) => fs.statSync(path.join(ANIME_NEW_PATH, season, dir)))
     .sort((a, b) => b.mtimeMs - a.mtimeMs);
   if (lastModifiedDir) {
-    fs.utimesSync(
-      path.join(ANIME_NEW_PATH, season),
-      lastModifiedDir.atime,
-      lastModifiedDir.mtime
-    );
+    fs.utimesSync(path.join(ANIME_NEW_PATH, season), lastModifiedDir.atime, lastModifiedDir.mtime);
   }
 }

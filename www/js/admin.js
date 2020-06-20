@@ -1,9 +1,5 @@
-var ruTorrentHost = document
-  .querySelector("meta[name=rutorrent-host]")
-  .getAttribute("content");
-var ruTorrentHost2 = document
-  .querySelector("meta[name=rutorrent-host-2]")
-  .getAttribute("content");
+var ruTorrentHost = document.querySelector("meta[name=rutorrent-host]").getAttribute("content");
+var ruTorrentHost2 = document.querySelector("meta[name=rutorrent-host-2]").getAttribute("content");
 var app = angular.module("myAniList", []);
 app.controller("searchAniList", function ($scope, $http, $filter) {
   $scope.start_from_year = 2020;
@@ -53,9 +49,7 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
       request.query = {
         ids: {
           values: (
-            await $http.get(
-              `https://${ruTorrentHost}/plugins/rss/action.php?mode=getfilters`
-            )
+            await $http.get(`https://${ruTorrentHost}/plugins/rss/action.php?mode=getfilters`)
           ).data.map((rule) => rule.name),
         },
       };
@@ -63,18 +57,14 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
       request.query = {
         ids: {
           values: (
-            await $http.get(
-              `https://${ruTorrentHost2}/plugins/rss/action.php?mode=getfilters`
-            )
+            await $http.get(`https://${ruTorrentHost2}/plugins/rss/action.php?mode=getfilters`)
           ).data.map((rule) => rule.name),
         },
       };
     } else if (type === "path") {
       request.query = {
         ids: {
-          values: (await $http.get(`/ls?path=%2F${path}%2F`)).data.map(
-            (e) => e.anilist_id
-          ),
+          values: (await $http.get(`/ls?path=%2F${path}%2F`)).data.map((e) => e.anilist_id),
         },
       };
     } else if (type === "filter") {
@@ -123,9 +113,7 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
         bool: {
           must: must,
           filter:
-            $scope.isAdult === "any"
-              ? []
-              : [{ match: { isAdult: $scope.isAdult === "true" } }],
+            $scope.isAdult === "any" ? [] : [{ match: { isAdult: $scope.isAdult === "true" } }],
         },
       };
       request.sort = {};
@@ -162,23 +150,16 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
       "averageScore",
       "popularity",
     ];
-    const anilist = (
-      await $http.post("anilist/anime/_search", request)
-    ).data.hits.hits.map((e) => e._source);
+    const anilist = (await $http.post("anilist/anime/_search", request)).data.hits.hits.map(
+      (e) => e._source
+    );
     const anime = (
-      await $http.get(
-        "/admin/get_series?anilist_id=" + anilist.map((e) => e.id).join(",")
-      )
+      await $http.get("/admin/get_series?anilist_id=" + anilist.map((e) => e.id).join(","))
     ).data;
-    const rss = (
-      await $http.get(
-        `https://${ruTorrentHost}/plugins/rss/action.php?mode=getfilters`
-      )
-    ).data;
+    const rss = (await $http.get(`https://${ruTorrentHost}/plugins/rss/action.php?mode=getfilters`))
+      .data;
     const sola = (
-      await $http.get(
-        `https://${ruTorrentHost2}/plugins/rss/action.php?mode=getfilters`
-      )
+      await $http.get(`https://${ruTorrentHost2}/plugins/rss/action.php?mode=getfilters`)
     ).data;
     $scope.hits = anilist
       .map((a) => {
@@ -229,10 +210,7 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
       })
       .sort((a, b) => {
         if (type === "rss" || type === "path") {
-          return `${a.directory}/${a.sub_directory}` <
-            `${b.directory}/${b.sub_directory}`
-            ? -1
-            : 1;
+          return `${a.directory}/${a.sub_directory}` < `${b.directory}/${b.sub_directory}` ? -1 : 1;
         } else {
           return 0;
         }
@@ -240,11 +218,8 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
     $scope.$apply();
   };
   $scope.saveRSS = async function (index) {
-    const rss = (
-      await $http.get(
-        `https://${ruTorrentHost}/plugins/rss/action.php?mode=getfilters`
-      )
-    ).data;
+    const rss = (await $http.get(`https://${ruTorrentHost}/plugins/rss/action.php?mode=getfilters`))
+      .data;
     if (!rss.some((rule) => Number(rule.name) === $scope.hits[index].id)) {
       rss.push({ name: $scope.hits[index].id });
     }
@@ -304,9 +279,7 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
 
   $scope.saveSola = async function (index) {
     const sola = (
-      await $http.get(
-        `https://${ruTorrentHost2}/plugins/rss/action.php?mode=getfilters`
-      )
+      await $http.get(`https://${ruTorrentHost2}/plugins/rss/action.php?mode=getfilters`)
     ).data;
     if (!sola.some((rule) => Number(rule.name) === $scope.hits[index].id)) {
       sola.push({ name: $scope.hits[index].id });
@@ -366,11 +339,8 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
   };
 
   $scope.deleteRSS = async function (index) {
-    const rss = (
-      await $http.get(
-        `https://${ruTorrentHost}/plugins/rss/action.php?mode=getfilters`
-      )
-    ).data;
+    const rss = (await $http.get(`https://${ruTorrentHost}/plugins/rss/action.php?mode=getfilters`))
+      .data;
     const params = new URLSearchParams();
     params.append("mode", "setfilters");
     rss
@@ -411,9 +381,7 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
 
   $scope.deleteSola = async function (index) {
     const rss = (
-      await $http.get(
-        `https://${ruTorrentHost2}/plugins/rss/action.php?mode=getfilters`
-      )
+      await $http.get(`https://${ruTorrentHost2}/plugins/rss/action.php?mode=getfilters`)
     ).data;
     const params = new URLSearchParams();
     params.append("mode", "setfilters");
@@ -489,10 +457,9 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
       if (field == "pattern") {
         $scope.hits[index].pattern = Array.from(
           new Set(
-            [
-              $scope.hits[index].title.chinese,
-              $scope.hits[index].title.romaji,
-            ].map((e) => e.toLowerCase().replace(/ /g, ".*"))
+            [$scope.hits[index].title.chinese, $scope.hits[index].title.romaji].map((e) =>
+              e.toLowerCase().replace(/ /g, ".*")
+            )
           )
         ).join("|");
         return;
@@ -534,10 +501,7 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
       if (field == "directory") {
         if ($scope.hits[index].isAdult) {
           $scope.hits[index].directory = "Sukebei";
-        } else if (
-          $scope.hits[index].format == "SPECIAL" ||
-          $scope.hits[index].format == "OVA"
-        ) {
+        } else if ($scope.hits[index].format == "SPECIAL" || $scope.hits[index].format == "OVA") {
           $scope.hits[index].directory = "OVA";
         } else if ($scope.hits[index].format == "MOVIE") {
           $scope.hits[index].directory = "Movie";
@@ -546,9 +510,11 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
           $scope.hits[index].format == "TV_SHORT" ||
           $scope.hits[index].format == "ONA"
         ) {
-          $scope.hits[index].directory = `${
-            $scope.hits[index].startDate.year
-          }-${$scope.hits[index].startDate.month.toString().padStart(2, "0")}`;
+          $scope.hits[index].directory = `${$scope.hits[index].startDate.year}-${$scope.hits[
+            index
+          ].startDate.month
+            .toString()
+            .padStart(2, "0")}`;
         }
       }
       $scope.getAnimeID(index);

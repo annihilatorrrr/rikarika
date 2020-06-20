@@ -37,8 +37,7 @@ if (cluster.isMaster) {
         const speed = (mark - fileList.length) / (displayInterval / 1000);
         speedRecord.push(speed);
         speedRecord = speedRecord.slice(1);
-        const averageSpeed =
-          speedRecord.reduce((a, b) => a + b, 0) / speedRecord.length;
+        const averageSpeed = speedRecord.reduce((a, b) => a + b, 0) / speedRecord.length;
         const ETA = fileList.length / averageSpeed;
         const completed = total - fileList.length;
         const percentage = ((completed / total) * 100).toFixed(2);

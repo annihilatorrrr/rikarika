@@ -30,12 +30,8 @@ const {
   const titleList = await knex("anime").select("id", "season", "title");
   const list = titleList.map((e) => path.join(ANIME_PATH, `${e.id}`));
   const seasonList = season.map((e) => path.join(ANIME_NEW_PATH, e.season));
-  const newList = titleList.map((e) =>
-    path.join(ANIME_NEW_PATH, e.season, e.title)
-  );
-  const thumbList = titleList.map((e) =>
-    path.join(ANIME_THUMB_PATH, `${e.id}`)
-  );
+  const newList = titleList.map((e) => path.join(ANIME_NEW_PATH, e.season, e.title));
+  const thumbList = titleList.map((e) => path.join(ANIME_THUMB_PATH, `${e.id}`));
 
   console.log("Missing symlink / folders:");
   for (const entry of seasonList) {

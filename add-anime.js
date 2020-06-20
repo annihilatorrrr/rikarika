@@ -19,8 +19,7 @@ module.exports = (input, output) => {
       .toString()
   );
   const videoInfo = mediaInfo.streams.find((e) => e.codec_type === "video");
-  const skipTranscode =
-    ["High", "Main"].includes(videoInfo.profile) && videoInfo.level <= 51;
+  const skipTranscode = ["High", "Main"].includes(videoInfo.profile) && videoInfo.level <= 51;
 
   const tmpPath = path.join(os.tmpdir(), process.hrtime().join(""));
   child_process.execSync(

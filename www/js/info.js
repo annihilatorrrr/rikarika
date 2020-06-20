@@ -126,10 +126,7 @@ const displayInfo = function (src) {
   }
   let naturalText = "";
   const strStartDate =
-    src.startDate &&
-    src.startDate.year &&
-    src.startDate.month &&
-    src.startDate.day
+    src.startDate && src.startDate.year && src.startDate.month && src.startDate.day
       ? `${src.startDate.year}年${src.startDate.month}月${src.startDate.day}日`
       : null;
   const strEndDate =
@@ -176,8 +173,7 @@ const displayInfo = function (src) {
   td1.innerText = "評分";
   tr1.appendChild(td1);
   const td2 = document.createElement("td");
-  td2.innerText =
-    src.averageScore > 0 ? parseFloat(src.averageScore).toFixed(1) : "-";
+  td2.innerText = src.averageScore > 0 ? parseFloat(src.averageScore).toFixed(1) : "-";
   tr1.appendChild(td2);
   table1.appendChild(tr1);
 
@@ -198,8 +194,7 @@ const displayInfo = function (src) {
   td6.innerText =
     src.popularity > 0
       ? `${(
-          (src.stats.statusDistribution.filter((e) => e.status === "DROPPED")[0]
-            .amount /
+          (src.stats.statusDistribution.filter((e) => e.status === "DROPPED")[0].amount /
             src.popularity) *
           100
         ).toFixed(1)}%`
@@ -298,10 +293,7 @@ const displayInfo = function (src) {
       const col = document.createElement("td");
       col.innerText = staffRoleMap[entry.role]
         ? staffRoleMap[entry.role]
-        : entry.role.replace(
-            "Theme Song Performance",
-            staffRoleMap["Theme Song Performance"]
-          );
+        : entry.role.replace("Theme Song Performance", staffRoleMap["Theme Song Performance"]);
       row.appendChild(col);
 
       const nameTD = document.createElement("td");
@@ -332,11 +324,7 @@ const displayInfo = function (src) {
   div6.innerHTML = src.description;
   document.querySelector("#info").appendChild(div6);
 
-  if (
-    src.characters &&
-    src.characters.edges &&
-    src.characters.edges.length > 0
-  ) {
+  if (src.characters && src.characters.edges && src.characters.edges.length > 0) {
     const br3 = document.createElement("br");
     br3.style = "clear:both";
     document.querySelector("#info").appendChild(br3);
@@ -364,10 +352,7 @@ const displayInfo = function (src) {
       charIMG.rel = "noreferrer";
       charImgDiv.appendChild(charIMG);
       const charBgDIV = document.createElement("div");
-      charBgDIV.style = `background-image:url(${entry.node.image.medium.replace(
-        "http:",
-        ""
-      )})`;
+      charBgDIV.style = `background-image:url(${entry.node.image.medium.replace("http:", "")})`;
       charIMG.appendChild(charBgDIV);
       charDIV.appendChild(charImgDiv);
       const charNameDiv = document.createElement("div");
@@ -387,11 +372,7 @@ const displayInfo = function (src) {
         charName.appendChild(document.createElement("br"));
 
         let name = entry.voiceActors[0].name.native;
-        if (
-          !name &&
-          entry.voiceActors[0].name.first &&
-          entry.voiceActors[0].name.last
-        ) {
+        if (!name && entry.voiceActors[0].name.first && entry.voiceActors[0].name.last) {
           name = `${entry.voiceActors[0].name.last} ${entry.voiceActors[0].name.first}`;
         }
         charName.appendChild(document.createTextNode("(CV: "));
@@ -440,20 +421,12 @@ const displayRanking = function (hits, dirEntries) {
       const src = entry._source;
       const row = document.createElement("tr");
       const col1 = document.createElement("td");
-      col1.style = calculateOpacityStyle(
-        parseFloat(src.popularity),
-        1000,
-        3000
-      );
+      col1.style = calculateOpacityStyle(parseFloat(src.popularity), 1000, 3000);
       col1.innerText = src.popularity;
       row.appendChild(col1);
       const col2 = document.createElement("td");
       if (src.averageScore > 0) {
-        col2.style = calculateOpacityStyle(
-          parseFloat(src.averageScore),
-          65,
-          75
-        );
+        col2.style = calculateOpacityStyle(parseFloat(src.averageScore), 65, 75);
         col2.innerText = parseFloat(src.averageScore).toFixed(1);
       } else {
         col2.style = calculateOpacityStyle(0, 65, 75);
@@ -464,9 +437,7 @@ const displayRanking = function (hits, dirEntries) {
       if (src.popularity > 0) {
         col3.style = calculateOpacityStyle(
           parseFloat(
-            (src.stats.statusDistribution.filter(
-              (e) => e.status === "DROPPED"
-            )[0].amount /
+            (src.stats.statusDistribution.filter((e) => e.status === "DROPPED")[0].amount /
               src.popularity) *
               100
           ),
@@ -474,8 +445,7 @@ const displayRanking = function (hits, dirEntries) {
           15
         );
         col3.innerText = `${(
-          (src.stats.statusDistribution.filter((e) => e.status === "DROPPED")[0]
-            .amount /
+          (src.stats.statusDistribution.filter((e) => e.status === "DROPPED")[0].amount /
             src.popularity) *
           100
         ).toFixed(1)}%`;
@@ -486,9 +456,7 @@ const displayRanking = function (hits, dirEntries) {
       row.appendChild(col3);
       const col4 = document.createElement("td");
       const a5 = document.createElement("a");
-      a5.href = `${encodeURIComponent(
-        dirEntries.find((e) => e.anilist_id === src.id).name
-      )}/`;
+      a5.href = `${encodeURIComponent(dirEntries.find((e) => e.anilist_id === src.id).name)}/`;
       a5.innerText = dirEntries.find((e) => e.anilist_id === src.id).name;
       col4.appendChild(a5);
       col4.onmouseup = navfolder; // eslint-disable-line

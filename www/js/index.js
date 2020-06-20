@@ -10,19 +10,13 @@ let compressor = null;
 
 const center = (element) => {
   element.style.position = "absolute";
-  element.style.top = `${
-    (window.innerHeight - element.clientHeight) / 2 + window.scrollY
-  }px`;
-  element.style.left = `${
-    (window.innerWidth - element.clientWidth) / 2 + window.scrollX
-  }px`;
+  element.style.top = `${(window.innerHeight - element.clientHeight) / 2 + window.scrollY}px`;
+  element.style.left = `${(window.innerWidth - element.clientWidth) / 2 + window.scrollX}px`;
 };
 
 const toggleFullScreen = (element) => {
   const fullscreenElement =
-    document.fullscreenElement ||
-    document.mozFullScreenElement ||
-    document.webkitFullscreenElement;
+    document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement;
 
   if (fullscreenElement) {
     if (document.exitFullscreen) {
@@ -51,9 +45,7 @@ const captureScreen = () => {
     canvas.width = player.videoWidth;
     canvas.height = player.videoHeight;
     canvas.getContext("2d").scale(1.00001, 1.00001);
-    canvas
-      .getContext("2d")
-      .drawImage(player, 0, 0, canvas.width, canvas.height);
+    canvas.getContext("2d").drawImage(player, 0, 0, canvas.width, canvas.height);
 
     const download = document.getElementById("download_captured");
     const filename = decodeURI(
@@ -97,8 +89,7 @@ const playmodeChange = () => {
   } else if (window.playmode === "Loop") {
     window.playmode = "Default";
   }
-  document.querySelector(".vjs-playmode-control").dataset.content =
-    window.playmode;
+  document.querySelector(".vjs-playmode-control").dataset.content = window.playmode;
 };
 
 let hidingOSD = null;
@@ -136,9 +127,7 @@ const stepForward = () => {
 const stepBackward = () => {
   window.vjs.pause();
   window.vjs.currentTime(
-    window.vjs.currentTime() - 0.0417 > 0
-      ? window.vjs.currentTime() - 0.0417
-      : 0
+    window.vjs.currentTime() - 0.0417 > 0 ? window.vjs.currentTime() - 0.0417 : 0
   );
   showOSD('<i class="fa fa-step-backward"></i> 1 Frame');
 };
@@ -149,32 +138,20 @@ const fastForward = (seek) => {
       ? window.vjs.duration()
       : window.vjs.currentTime() + seek
   );
-  showOSD(
-    `<i class="fa fa-forward"></i> 00:${seek.toString().padStart(2, "0")}`
-  );
+  showOSD(`<i class="fa fa-forward"></i> 00:${seek.toString().padStart(2, "0")}`);
 };
 
 const fastBackward = (seek) => {
-  window.vjs.currentTime(
-    window.vjs.currentTime() < seek ? 0 : window.vjs.currentTime() - seek
-  );
-  showOSD(
-    `<i class="fa fa-backward"></i> 00:${seek.toString().padStart(2, "0")}`
-  );
+  window.vjs.currentTime(window.vjs.currentTime() < seek ? 0 : window.vjs.currentTime() - seek);
+  showOSD(`<i class="fa fa-backward"></i> 00:${seek.toString().padStart(2, "0")}`);
 };
 
 const toggleVolumeCompress = () => {
-  const { active } = document.querySelector(
-    ".vjs-compressVolume-control"
-  ).dataset;
+  const { active } = document.querySelector(".vjs-compressVolume-control").dataset;
   if (active === "false") {
-    showOSD(
-      '<i class="fa fa-assistive-listening-systems"></i> Easy Listening On',
-      3000
-    );
+    showOSD('<i class="fa fa-assistive-listening-systems"></i> Easy Listening On', 3000);
     document.querySelector(".vjs-compressVolume-control").dataset.active = true;
-    document.querySelector(".vjs-compressVolume-control").dataset.content =
-      "\uf2a4";
+    document.querySelector(".vjs-compressVolume-control").dataset.content = "\uf2a4";
     if (audioCtx) {
       mediaSource.disconnect(audioCtx.destination);
       mediaSource.connect(compressor);
@@ -182,11 +159,8 @@ const toggleVolumeCompress = () => {
     }
   } else {
     showOSD('<i class="fa fa-deaf"></i> Easy Listening Off', 3000);
-    document.querySelector(
-      ".vjs-compressVolume-control"
-    ).dataset.active = false;
-    document.querySelector(".vjs-compressVolume-control").dataset.content =
-      "\uf2a2";
+    document.querySelector(".vjs-compressVolume-control").dataset.active = false;
+    document.querySelector(".vjs-compressVolume-control").dataset.content = "\uf2a2";
     if (audioCtx) {
       mediaSource.disconnect(compressor);
       compressor.disconnect(audioCtx.destination);
@@ -196,14 +170,11 @@ const toggleVolumeCompress = () => {
 };
 
 const fullscreenChange = (e) => {
-  const fullscreenElement =
-    document.fullscreenElement || document.webkitFullscreenElement;
+  const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement;
   if (fullscreenElement) {
-    document.querySelector(".vjs-fullScreen-control").dataset.content =
-      "\uf066";
+    document.querySelector(".vjs-fullScreen-control").dataset.content = "\uf066";
   } else {
-    document.querySelector(".vjs-fullScreen-control").dataset.content =
-      "\uf065";
+    document.querySelector(".vjs-fullScreen-control").dataset.content = "\uf065";
   }
 };
 
@@ -325,16 +296,11 @@ if (iOS || android) {
     if (event.charCode === 96) {
       // ` backtick key
       document.querySelector("#menu").style.display =
-        document.querySelector("#menu").style.display === "block"
-          ? "none"
-          : "block";
+        document.querySelector("#menu").style.display === "block" ? "none" : "block";
       document.querySelector("#infoBtn").style.display =
-        document.querySelector("#infoBtn").style.display === "block"
-          ? "none"
-          : "block";
+        document.querySelector("#infoBtn").style.display === "block" ? "none" : "block";
       document.querySelector(".vjs-control-bar").style.visibility =
-        document.querySelector(".vjs-control-bar").style.visibility ===
-        "visible"
+        document.querySelector(".vjs-control-bar").style.visibility === "visible"
           ? "hidden"
           : "visible";
     }
@@ -391,9 +357,7 @@ const getDateTimeOpacity = function (timestringUTC) {
 
 const formatDateTime = function (timestringUTC) {
   const lastModified = new Date(timestringUTC);
-  const formatedDate = `${lastModified.getFullYear()}-${(
-    lastModified.getMonth() + 1
-  )
+  const formatedDate = `${lastModified.getFullYear()}-${(lastModified.getMonth() + 1)
     .toString()
     .padStart(2, "0")}-${lastModified.getDate().toString().padStart(2, "0")}`;
   const seconds = Math.floor((new Date() - lastModified) / 1000);
@@ -440,24 +404,11 @@ let ambient_heartbeat = null;
 const sampleScreen = function () {
   let sampleSize = 3;
   ambient_heartbeat = window.requestAnimationFrame(sampleScreen);
-  if (
-    window.innerWidth / window.innerHeight >
-    player.videoWidth / player.videoHeight
-  ) {
+  if (window.innerWidth / window.innerHeight > player.videoWidth / player.videoHeight) {
     sampleSize = 3;
     ambient
       .getContext("2d")
-      .drawImage(
-        player,
-        3,
-        0,
-        3,
-        player.videoHeight,
-        0,
-        0,
-        ambient_left,
-        ambient.height
-      );
+      .drawImage(player, 3, 0, 3, player.videoHeight, 0, 0, ambient_left, ambient.height);
     ambient
       .getContext("2d")
       .drawImage(
@@ -532,10 +483,8 @@ const ambient_fill = function () {
   window.cancelAnimationFrame(ambient_heartbeat);
   if (
     ambient_need &&
-    Math.abs(
-      window.innerWidth / window.innerHeight -
-        player.videoWidth / player.videoHeight
-    ) > 0.001
+    Math.abs(window.innerWidth / window.innerHeight - player.videoWidth / player.videoHeight) >
+      0.001
   ) {
     ambient_heartbeat = window.requestAnimationFrame(sampleScreen);
     player.style.display = "none";
@@ -549,21 +498,13 @@ const ambient_fill = function () {
 
 const ambient_resize = function () {
   ambient_left =
-    (window.innerWidth -
-      (player.videoWidth / player.videoHeight) * window.innerHeight) /
-    2;
+    (window.innerWidth - (player.videoWidth / player.videoHeight) * window.innerHeight) / 2;
   ambient_right =
-    (window.innerWidth -
-      (player.videoWidth / player.videoHeight) * window.innerHeight) /
-    2;
+    (window.innerWidth - (player.videoWidth / player.videoHeight) * window.innerHeight) / 2;
   ambient_top =
-    (window.innerHeight -
-      (player.videoHeight / player.videoWidth) * window.innerWidth) /
-    2;
+    (window.innerHeight - (player.videoHeight / player.videoWidth) * window.innerWidth) / 2;
   ambient_bottom =
-    (window.innerHeight -
-      (player.videoHeight / player.videoWidth) * window.innerWidth) /
-    2;
+    (window.innerHeight - (player.videoHeight / player.videoWidth) * window.innerWidth) / 2;
   ambient_center = window.innerWidth - ambient_left - ambient_right;
   ambient_middle = window.innerHeight - ambient_top - ambient_bottom;
   ambient.width = window.innerWidth;
@@ -584,8 +525,7 @@ const playfile = function (event, file = null) {
     file === null
       ? this.querySelector("a").getAttribute("href")
       : file.querySelector("a").getAttribute("href");
-  const url =
-    file === null ? this.querySelector("a").href : file.querySelector("a").href;
+  const url = file === null ? this.querySelector("a").href : file.querySelector("a").href;
   document.querySelectorAll(".file").forEach((each) => {
     each.classList.remove("highlight");
   });
@@ -598,11 +538,7 @@ const playfile = function (event, file = null) {
   }
   localStorage.setItem(href, 1);
 
-  if (
-    href.slice(-4) === ".txt" ||
-    href.slice(-4) === ".ass" ||
-    href.slice(-5) === "/list"
-  ) {
+  if (href.slice(-4) === ".txt" || href.slice(-4) === ".ass" || href.slice(-5) === "/list") {
     window.open(href, "_blank");
   } else if (android) {
     const a = document.createElement("a");
@@ -686,16 +622,11 @@ const playfile = function (event, file = null) {
           if (document.querySelector(".file.highlight").nextSibling) {
             showOSD(
               `<i class="fa fa-toggle-right"></i> ${
-                document
-                  .querySelector(".file.highlight")
-                  .nextSibling.querySelector("a").innerText
+                document.querySelector(".file.highlight").nextSibling.querySelector("a").innerText
               }`,
               3000
             );
-            playfile(
-              null,
-              document.querySelector(".file.highlight").nextSibling
-            );
+            playfile(null, document.querySelector(".file.highlight").nextSibling);
           } else {
             showOSD("This is the last file in folder", 3000);
           }
@@ -733,8 +664,7 @@ const playfile = function (event, file = null) {
       fullScreenBtn.addClass("vjs-fullScreen-control");
       document.querySelector(".vjs-fullScreen-control").title = "FullScreen";
       document.querySelector(".vjs-fullScreen-control").style.float = "right";
-      document.querySelector(".vjs-fullScreen-control").dataset.content =
-        "\uf065";
+      document.querySelector(".vjs-fullScreen-control").dataset.content = "\uf065";
       document.querySelector(".vjs-fullScreen-control").onclick = () => {
         toggleFullScreen(document.documentElement);
       };
@@ -757,8 +687,7 @@ const playfile = function (event, file = null) {
         text: "Fast Backward",
       });
       fastBackwardBtn.addClass("vjs-fastBackward-control");
-      document.querySelector(".vjs-fastBackward-control").title =
-        "Fast Backward";
+      document.querySelector(".vjs-fastBackward-control").title = "Fast Backward";
       document.querySelector(".vjs-fastBackward-control").style.float = "left";
       document.querySelector(".vjs-fastBackward-control").onclick = () => {
         fastBackward(30);
@@ -786,12 +715,9 @@ const playfile = function (event, file = null) {
         text: "Step Backward",
       });
       stepBackwardBtn.addClass("vjs-stepBackward-control");
-      document.querySelector(".vjs-stepBackward-control").title =
-        "Step Backward";
+      document.querySelector(".vjs-stepBackward-control").title = "Step Backward";
       document.querySelector(".vjs-stepBackward-control").style.float = "left";
-      document.querySelector(
-        ".vjs-stepBackward-control"
-      ).onclick = stepBackward;
+      document.querySelector(".vjs-stepBackward-control").onclick = stepBackward;
 
       const stepForwardBtn = window.vjs.controlBar.addChild("button", {
         text: "Step Forward",
@@ -824,26 +750,17 @@ const playfile = function (event, file = null) {
 
       document
         .querySelector(".vjs-control-bar")
-        .insertBefore(
-          a5,
-          document.querySelector(".vjs-stepForward-control").nextSibling
-        );
+        .insertBefore(a5, document.querySelector(".vjs-stepForward-control").nextSibling);
 
       const volAssistBtn = window.vjs.controlBar.addChild("button", {
         text: "Volume Assist",
       });
       volAssistBtn.addClass("vjs-compressVolume-control");
-      document.querySelector(".vjs-compressVolume-control").title =
-        "Volume Assist";
-      document.querySelector(".vjs-compressVolume-control").style.float =
-        "right";
-      document.querySelector(".vjs-compressVolume-control").dataset.content =
-        "\uf2a2";
-      document.querySelector(".vjs-compressVolume-control").dataset.active =
-        "false";
-      document.querySelector(
-        ".vjs-compressVolume-control"
-      ).onclick = toggleVolumeCompress;
+      document.querySelector(".vjs-compressVolume-control").title = "Volume Assist";
+      document.querySelector(".vjs-compressVolume-control").style.float = "right";
+      document.querySelector(".vjs-compressVolume-control").dataset.content = "\uf2a2";
+      document.querySelector(".vjs-compressVolume-control").dataset.active = "false";
+      document.querySelector(".vjs-compressVolume-control").onclick = toggleVolumeCompress;
 
       const playModeBtn = window.vjs.controlBar.addChild("button", {
         text: "Play Mode",
@@ -853,8 +770,7 @@ const playfile = function (event, file = null) {
       document.querySelector(".vjs-playmode-control").style.float = "right";
       document.querySelector(".vjs-playmode-control").style.width = "60px";
       document.querySelector(".vjs-playmode-control").onclick = playmodeChange;
-      document.querySelector(".vjs-playmode-control").dataset.content =
-        window.playmode;
+      document.querySelector(".vjs-playmode-control").dataset.content = window.playmode;
 
       const capscreenBtn = window.vjs.controlBar.addChild("button", {
         text: "Capture Screen",
@@ -868,12 +784,9 @@ const playfile = function (event, file = null) {
         text: "Download Capture Screen",
       });
       downloadcapscreenBtn.addClass("vjs-downloadcapscreen-control");
-      document.querySelector(".vjs-downloadcapscreen-control").style.float =
-        "right";
-      document.querySelector(".vjs-downloadcapscreen-control").style.width =
-        "70px";
-      document.querySelector(".vjs-downloadcapscreen-control").style.display =
-        "none";
+      document.querySelector(".vjs-downloadcapscreen-control").style.float = "right";
+      document.querySelector(".vjs-downloadcapscreen-control").style.width = "70px";
+      document.querySelector(".vjs-downloadcapscreen-control").style.display = "none";
       document.querySelector(".vjs-downloadcapscreen-control").innerHTML =
         '<a id="download_captured"></a>';
       // }
@@ -934,27 +847,13 @@ const playfile = function (event, file = null) {
             }
             if (e.which === 38) {
               // up
-              window.vjs.volume(
-                window.vjs.volume() > 0.9 ? 1 : window.vjs.volume() + 0.1
-              );
-              showOSD(
-                `<i class="fa fa-volume-up"></i> ${parseInt(
-                  window.vjs.volume() * 100,
-                  10
-                )}`
-              );
+              window.vjs.volume(window.vjs.volume() > 0.9 ? 1 : window.vjs.volume() + 0.1);
+              showOSD(`<i class="fa fa-volume-up"></i> ${parseInt(window.vjs.volume() * 100, 10)}`);
             }
             if (e.which === 40) {
               // down
-              window.vjs.volume(
-                window.vjs.volume() < 0.1 ? 0 : window.vjs.volume() - 0.1
-              );
-              showOSD(
-                `<i class="fa fa-volume-up"></i> ${parseInt(
-                  window.vjs.volume() * 100,
-                  10
-                )}`
-              );
+              window.vjs.volume(window.vjs.volume() < 0.1 ? 0 : window.vjs.volume() - 0.1);
+              showOSD(`<i class="fa fa-volume-up"></i> ${parseInt(window.vjs.volume() * 100, 10)}`);
             }
             if (e.which === 33) {
               // pageup
@@ -1009,51 +908,26 @@ const playfile = function (event, file = null) {
 
       document.querySelector("#player").onwheel = function (e) {
         if (e.deltaY < 0) {
-          window.vjs.volume(
-            window.vjs.volume() > 0.9 ? 1 : window.vjs.volume() + 0.1
-          );
-          showOSD(
-            `<i class="fa fa-volume-up"></i> ${parseInt(
-              window.vjs.volume() * 100,
-              10
-            )}`
-          );
+          window.vjs.volume(window.vjs.volume() > 0.9 ? 1 : window.vjs.volume() + 0.1);
+          showOSD(`<i class="fa fa-volume-up"></i> ${parseInt(window.vjs.volume() * 100, 10)}`);
         } else {
-          window.vjs.volume(
-            window.vjs.volume() < 0.1 ? 0 : window.vjs.volume() - 0.1
-          );
-          showOSD(
-            `<i class="fa fa-volume-up"></i> ${parseInt(
-              window.vjs.volume() * 100,
-              10
-            )}`
-          );
+          window.vjs.volume(window.vjs.volume() < 0.1 ? 0 : window.vjs.volume() - 0.1);
+          showOSD(`<i class="fa fa-volume-up"></i> ${parseInt(window.vjs.volume() * 100, 10)}`);
         }
       };
 
       window.vjs.on("volumechange", () => {
-        showOSD(
-          `<i class="fa fa-volume-up"></i> ${parseInt(
-            window.vjs.volume() * 100,
-            10
-          )}`
-        );
+        showOSD(`<i class="fa fa-volume-up"></i> ${parseInt(window.vjs.volume() * 100, 10)}`);
       });
     }
     window.vjs.src(href);
     document.querySelector("#info").style.visibility = "hidden";
     document.querySelector("#info").style.opacity = 0;
     document.querySelector("#downloadLink").href = href;
-    document.querySelector("#downloadLink").download = decodeURIComponent(
-      href
-    ).split("/")[2];
-    showOSD(
-      `<i class="fa fa-play"></i> ${decodeURIComponent(href).split("/")[2]}`,
-      3000
-    );
+    document.querySelector("#downloadLink").download = decodeURIComponent(href).split("/")[2];
+    showOSD(`<i class="fa fa-play"></i> ${decodeURIComponent(href).split("/")[2]}`, 3000);
     if (document.querySelector(".file.highlight a").dataset.thumb) {
-      const thumbURL = document.querySelector(".file.highlight a").dataset
-        .thumb;
+      const thumbURL = document.querySelector(".file.highlight a").dataset.thumb;
       const map = [];
       for (let i = 0; i < 144; i++) {
         const row = Math.floor(i / 12);
@@ -1076,9 +950,7 @@ const playfile = function (event, file = null) {
       window.div = thumbDIV;
 
       const moveListener = function (e) {
-        const clientRect = document
-          .querySelector(".vjs-control-bar")
-          .getBoundingClientRect();
+        const clientRect = document.querySelector(".vjs-control-bar").getBoundingClientRect();
         const clientRectX = clientRect.x || 0;
         const progressRect = document
           .querySelector(".vjs-progress-control.vjs-control")
@@ -1116,9 +988,7 @@ const playfile = function (event, file = null) {
         thumbDIV.style.display = "none";
       };
 
-      document
-        .querySelector(".vjs-control-bar")
-        .addEventListener("mouseout", moveCancel);
+      document.querySelector(".vjs-control-bar").addEventListener("mouseout", moveCancel);
       window.vjs.on("userinactive", moveCancel);
     }
   }
@@ -1126,9 +996,7 @@ const playfile = function (event, file = null) {
 
 window.playPrev = () => {
   if (document.querySelector(".file.highlight").previousSibling) {
-    if (
-      document.querySelector(".file.highlight").previousSibling.id === "back"
-    ) {
+    if (document.querySelector(".file.highlight").previousSibling.id === "back") {
       showOSD("This is the first file in folder", 3000);
     } else {
       playfile(null, document.querySelector(".file.highlight").previousSibling);
@@ -1188,9 +1056,7 @@ const getInfo = async function (dirEntries) {
     // season
     document.querySelector("#info").innerHTML = "";
     const season = window.location.pathname.split("/")[1];
-    const info = await fetch(`/info?season=${season}`).then((res) =>
-      res.json()
-    );
+    const info = await fetch(`/info?season=${season}`).then((res) => res.json());
     if (info.length > 0) {
       displayRanking(info, dirEntries);
       document.querySelector("#info").style.visibility = "visible";
@@ -1281,10 +1147,7 @@ const navfolder = function (event) {
   history.pushState(
     null,
     null,
-    `${
-      window.location.pathname +
-      encodeURIComponent(this.querySelector("a").innerText)
-    }/`
+    `${window.location.pathname + encodeURIComponent(this.querySelector("a").innerText)}/`
   );
 
   if (event.target.id === "back") {
@@ -1305,9 +1168,7 @@ window.getListing = async (scroll) => {
     document.title = "カリ(仮)";
   } else {
     document.title = decodeURIComponent(
-      window.location.pathname.split("/")[
-        window.location.pathname.split("/").length - 2
-      ]
+      window.location.pathname.split("/")[window.location.pathname.split("/").length - 2]
     );
   }
 
@@ -1399,17 +1260,11 @@ window.getListing = async (scroll) => {
       window.location.pathname === "/2020-01/" ||
       window.location.pathname === "/2020-04/"
     ) {
-      dirEntries.sort((a, b) =>
-        b.modified > a.modified ? 1 : b.modified < a.modified ? -1 : 0
-      );
+      dirEntries.sort((a, b) => (b.modified > a.modified ? 1 : b.modified < a.modified ? -1 : 0));
     } else if (window.location.pathname === "/") {
-      dirEntries.sort((a, b) =>
-        b.name > a.name ? 1 : b.name < a.name ? -1 : 0
-      );
+      dirEntries.sort((a, b) => (b.name > a.name ? 1 : b.name < a.name ? -1 : 0));
     } else {
-      dirEntries.sort((a, b) =>
-        a.name > b.name ? 1 : a.name < b.name ? -1 : 0
-      );
+      dirEntries.sort((a, b) => (a.name > b.name ? 1 : a.name < b.name ? -1 : 0));
     }
     if (window.location.pathname === "/") {
       const div6 = document.createElement("div");
@@ -1435,18 +1290,12 @@ window.getListing = async (scroll) => {
       div8.innerText = formatDateTime(entry.modified);
       if (entry.name.slice(-4) === ".mp4") {
         let watched = "";
-        if (
-          localStorage.getItem(
-            `/${entry.anime_id}/${encodeURIComponent(entry.name)}`
-          )
-        ) {
+        if (localStorage.getItem(`/${entry.anime_id}/${encodeURIComponent(entry.name)}`)) {
           watched = "watched";
         }
         div7.className = `file ${watched}`;
         a4.href = `/${entry.anime_id}/${encodeURIComponent(entry.name)}`;
-        a4.dataset.thumb = `/${entry.anime_id}/${encodeURIComponent(
-          entry.thumb
-        )}`;
+        a4.dataset.thumb = `/${entry.anime_id}/${encodeURIComponent(entry.thumb)}`;
         i5.className = "fa fa-toggle-right";
         a4.appendChild(i5);
         a4.appendChild(document.createTextNode(entry.name.slice(0, -4)));
@@ -1457,10 +1306,7 @@ window.getListing = async (scroll) => {
         div9.className = "details_filesize";
         div9.innerText = formatFilesize(entry.size);
         div7.appendChild(div9);
-      } else if (
-        entry.name.slice(-4) === ".txt" ||
-        entry.name.slice(-4) === ".ass"
-      ) {
+      } else if (entry.name.slice(-4) === ".txt" || entry.name.slice(-4) === ".ass") {
         div7.className = "file";
         a4.href = `/${entry.anime_id}/${encodeURIComponent(entry.name)}`;
         i5.className = "fa fa-file-text";
@@ -1592,11 +1438,7 @@ const navSearchFolder = function (event) {
   document.querySelectorAll(".folder").forEach((each) => {
     each.onmouseup = null;
   });
-  history.pushState(
-    null,
-    null,
-    this.querySelector("a").href.replace(window.location.origin, "")
-  );
+  history.pushState(null, null, this.querySelector("a").href.replace(window.location.origin, ""));
   window.getListing();
 };
 
@@ -1618,9 +1460,7 @@ window.search = async function () {
 
     document.querySelector("#list .search").style.display = "flex";
 
-    const anime_list = await fetch(`/search?q=${keyword}`).then((res) =>
-      res.json()
-    );
+    const anime_list = await fetch(`/search?q=${keyword}`).then((res) => res.json());
     anime_list.forEach((entry) => {
       if (entry.season !== "Sukebei") {
         const div1 = document.createElement("div");
@@ -1723,8 +1563,7 @@ videojs.plugin("progressTips", function (options) {
     document.querySelector(".vjs-progress-control").onmousemove = (event) => {
       const { seekBar } = window.vjs.controlBar.progressControl;
       const mousePosition =
-        (event.pageX - window.vjs.controlBar.progressControl.el().offsetLeft) /
-        seekBar.width();
+        (event.pageX - window.vjs.controlBar.progressControl.el().offsetLeft) / seekBar.width();
       let timeInSeconds = mousePosition * window.vjs.duration();
       if (timeInSeconds === window.vjs.duration()) {
         timeInSeconds -= 0.1;
@@ -1736,16 +1575,12 @@ videojs.plugin("progressTips", function (options) {
       const minutes = Math.floor((sec_num - hours * 3600) / 60)
         .toString()
         .padStart(2, "0");
-      const seconds = (sec_num - hours * 3600 - minutes * 60)
-        .toString()
-        .padStart(2, "0");
+      const seconds = (sec_num - hours * 3600 - minutes * 60).toString().padStart(2, "0");
 
       let left = event.pageX;
       const width = 65;
       left -= width / 2;
-      const clientRect = document
-        .querySelector(".vjs-control-bar")
-        .getBoundingClientRect();
+      const clientRect = document.querySelector(".vjs-control-bar").getBoundingClientRect();
       const clientRectX = clientRect.x || 0;
       if (left < clientRectX) {
         left = clientRectX;
@@ -1753,9 +1588,7 @@ videojs.plugin("progressTips", function (options) {
         left = clientRectX + clientRect.width - width;
       }
       left -= clientRectX;
-      document.querySelector(
-        "#vjs-tip-inner"
-      ).innerText = `${hours}:${minutes}:${seconds}`;
+      document.querySelector("#vjs-tip-inner").innerText = `${hours}:${minutes}:${seconds}`;
       const barHeight = document.querySelector(".vjs-control-bar").clientHeight;
       document.querySelector("#vjs-tip").style.bottom = `${barHeight + 20}px`;
       document.querySelector("#vjs-tip").style.left = `${left}px`;
@@ -1779,9 +1612,7 @@ videojs.plugin("progressTips", function (options) {
     subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(
-        document
-          .querySelector("meta[name=webpush-public-key]")
-          .getAttribute("content")
+        document.querySelector("meta[name=webpush-public-key]").getAttribute("content")
       ),
     });
   }

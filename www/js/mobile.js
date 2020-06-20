@@ -69,9 +69,7 @@ const getDateTimeOpacity = function (timeStringUTC) {
 
 const formatDateTime = function (timeStringUTC) {
   const lastModified = new Date(timeStringUTC);
-  const formattedDate = `${lastModified.getFullYear()}-${(
-    lastModified.getMonth() + 1
-  )
+  const formattedDate = `${lastModified.getFullYear()}-${(lastModified.getMonth() + 1)
     .toString()
     .padStart(2, "0")}-${lastModified.getDate().toString().padStart(2, "0")}`;
   const seconds = Math.floor((new Date() - lastModified) / 1000);
@@ -146,9 +144,7 @@ const render = async () => {
     document.querySelector("#list").appendChild(div3);
   }, 300);
   const dirEntries = await fetch(
-    season === "search"
-      ? `/search?q=${title}`
-      : `/ls?path=${encodeURIComponent(location.pathname)}`
+    season === "search" ? `/search?q=${title}` : `/ls?path=${encodeURIComponent(location.pathname)}`
   ).then((res) => res.json());
   clearTimeout(loadingTimer);
 
@@ -161,10 +157,7 @@ const render = async () => {
     return;
   }
 
-  if (
-    ["2020-01", "2020-04", "Movie", "OVA", "Sukebei"].includes(season) &&
-    !title
-  ) {
+  if (["2020-01", "2020-04", "Movie", "OVA", "Sukebei"].includes(season) && !title) {
     dirEntries.sort((a, b) => (a.modified > b.modified ? -1 : 1));
   } else if (!season) {
     dirEntries.sort((a, b) => (a.name > b.name ? -1 : 1));
@@ -272,9 +265,7 @@ const render = async () => {
     div14.className = "item";
     div14.onclick = (event) => {
       event.preventDefault();
-      location.href = document
-        .querySelector("meta[name=donate-url]")
-        .getAttribute("content");
+      location.href = document.querySelector("meta[name=donate-url]").getAttribute("content");
     };
     div14.appendChild(document.createTextNode("❤️ PayMe 捐助"));
     document.querySelector("#list").appendChild(div14);
@@ -318,11 +309,7 @@ const render = async () => {
       this.classList.add("watched");
       localStorage.setItem(decodeURIComponent(href), 1);
 
-      if (
-        android &&
-        localStorage.getItem("player") &&
-        href.slice(-4) === ".mp4"
-      ) {
+      if (android && localStorage.getItem("player") && href.slice(-4) === ".mp4") {
         const url = this.querySelector("a").href;
         const a = document.createElement("a");
         a.href = `intent:${url}#Intent;package=${localStorage.getItem(
@@ -391,21 +378,13 @@ document.querySelector("#search").oninput = (e) => {
     render();
     return;
   }
-  history.replaceState(
-    null,
-    null,
-    `/search/${encodeURIComponent(e.target.value)}/`
-  );
+  history.replaceState(null, null, `/search/${encodeURIComponent(e.target.value)}/`);
   typing = setTimeout(render, 200);
 };
 
 document.querySelector("#search").onfocus = (e) => {
   if (e.target.value) {
-    history.pushState(
-      null,
-      null,
-      `/search/${encodeURIComponent(e.target.value)}/`
-    );
+    history.pushState(null, null, `/search/${encodeURIComponent(e.target.value)}/`);
     render();
   }
 };
@@ -418,9 +397,7 @@ document.querySelector("#search").onfocus = (e) => {
     subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(
-        document
-          .querySelector("meta[name=webpush-public-key]")
-          .getAttribute("content")
+        document.querySelector("meta[name=webpush-public-key]").getAttribute("content")
       ),
     });
   }

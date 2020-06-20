@@ -89,10 +89,7 @@
     <select ng-model="type" ng-options="type.value for type in types"></select>
     Sort:
     <select ng-model="sort" ng-options="sort.value for sort in sorts"></select>
-    <select
-      ng-model="order"
-      ng-options="order.value for order in orders"
-    ></select>
+    <select ng-model="order" ng-options="order.value for order in orders"></select>
     Score:
     <input type="number" ng-model="score" min="-1" max="99" /> Popularity:
     <input type="number" ng-model="popularity" min="-1" max="100000" />
@@ -103,9 +100,8 @@
       <option>false</option>
     </select>
     <button ng-click="search('filter')">Search</button>
-    {{ hits.length }} results, {{ (hits | filter: {anime_id: ""}).length }}
-    collected ({{ 100 * (hits | filter: {anime_id: ""}).length / hits.length |
-    number:2 }}%)
+    {{ hits.length }} results, {{ (hits | filter: {anime_id: ""}).length }} collected ({{ 100 *
+    (hits | filter: {anime_id: ""}).length / hits.length | number:2 }}%)
   </div>
   <input
     id="search_field"
@@ -115,25 +111,20 @@
     ng-click="onTextClick($event)"
   />
   <table class="list">
-    <tr
-      ng-repeat="hit in hits track by $index"
-      ng-class="hit.anime_id ? 'collected' : 'missing'"
-    >
+    <tr ng-repeat="hit in hits track by $index" ng-class="hit.anime_id ? 'collected' : 'missing'">
       <td>
         {{ hit.format }} - {{ hit.episodes }}<br />
         {{ hit.isAdult ? "18+" : "-" }}<br />
-        {{ hit.startDate.year }}-{{ hit.startDate.month }}-{{ hit.startDate.day
-        }}<br />
+        {{ hit.startDate.year }}-{{ hit.startDate.month }}-{{ hit.startDate.day }}<br />
         {{ hit.endDate.year }}-{{ hit.endDate.month }}-{{ hit.endDate.day }}<br />
         <br />
-        {{ hit.averageScore ? hit.averageScore : "-" }}% ({{ hit.popularity ?
-        hit.popularity : "-" }})
+        {{ hit.averageScore ? hit.averageScore : "-" }}% ({{ hit.popularity ? hit.popularity : "-"
+        }})
         <br />
       </td>
       <td>
         <a href="anilist/anime/{{ hit.id }}">{{ hit.id }}</a>
-        <a href="https://anilist.co/anime/{{ hit.id }}">{{ hit.id }}</a> {{
-        hit.id }}<br />
+        <a href="https://anilist.co/anime/{{ hit.id }}">{{ hit.id }}</a> {{ hit.id }}<br />
         <table class="form">
           <tr>
             <td>title.native</td>
@@ -162,9 +153,7 @@
         </table>
       </td>
       <td>
-        <a href="/{{ hit.directory }}/{{ hit.sub_directory }}/"
-          >{{ hit.anime_id }}</a
-        >
+        <a href="/{{ hit.directory }}/{{ hit.sub_directory }}/">{{ hit.anime_id }}</a>
         {{ hit.anime_id }}<br />
         <table class="form">
           <tr>
@@ -220,21 +209,13 @@
           <tr>
             <td>pattern</td>
             <td>
-              <input
-                type="text"
-                ng-model="hit.pattern"
-                ng-click="autoFill($index,'pattern')"
-              />
+              <input type="text" ng-model="hit.pattern" ng-click="autoFill($index,'pattern')" />
             </td>
           </tr>
           <tr>
             <td>exclude</td>
             <td>
-              <input
-                type="text"
-                ng-model="hit.exclude"
-                ng-click="autoFill($index,'exclude')"
-              />
+              <input type="text" ng-model="hit.exclude" ng-click="autoFill($index,'exclude')" />
             </td>
           </tr>
         </table>
@@ -248,21 +229,13 @@
           <tr>
             <td>pattern2</td>
             <td>
-              <input
-                type="text"
-                ng-model="hit.pattern2"
-                ng-click="autoFill($index,'pattern2')"
-              />
+              <input type="text" ng-model="hit.pattern2" ng-click="autoFill($index,'pattern2')" />
             </td>
           </tr>
           <tr>
             <td>exclude2</td>
             <td>
-              <input
-                type="text"
-                ng-model="hit.exclude2"
-                ng-click="autoFill($index,'exclude2')"
-              />
+              <input type="text" ng-model="hit.exclude2" ng-click="autoFill($index,'exclude2')" />
             </td>
           </tr>
         </table>

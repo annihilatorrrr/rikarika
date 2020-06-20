@@ -14,8 +14,7 @@
   let sortOptions = [
     {
       name: "number",
-      pattern: (item) =>
-        item.match(/^-?(\d)*-?([,\.]){0,1}-?(\d)+([E,e][\-+][\d]+)?%?$/),
+      pattern: (item) => item.match(/^-?(\d)*-?([,\.]){0,1}-?(\d)+([E,e][\-+][\d]+)?%?$/),
       sort: (a, b) => {
         a = a.replace(/[^\-?0-9.]/g, "");
         b = b.replace(/[^\-?0-9.]/g, "");
@@ -161,9 +160,7 @@
 
       // If updating an existing sort `sortDir` should remain unchanged.
       if (update) {
-        sortDir = header.classList.contains("sort-up")
-          ? "sort-up"
-          : "sort-down";
+        sortDir = header.classList.contains("sort-up") ? "sort-up" : "sort-down";
       } else {
         if (header.classList.contains("sort-up")) {
           sortDir = "sort-down";
@@ -177,9 +174,7 @@
           sortDir = that.options.descending ? "sort-up" : "sort-down";
         }
 
-        header.classList.remove(
-          sortDir === "sort-down" ? "sort-up" : "sort-down"
-        );
+        header.classList.remove(sortDir === "sort-down" ? "sort-up" : "sort-down");
         header.classList.add(sortDir);
       }
 

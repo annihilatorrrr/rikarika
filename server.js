@@ -63,9 +63,7 @@ app.get(/.*\/$/, (req, res) => {
     req.cookies.session ===
       crypto.createHmac("sha256", WEB_PASSWORD).update(WEB_SECRET).digest("hex")
   ) {
-    const view = /(Android|iPad|iPhone|iPod)/g.test(req.headers["user-agent"])
-      ? "mobile"
-      : "index";
+    const view = /(Android|iPad|iPhone|iPod)/g.test(req.headers["user-agent"]) ? "mobile" : "index";
     res.setHeader("Link", `</js/${view}.js>; as=script; rel=preload`);
     res.send(
       fs
@@ -79,10 +77,7 @@ app.get(/.*\/$/, (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  if (
-    req.body.password === WEB_PASSWORD ||
-    req.headers["x-real-ip"] === WEB_WHITELIST_IP
-  ) {
+  if (req.body.password === WEB_PASSWORD || req.headers["x-real-ip"] === WEB_WHITELIST_IP) {
     res.setHeader(
       "Set-Cookie",
       `session=${crypto
@@ -91,18 +86,12 @@ app.post("/login", (req, res) => {
         .digest("hex")}; Secure; HttpOnly; SameSite=Strict`
     );
   }
-  return res.redirect(
-    302,
-    req.headers["referer"] ? new URL(req.headers["referer"]).pathname : "/"
-  );
+  return res.redirect(302, req.headers["referer"] ? new URL(req.headers["referer"]).pathname : "/");
 });
 
 app.get("/logout", (req, res) => {
   res.setHeader("Set-Cookie", `session=; Secure; HttpOnly; SameSite=Strict`);
-  return res.redirect(
-    302,
-    req.headers["referer"] ? new URL(req.headers["referer"]).pathname : "/"
-  );
+  return res.redirect(302, req.headers["referer"] ? new URL(req.headers["referer"]).pathname : "/");
 });
 
 // path without extension and not end with /
@@ -120,9 +109,7 @@ app.use(/\/[^\.\/]+$/, (req, res, next) => {
 
 app.get("/motd", async (req, res) => {
   res.type("text/plain");
-  return res.send(
-    fs.readFileSync(path.join(__dirname, "www", "message.txt"), "utf8")
-  );
+  return res.send(fs.readFileSync(path.join(__dirname, "www", "message.txt"), "utf8"));
 });
 
 app.get("/list", async (req, res) => {
@@ -164,11 +151,9 @@ app.get("/list", async (req, res) => {
         .toString()
         .trim()}`,
       "",
-      ...(
-        await knex("anime")
-          .select("season", "title")
-          .orderBy(["season", "title"])
-      ).map((e) => `${e.season}/${e.title}`),
+      ...(await knex("anime").select("season", "title").orderBy(["season", "title"])).map(
+        (e) => `${e.season}/${e.title}`
+      ),
     ].join("\n")
   );
 });
@@ -178,15 +163,11 @@ app.get("/ls", async (req, res) => {
     return res.send("invalid path");
   }
   if (req.query.path.split("/").length === 2) {
-    const rows = await knex("anime")
-      .distinct("season")
-      .orderBy("season", "asc");
+    const rows = await knex("anime").distinct("season").orderBy("season", "asc");
     return res.send(
       rows.map((row) => ({
         name: row.season,
-        modified: fs.lstatSync(
-          fs.realpathSync(path.join(ANIME_NEW_PATH, row.season))
-        ).mtime,
+        modified: fs.lstatSync(fs.realpathSync(path.join(ANIME_NEW_PATH, row.season))).mtime,
       }))
     );
   }
@@ -216,24 +197,18 @@ app.get("/ls", async (req, res) => {
       return res.send([]);
     }
     const [{ id, anilist_id }] = rows;
-    const path_series = fs
-      .readdirSync(path.join(ANIME_PATH, `${id}`))
-      .map((file) => ({
-        anime_id: id,
-        anilist_id,
-        name: file,
-        modified: fs.lstatSync(path.join(ANIME_PATH, `${id}`, file)).mtime,
-        size: fs.lstatSync(path.join(ANIME_PATH, `${id}`, file)).size,
-        thumb: fs.existsSync(
-          path.join(
-            ANIME_THUMB_PATH,
-            `${id}`,
-            `${path.basename(file, ".mp4")}.jpg`
-          )
-        )
-          ? `${path.basename(file, ".mp4")}.jpg`
-          : null,
-      }));
+    const path_series = fs.readdirSync(path.join(ANIME_PATH, `${id}`)).map((file) => ({
+      anime_id: id,
+      anilist_id,
+      name: file,
+      modified: fs.lstatSync(path.join(ANIME_PATH, `${id}`, file)).mtime,
+      size: fs.lstatSync(path.join(ANIME_PATH, `${id}`, file)).size,
+      thumb: fs.existsSync(
+        path.join(ANIME_THUMB_PATH, `${id}`, `${path.basename(file, ".mp4")}.jpg`)
+      )
+        ? `${path.basename(file, ".mp4")}.jpg`
+        : null,
+    }));
     return res.send(path_series);
   }
   return res.send([]);
@@ -257,41 +232,30 @@ app.get("/info", async (req, res) => {
     );
   }
 
-  const rows = await knex("anime")
-    .select("id", "anilist_id")
-    .where("season", req.query.season);
+  const rows = await knex("anime").select("id", "anilist_id").where("season", req.query.season);
 
-  const result = await fetch(
-    `http://${ES_HOST}:${ES_PORT}/anilist/anime/_search`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        size: 500,
-        query: {
-          ids: {
-            type: "anime",
-            values: rows.map((row) => row.anilist_id),
-          },
+  const result = await fetch(`http://${ES_HOST}:${ES_PORT}/anilist/anime/_search`, {
+    method: "POST",
+    body: JSON.stringify({
+      size: 500,
+      query: {
+        ids: {
+          type: "anime",
+          values: rows.map((row) => row.anilist_id),
         },
-        _source: [
-          "id",
-          "title.chinese",
-          "popularity",
-          "stats.statusDistribution",
-          "averageScore",
-        ],
-        sort: {
-          averageScore: {
-            order: "desc",
-          },
-          popularity: {
-            order: "desc",
-          },
+      },
+      _source: ["id", "title.chinese", "popularity", "stats.statusDistribution", "averageScore"],
+      sort: {
+        averageScore: {
+          order: "desc",
         },
-      }),
-      headers: { "Content-Type": "application/json" },
-    }
-  ).then((response) => response.json());
+        popularity: {
+          order: "desc",
+        },
+      },
+    }),
+    headers: { "Content-Type": "application/json" },
+  }).then((response) => response.json());
 
   return res.send(result.hits ? result.hits.hits : []);
 });
@@ -300,32 +264,29 @@ app.get("/search", async (req, res) => {
   if (!req.query || !req.query.q) {
     return res.send("invalid query");
   }
-  const result = await fetch(
-    `http://${ES_HOST}:${ES_PORT}/anilist/anime/_search`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        _source: ["id", "title"],
-        size: 100,
-        query: {
-          multi_match: {
-            query: req.query.q,
-            fields: [
-              "title.native",
-              "title.romaji",
-              "title.english",
-              "title.chinese",
-              "synonyms",
-              "synonyms_chinese",
-            ],
-            type: "phrase_prefix",
-            prefix_length: 0,
-          },
+  const result = await fetch(`http://${ES_HOST}:${ES_PORT}/anilist/anime/_search`, {
+    method: "POST",
+    body: JSON.stringify({
+      _source: ["id", "title"],
+      size: 100,
+      query: {
+        multi_match: {
+          query: req.query.q,
+          fields: [
+            "title.native",
+            "title.romaji",
+            "title.english",
+            "title.chinese",
+            "synonyms",
+            "synonyms_chinese",
+          ],
+          type: "phrase_prefix",
+          prefix_length: 0,
         },
-      }),
-      headers: { "Content-Type": "application/json" },
-    }
-  ).then((response) => response.json());
+      },
+    }),
+    headers: { "Content-Type": "application/json" },
+  }).then((response) => response.json());
 
   const rows = await knex("anime")
     .select("id", "anilist_id", "season", "title")
@@ -348,10 +309,7 @@ app.post("/subscribe", async (req, res) => {
   console.log(`subscription registering: ${req.body.endpoint}`);
   try {
     await knex("subscription").insert({
-      id: crypto
-        .createHmac("sha256", "")
-        .update(req.body.endpoint)
-        .digest("base64"),
+      id: crypto.createHmac("sha256", "").update(req.body.endpoint).digest("base64"),
       json: JSON.stringify(req.body),
     });
   } catch (e) {
@@ -361,9 +319,7 @@ app.post("/subscribe", async (req, res) => {
 });
 
 app.use("/admin/get_series", async (req, res) => {
-  const id_list = req.query.anilist_id
-    ? req.query.anilist_id
-    : req.body.anilist_id;
+  const id_list = req.query.anilist_id ? req.query.anilist_id : req.body.anilist_id;
   const rows = await knex("anime")
     .select("id", "anilist_id", "season", "title")
     .whereIn(
@@ -386,11 +342,7 @@ app.post("/admin/add_anilist_chinese", async (req, res) => {
   }
   const rows = await knex.raw(
     "INSERT INTO anilist_chinese (id, json) values (?, ?) ON DUPLICATE KEY UPDATE json=?",
-    [
-      parseInt(req.query.anilist_id, 10),
-      JSON.stringify(req.body),
-      JSON.stringify(req.body),
-    ]
+    [parseInt(req.query.anilist_id, 10), JSON.stringify(req.body), JSON.stringify(req.body)]
   );
   return res.send(JSON.stringify(rows));
 });
@@ -429,11 +381,7 @@ app.post("/admin/add_series", async (req, res) => {
     // }
     if (!fs.existsSync(animeNewDest)) {
       console.log(`Creating symlink ${animeNewDest}`);
-      fs.symlinkSync(
-        path.relative(path.dirname(animeNewDest), src),
-        animeNewDest,
-        fs.S_IFLNK
-      );
+      fs.symlinkSync(path.relative(path.dirname(animeNewDest), src), animeNewDest, fs.S_IFLNK);
     }
   }
   return res.send(JSON.stringify(id));

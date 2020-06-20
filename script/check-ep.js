@@ -63,9 +63,7 @@ const { DB_NAME, DB_USER, DB_PASS, DB_HOST, ANIME_PATH } = process.env;
     }
     if (missing.length) {
       if (missing.length < 10) {
-        const rows = await knex("anime")
-          .select("id", "season", "title")
-          .where("id", dir);
+        const rows = await knex("anime").select("id", "season", "title").where("id", dir);
         if (
           !["Sukebei", "HKTVBJ2", "OVA"].includes(rows[0].season) &&
           ![
@@ -85,11 +83,7 @@ const { DB_NAME, DB_USER, DB_PASS, DB_HOST, ANIME_PATH } = process.env;
             "4314",
           ].includes(dir)
         ) {
-          console.log(
-            `[${dir}] ${rows[0].season}/${rows[0].title} EP ${missing.join(
-              ","
-            )}`
-          );
+          console.log(`[${dir}] ${rows[0].season}/${rows[0].title} EP ${missing.join(",")}`);
           // console.log(epList.join(" "));
           // console.log(fileList[dir].map(file => `${aniep(file)} => ${file}`));
         }
