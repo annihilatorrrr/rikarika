@@ -4,12 +4,17 @@ console.log(
 );
 
 const cluster = require("cluster");
+const fs = require("fs-extra");
 
 if (!cluster.isMaster) {
   process.on("message", (message) => {
     const [task, input, output] = JSON.parse(message);
-    console.log(`Building ${output}`);
-    require(task)(input, output);
+    if (fs.existsSync(input)) {
+      console.log(`Building ${output}`);
+      require(task)(input, output);
+    } else {
+      console.log(`Gone     ${output}`);
+    }
     process.send(output);
   });
   return;
@@ -19,7 +24,6 @@ require("dotenv").config();
 
 const os = require("os");
 const path = require("path");
-const fs = require("fs-extra");
 const chokidar = require("chokidar");
 const fetch = require("node-fetch");
 const { URLSearchParams } = require("url");
