@@ -451,7 +451,7 @@ a {
 .folder,
 .file,
 .item {
-  word-wrap: break-word;
+  word-break: break-all;
   width: 100%;
   margin-left: 0;
   margin-right: 80px;
