@@ -225,6 +225,9 @@ app.get("/info", async (req, res) => {
         season: req.query.season,
         title: decodeURIComponent(req.query.title),
       });
+    if (!anime) {
+      return res.send({});
+    }
     return res.send(
       await fetch(
         `http://${ES_HOST}:${ES_PORT}/anilist/anime/${anime.anilist_id}`

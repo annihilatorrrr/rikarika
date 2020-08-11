@@ -1049,7 +1049,9 @@ const getInfo = async function (dirEntries) {
     const data = await fetch(
       `/info?season=${season}&title=${encodeURIComponent(title)}`
     ).then((res) => res.json());
-    displayInfo(data._source);
+    if (data.found) {
+      displayInfo(data._source);
+    }
     document.querySelector("#info").style.visibility = "visible";
     document.querySelector("#info").style.opacity = 1;
   } else if (window.location.pathname.split("/").length === 3) {
