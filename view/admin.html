@@ -54,9 +54,17 @@
     width: 100%;
   }
   input[type="number"] {
+    padding: 0;
     width: 50px;
+    font-size: 12px;
   }
-  input[type="text"],
+  input[type="text"] {
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+    font-family: Arial;
+  }
   textarea {
     width: 100%;
     border: none;
@@ -68,8 +76,14 @@
   button {
     border: 0;
   }
+  #search_anilist,
+  #search_anime,
   #search_field {
+    width: 60px;
     line-height: 2em;
+  }
+  #search_field {
+    width: 600px;
   }
 </style>
 <div ng-app="myAniList" ng-controller="searchAniList">
@@ -103,13 +117,17 @@
     {{ hits.length }} results, {{ (hits | filter: {anime_id: ""}).length }} collected ({{ 100 *
     (hits | filter: {anime_id: ""}).length / hits.length | number:2 }}%)
   </div>
+  Anilist ID:
   <input
-    id="search_field"
+    id="search_anilist"
     type="text"
-    ng-model="query"
-    ng-change="searching()"
-    ng-click="onTextClick($event)"
+    ng-model="search_anilist"
+    ng-change="searching_anilist()"
   />
+  Anime ID:
+  <input id="search_anime" type="text" ng-model="search_anime" ng-change="searching_anime()" />
+  Title:
+  <input id="search_field" type="text" ng-model="query" ng-change="searching()" />
   <table class="list">
     <tr ng-repeat="hit in hits track by $index" ng-class="hit.anime_id ? 'collected' : 'missing'">
       <td>

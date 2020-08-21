@@ -34,6 +34,18 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
   $scope.orders = [{ value: "asc" }, { value: "desc" }];
   $scope.order = $scope.orders[1];
   var handle;
+  $scope.searching_anilist = function () {
+    clearTimeout(handle);
+    handle = setTimeout(function () {
+      $scope.search("anilist");
+    }, 0);
+  };
+  $scope.searching_anime = function () {
+    clearTimeout(handle);
+    handle = setTimeout(function () {
+      $scope.search("anime");
+    }, 0);
+  };
   $scope.searching = function () {
     clearTimeout(handle);
     handle = setTimeout(function () {
@@ -118,6 +130,21 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
       };
       request.sort = {};
       request.sort[$scope.sort.value] = { order: $scope.order.value };
+    } else if (type === "anime") {
+      const anilistID = (await $http.get(`/admin/get_anilist?id=${$scope.search_anime}`)).data;
+      request.size = 5;
+      request.query = {
+        ids: {
+          values: [Number(anilistID)],
+        },
+      };
+    } else if (type === "anilist") {
+      request.size = 5;
+      request.query = {
+        ids: {
+          values: [$scope.search_anilist],
+        },
+      };
     } else {
       history.replaceState(null, null, `?q=${$scope.query}`);
       request.size = 50;
@@ -448,9 +475,6 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
         $scope.hits[index].anime_id = anime_id;
       }
     });
-  };
-  $scope.onTextClick = function ($event) {
-    //$event.target.select();
   };
   $scope.autoFill = function (index, field) {
     if (!$scope.hits[index][field]) {

@@ -323,6 +323,9 @@ app.post("/subscribe", async (req, res) => {
 
 app.use("/admin/get_series", async (req, res) => {
   const id_list = req.query.anilist_id ? req.query.anilist_id : req.body.anilist_id;
+  if (!id_list) {
+    return res.send([]);
+  }
   const rows = await knex("anime")
     .select("id", "anilist_id", "season", "title")
     .whereIn(
@@ -337,6 +340,17 @@ app.use("/admin/get_series", async (req, res) => {
       title: row.title,
     }))
   );
+});
+
+app.use("/admin/get_anilist", async (req, res) => {
+  if (req.query.id && Number(req.query.id)) {
+    const rows = await knex("anime").select("id", "anilist_id").where("id", Number(req.query.id));
+    if (rows.length) {
+      return res.send(`${rows[0].anilist_id}`);
+    }
+    return res.send("");
+  }
+  return res.send("");
 });
 
 app.post("/admin/add_anilist_chinese", async (req, res) => {
