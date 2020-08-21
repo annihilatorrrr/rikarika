@@ -71,7 +71,7 @@ for (let i = 0; i < concurrency; i++) {
     if (typeof filePath === "object") return;
     console.log(`Complete ${filePath}`);
     if (taskList.length > 0) {
-      worker.send(taskList.pop());
+      worker.send(taskList.shift());
     } else {
       workerList.push(worker);
     }
