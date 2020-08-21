@@ -94,7 +94,6 @@ data.forEach((each) => {
     console.log(each.format.filename);
   }
 });
-
 console.log("No max_bit_rate in audio streams:");
 data.forEach((each) => {
   const audio = each.streams.find((stream) => stream.codec_type === "audio");
@@ -111,6 +110,12 @@ data.forEach((each) => {
 console.log("More than 1 video streams:");
 data.forEach((each) => {
   if (each.streams.filter((stream) => stream.codec_type === "video").length > 1) {
+    console.log(each.format.filename);
+  }
+});
+console.log("More than 2 streams:");
+data.forEach((each) => {
+  if (each.streams.length > 2) {
     console.log(each.format.filename);
   }
 });
