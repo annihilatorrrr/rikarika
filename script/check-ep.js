@@ -81,6 +81,11 @@ const { DB_NAME, DB_USER, DB_PASS, DB_HOST, ANIME_PATH } = process.env;
             "4258",
             "4268",
             "4314",
+            "4508",
+            "4659",
+            "5251",
+            "5255",
+            "5886",
           ].includes(dir)
         ) {
           console.log(`[${dir}] ${rows[0].season}/${rows[0].title} EP ${missing.join(",")}`);
