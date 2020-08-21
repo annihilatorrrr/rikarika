@@ -71,12 +71,46 @@ const bbbbbbbb = data
     return map;
   }, {});
 
-console.log("Indexed video: " + totalCount);
-console.log("Average duration: " + formatDateTime(averageDuration));
-console.log("Total duration: " + formatDateTime(totalDuration));
-console.log("Total duration: " + formatDateTime(totalDuration));
 console.table(videoProfileList);
 console.table(videoLevelList);
 console.table(audioProfileList);
 console.table(aaaaaaaaaa);
 console.table(bbbbbbbb);
+
+console.log("Indexed video: " + totalCount);
+console.log("Average duration: " + formatDateTime(averageDuration));
+console.log("Total duration: " + formatDateTime(totalDuration));
+console.log("Total duration: " + formatDateTime(totalDuration));
+
+console.log("No audio streams:");
+data.forEach((each) => {
+  if (!each.streams.find((stream) => stream.codec_type === "audio")) {
+    console.log(each.format.filename);
+  }
+});
+console.log("More than 1 audio streams:");
+data.forEach((each) => {
+  if (each.streams.filter((stream) => stream.codec_type === "audio").length > 1) {
+    console.log(each.format.filename);
+  }
+});
+
+console.log("No max_bit_rate in audio streams:");
+data.forEach((each) => {
+  const audio = each.streams.find((stream) => stream.codec_type === "audio");
+  if (audio && !audio.max_bit_rate) {
+    console.log(each.format.filename);
+  }
+});
+console.log("No video streams:");
+data.forEach((each) => {
+  if (!each.streams.find((stream) => stream.codec_type === "video")) {
+    console.log(each.format.filename);
+  }
+});
+console.log("More than 1 video streams:");
+data.forEach((each) => {
+  if (each.streams.filter((stream) => stream.codec_type === "video").length > 1) {
+    console.log(each.format.filename);
+  }
+});
