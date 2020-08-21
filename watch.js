@@ -159,6 +159,9 @@ chokidar
         taskList.push(JSON.stringify(["./gentile.js", filePath, jpgPath]));
       }
     }
+    if (process.argv.includes("--rescan")) {
+      return;
+    }
 
     const dirName = path.dirname(filePath);
     const fileName = path.basename(filePath);
