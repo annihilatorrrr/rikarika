@@ -57,7 +57,6 @@ const {
       console.log(entry);
     }
   }
-  console.log();
   console.log("Extra symlink / folders:");
   for (const entry of child_process
     .execSync(`find ${ANIME_PATH}/* -type d`, {
@@ -65,7 +64,8 @@ const {
     })
     .toString()
     .split("\n")
-    .filter((e) => !list.includes(e))) {
+    .filter((e) => !list.includes(e))
+    .filter((e) => e)) {
     console.log(entry);
   }
 
@@ -75,7 +75,8 @@ const {
     })
     .toString()
     .split("\n")
-    .filter((e) => !seasonList.includes(e))) {
+    .filter((e) => !seasonList.includes(e))
+    .filter((e) => e)) {
     console.log(entry);
   }
 
@@ -85,7 +86,8 @@ const {
     })
     .toString()
     .split("\n")
-    .filter((e) => !newList.includes(e))) {
+    .filter((e) => !newList.includes(e))
+    .filter((e) => e)) {
     console.log(entry);
   }
 
@@ -95,10 +97,12 @@ const {
     })
     .toString()
     .split("\n")
-    .filter((e) => !thumbList.includes(e))) {
+    .filter((e) => !thumbList.includes(e))
+    .filter((e) => e)) {
     console.log(entry);
   }
 
+  console.log("Extra jpg / Missing mp4:");
   for (const entry of child_process
     .execSync(`find ${ANIME_THUMB_PATH}/* -type f`, {
       maxBuffer: 1024 * 1024 * 100,
@@ -106,8 +110,12 @@ const {
     .toString()
     .split("\n")
     .map((e) => e.replace(ANIME_THUMB_PATH, ANIME_PATH).replace(".jpg", ".mp4"))
-    .filter((e) => !fs.existsSync(e))) {
-    console.log(entry);
+    .filter((e) => !fs.existsSync(e))
+    .filter((e) => e)) {
+    console.log(entry.replace(ANIME_PATH, ANIME_THUMB_PATH).replace(".mp4", ".jpg"));
+    if (process.argv.includes("--delete")) {
+      fs.removeSync(entry.replace(ANIME_PATH, ANIME_THUMB_PATH).replace(".mp4", ".jpg"));
+    }
   }
   knex.destroy();
 })();
