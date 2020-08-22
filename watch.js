@@ -256,87 +256,89 @@ chokidar
     console.log(`Scanned  ${ANIME_PATH}/**/*.mp4`);
   });
 
-chokidar
-  .watch(ANIME_ADD_PATH, {
-    persistent: true,
-    ignoreInitial: false,
-    usePolling: false,
-    awaitWriteFinish: {
-      stabilityThreshold: 2000,
-      pollInterval: 100,
-    },
-    atomic: true,
-  })
-  .on("add", (filePath) => {
-    console.log(`New      ${filePath}`);
-    if (filePath.replace(ANIME_ADD_PATH, "").split("/").length < 3) return;
-    const animeID = filePath.replace(ANIME_ADD_PATH, "").split("/")[1];
-    const fileName = filePath.replace(ANIME_ADD_PATH, "").split("/").pop();
-    if (filePath.replace(ANIME_ADD_PATH, "").split("/").length > 3) {
-      fs.moveSync(filePath, path.join(ANIME_ADD_PATH, animeID, fileName), {
-        overwrite: true,
-      });
-      return;
-    }
-    if (![".mp4", ".mkv", ".webm"].includes(path.extname(fileName).toLowerCase())) {
-      fs.removeSync(filePath);
-      return;
-    }
-    const newFilePath = path.join(
-      ANIME_PATH,
-      animeID,
-      `${path.basename(fileName, path.extname(fileName))}.mp4`
-    );
-    // remove incoming file if same file name already exist
-    if (fs.existsSync(newFilePath)) {
-      console.log(`Existed  ${newFilePath}`);
-      fs.removeSync(filePath);
-    }
-    // remove incoming CHS file if CHT version already exist
-    for (const [cht, chs] of CHMap) {
-      if (
-        newFilePath.replace(chs, cht) !== newFilePath &&
-        fs.existsSync(newFilePath.replace(chs, cht))
-      ) {
+if (!process.argv.includes("--rescan")) {
+  chokidar
+    .watch(ANIME_ADD_PATH, {
+      persistent: true,
+      ignoreInitial: false,
+      usePolling: false,
+      awaitWriteFinish: {
+        stabilityThreshold: 2000,
+        pollInterval: 100,
+      },
+      atomic: true,
+    })
+    .on("add", (filePath) => {
+      console.log(`New      ${filePath}`);
+      if (filePath.replace(ANIME_ADD_PATH, "").split("/").length < 3) return;
+      const animeID = filePath.replace(ANIME_ADD_PATH, "").split("/")[1];
+      const fileName = filePath.replace(ANIME_ADD_PATH, "").split("/").pop();
+      if (filePath.replace(ANIME_ADD_PATH, "").split("/").length > 3) {
+        fs.moveSync(filePath, path.join(ANIME_ADD_PATH, animeID, fileName), {
+          overwrite: true,
+        });
+        return;
+      }
+      if (![".mp4", ".mkv", ".webm"].includes(path.extname(fileName).toLowerCase())) {
+        fs.removeSync(filePath);
+        return;
+      }
+      const newFilePath = path.join(
+        ANIME_PATH,
+        animeID,
+        `${path.basename(fileName, path.extname(fileName))}.mp4`
+      );
+      // remove incoming file if same file name already exist
+      if (fs.existsSync(newFilePath)) {
         console.log(`Existed  ${newFilePath}`);
         fs.removeSync(filePath);
-        return;
       }
-    }
-    for (const [cht, chs] of CHMap) {
-      if (filePath.replace(chs, cht) !== filePath && fs.existsSync(filePath.replace(chs, cht))) {
-        console.log(`Existed  ${filePath}`);
-        fs.removeSync(filePath);
-        return;
+      // remove incoming CHS file if CHT version already exist
+      for (const [cht, chs] of CHMap) {
+        if (
+          newFilePath.replace(chs, cht) !== newFilePath &&
+          fs.existsSync(newFilePath.replace(chs, cht))
+        ) {
+          console.log(`Existed  ${newFilePath}`);
+          fs.removeSync(filePath);
+          return;
+        }
       }
-    }
-    if (workerList.length > 0) {
-      const worker = workerList.pop();
-      worker.send(JSON.stringify(["./add-anime.js", filePath, newFilePath]));
-    } else {
-      console.log(`Queued   ${newFilePath}`);
-      taskList.push(JSON.stringify(["./add-anime.js", filePath, newFilePath]));
-    }
-  })
-  .on("unlink", (filePath) => {
-    console.log(`Deleted  ${filePath}`);
-    if (
-      fs.existsSync(path.dirname(filePath)) &&
-      fs.readdirSync(path.dirname(filePath)).length === 0
-    ) {
-      fs.removeSync(path.dirname(filePath));
-    }
-  })
-  .on("unlinkDir", (dirPath) => {
-    console.log(`Deleted  ${dirPath}`);
-    if (
-      dirPath.startsWith(ANIME_ADD_PATH) &&
-      path.dirname(dirPath) !== ANIME_ADD_PATH &&
-      fs.readdirSync(path.dirname(dirPath)).length === 0
-    ) {
-      fs.removeSync(path.dirname(dirPath));
-    }
-  })
-  .on("ready", () => {
-    console.log(`Scanned  ${ANIME_ADD_PATH}`);
-  });
+      for (const [cht, chs] of CHMap) {
+        if (filePath.replace(chs, cht) !== filePath && fs.existsSync(filePath.replace(chs, cht))) {
+          console.log(`Existed  ${filePath}`);
+          fs.removeSync(filePath);
+          return;
+        }
+      }
+      if (workerList.length > 0) {
+        const worker = workerList.pop();
+        worker.send(JSON.stringify(["./add-anime.js", filePath, newFilePath]));
+      } else {
+        console.log(`Queued   ${newFilePath}`);
+        taskList.push(JSON.stringify(["./add-anime.js", filePath, newFilePath]));
+      }
+    })
+    .on("unlink", (filePath) => {
+      console.log(`Deleted  ${filePath}`);
+      if (
+        fs.existsSync(path.dirname(filePath)) &&
+        fs.readdirSync(path.dirname(filePath)).length === 0
+      ) {
+        fs.removeSync(path.dirname(filePath));
+      }
+    })
+    .on("unlinkDir", (dirPath) => {
+      console.log(`Deleted  ${dirPath}`);
+      if (
+        dirPath.startsWith(ANIME_ADD_PATH) &&
+        path.dirname(dirPath) !== ANIME_ADD_PATH &&
+        fs.readdirSync(path.dirname(dirPath)).length === 0
+      ) {
+        fs.removeSync(path.dirname(dirPath));
+      }
+    })
+    .on("ready", () => {
+      console.log(`Scanned  ${ANIME_ADD_PATH}`);
+    });
+}
