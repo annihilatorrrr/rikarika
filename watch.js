@@ -278,7 +278,7 @@ chokidar
       });
       return;
     }
-    if (![".mp4", ".mkv"].includes(path.extname(fileName).toLowerCase())) {
+    if (![".mp4", ".mkv", ".webm"].includes(path.extname(fileName).toLowerCase())) {
       fs.removeSync(filePath);
       return;
     }
