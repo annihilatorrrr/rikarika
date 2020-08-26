@@ -17,13 +17,15 @@ const formatDateTime = (timeInSeconds) => {
   return days > 0 ? `${days} days ${time}` : time;
 };
 
+const sortTable = (obj) =>
+  Object.entries(obj)
+    .sort()
+    .reduce((o, [k, v]) => ((o[k] = v), o), {});
+
 const totalDuration = data
-  .filter((mp4) => parseInt(mp4.format.filename.split("/")[4], 10) > 1000)
   .filter((mp4) => parseFloat(mp4.format.duration))
   .reduce((total, mp4) => total + parseFloat(mp4.format.duration), 0);
-const totalCount = data
-  .filter((mp4) => parseInt(mp4.format.filename.split("/")[4], 10) > 1000)
-  .filter((mp4) => parseFloat(mp4.format.duration)).length;
+const totalCount = data.filter((mp4) => parseFloat(mp4.format.duration)).length;
 
 const averageDuration = totalDuration / totalCount;
 
@@ -43,6 +45,15 @@ const videoLevelList = data
     return map;
   }, {});
 
+const videoBitRateList = data
+  .map((each) => each.streams.find((stream) => stream.codec_type === "video"))
+  .filter((each) => each)
+  .reduce((map, video) => {
+    const bitRateRange = Math.ceil(video.bit_rate / 1000 / 1000) * 1000;
+    map[bitRateRange] = map[bitRateRange] ? map[bitRateRange] + 1 : 1;
+    return map;
+  }, {});
+
 const audioProfileList = data
   .map((each) => each.streams.find((stream) => stream.codec_type === "audio"))
   .filter((each) => each)
@@ -51,7 +62,7 @@ const audioProfileList = data
     return map;
   }, {});
 
-const aaaaaaaaaa = data
+const videoKeys = data
   .map((each) => each.streams.find((stream) => stream.codec_type === "video"))
   .filter((each) => each)
   .reduce((map, video) => {
@@ -61,7 +72,7 @@ const aaaaaaaaaa = data
     return map;
   }, {});
 
-const bbbbbbbb = data
+const audioKeys = data
   .map((each) => each.streams.find((stream) => stream.codec_type === "audio"))
   .filter((each) => each)
   .reduce((map, audio) => {
@@ -71,11 +82,31 @@ const bbbbbbbb = data
     return map;
   }, {});
 
-console.table(videoProfileList);
-console.table(videoLevelList);
-console.table(audioProfileList);
-console.table(aaaaaaaaaa);
-console.table(bbbbbbbb);
+const audioBitRateList = data
+  .map((each) => each.streams.find((stream) => stream.codec_type === "audio"))
+  .filter((each) => each)
+  .reduce((map, audio) => {
+    const bitRateRange = Math.ceil(audio.bit_rate / 1000 / 100) * 100;
+    map[bitRateRange] = map[bitRateRange] ? map[bitRateRange] + 1 : 1;
+    return map;
+  }, {});
+
+console.log(data[0]);
+console.log("Video Keys");
+console.table(sortTable(videoKeys));
+console.log("Video Profiles");
+console.table(sortTable(videoProfileList));
+console.log("Video Levels");
+console.table(sortTable(videoLevelList));
+console.log("Video Bit Rates (kbps)");
+console.table(sortTable(videoBitRateList));
+
+console.log("Audio Keys");
+console.table(sortTable(audioKeys));
+console.log("Audio Profiles");
+console.table(sortTable(audioProfileList));
+console.log("Audio Bit Rates (kbps)");
+console.table(sortTable(audioBitRateList));
 
 console.log("Indexed video: " + totalCount);
 console.log("Average duration: " + formatDateTime(averageDuration));
@@ -88,12 +119,6 @@ data.forEach((each) => {
     console.log(each.format.filename);
   }
 });
-console.log("More than 1 audio streams:");
-data.forEach((each) => {
-  if (each.streams.filter((stream) => stream.codec_type === "audio").length > 1) {
-    console.log(each.format.filename);
-  }
-});
 console.log("No max_bit_rate in audio streams:");
 data.forEach((each) => {
   const audio = each.streams.find((stream) => stream.codec_type === "audio");
@@ -101,21 +126,37 @@ data.forEach((each) => {
     console.log(each.format.filename);
   }
 });
+console.log("Audio bitrate too high:");
+data.forEach((each) => {
+  const audio = each.streams.find((stream) => stream.codec_type === "audio");
+  if (audio && audio.bit_rate > 1000 * 320) {
+    console.log(each.format.filename);
+  }
+});
+
 console.log("No video streams:");
 data.forEach((each) => {
   if (!each.streams.find((stream) => stream.codec_type === "video")) {
     console.log(each.format.filename);
   }
 });
-console.log("More than 1 video streams:");
-data.forEach((each) => {
-  if (each.streams.filter((stream) => stream.codec_type === "video").length > 1) {
-    console.log(each.format.filename);
-  }
-});
 console.log("More than 2 streams:");
 data.forEach((each) => {
   if (each.streams.length > 2) {
+    console.log(each.format.filename);
+  }
+});
+console.log("Wrong H.264 profile:");
+data.forEach((each) => {
+  const video = each.streams.find((stream) => stream.codec_type === "video");
+  if (!["Main", "High"].includes(video.profile)) {
+    console.log(each.format.filename);
+  }
+});
+console.log("Video bitrate too high:");
+data.forEach((each) => {
+  const video = each.streams.find((stream) => stream.codec_type === "video");
+  if (video.bit_rate > 1000 * 1000 * 10) {
     console.log(each.format.filename);
   }
 });
