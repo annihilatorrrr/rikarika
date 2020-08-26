@@ -86,7 +86,7 @@ const audioBitRateList = data
   .map((each) => each.streams.find((stream) => stream.codec_type === "audio"))
   .filter((each) => each)
   .reduce((map, audio) => {
-    const bitRateRange = Math.ceil(audio.bit_rate / 1000 / 100) * 100;
+    const bitRateRange = Math.ceil(audio.bit_rate / 1000 / 10) * 10;
     map[bitRateRange] = map[bitRateRange] ? map[bitRateRange] + 1 : 1;
     return map;
   }, {});
@@ -149,7 +149,7 @@ data.forEach((each) => {
 console.log("Wrong H.264 profile:");
 data.forEach((each) => {
   const video = each.streams.find((stream) => stream.codec_type === "video");
-  if (!["Main", "High"].includes(video.profile)) {
+  if (!["Constrained Baseline", "Main", "High"].includes(video.profile)) {
     console.log(each.format.filename);
   }
 });
