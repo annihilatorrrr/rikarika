@@ -926,20 +926,34 @@ const playfile = function (event, file = null) {
     document.querySelector("#downloadLink").href = href;
     document.querySelector("#downloadLink").download = decodeURIComponent(href).split("/")[2];
     showOSD(`<i class="fa fa-play"></i> ${decodeURIComponent(href).split("/")[2]}`, 3000);
-    if (document.querySelector(".file.highlight a").dataset.thumb) {
-      const thumbURL = document.querySelector(".file.highlight a").dataset.thumb;
+    if (
+      document.querySelector(".file.highlight a").dataset.avif ||
+      document.querySelector(".file.highlight a").dataset.thumb
+    ) {
+      const isAVIF = Boolean(document.querySelector(".file.highlight a").dataset.avif);
       const map = [];
-      for (let i = 0; i < 144; i++) {
-        const row = Math.floor(i / 12);
-        const col = i % 12;
+      const size = isAVIF ? 24 : 12;
+      for (let i = 0; i < size * size; i++) {
+        const row = Math.floor(i / size);
+        const col = i % size;
         const x = col * 160;
         const y = row * 90;
         map[i] = `-${x}px -${y}px`;
       }
       const thumbDIV = document.createElement("div");
       thumbDIV.className = "vjs-thumbnail";
-      thumbDIV.style.backgroundImage = `url("${thumbURL}")`;
-      thumbDIV.style.display = "none";
+      if (isAVIF) {
+        thumbDIV.style.backgroundImage = `url("${
+          document.querySelector(".file.highlight a").dataset.avif
+        }")`;
+      } else {
+        thumbDIV.style.backgroundImage = `url("${
+          document.querySelector(".file.highlight a").dataset.thumb
+        }")`;
+      }
+      setTimeout(() => {
+        thumbDIV.style.display = "none";
+      }, 0);
       thumbDIV.style.position = "absolute";
       thumbDIV.style.width = "160px";
       thumbDIV.style.height = "90px";
@@ -957,13 +971,13 @@ const playfile = function (event, file = null) {
           .getBoundingClientRect();
         let left = e.pageX;
         const progressRectX = progressRect.x || 0;
-        let i = Math.round(((left - progressRectX) / progressRect.width) * 144);
+        let i = Math.round(((left - progressRectX) / progressRect.width) * size * size);
 
         if (i < 0) {
           i = 0;
         }
-        if (i > 143) {
-          i = 143;
+        if (i > size * size - 1) {
+          i = size * size - 1;
         }
 
         if (map[i] && thumbDIV.style.backgroundPosition !== map[i]) {
@@ -1297,6 +1311,9 @@ window.getListing = async (scroll) => {
         div7.className = `file ${watched}`;
         a4.href = `/${entry.anime_id}/${encodeURIComponent(entry.name)}`;
         a4.dataset.thumb = `/${entry.anime_id}/${encodeURIComponent(entry.thumb)}`;
+        if (entry.avif) {
+          a4.dataset.avif = `/${entry.anime_id}/${encodeURIComponent(entry.avif)}`;
+        }
         i5.className = "fa fa-toggle-right";
         a4.appendChild(i5);
         a4.appendChild(document.createTextNode(entry.name.slice(0, -4)));
