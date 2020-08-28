@@ -7,6 +7,14 @@ const AudioContext = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
 let mediaSource = null;
 let compressor = null;
+let supportAVIF = false;
+
+const avifImg = new Image();
+avifImg.onload = function () {
+  supportAVIF = Boolean(avifImg.width > 0 && avifImg.height > 0);
+};
+avifImg.src =
+  "data:image/avif;base64,AAAAHGZ0eXBtaWYxAAAAAG1pZjFhdmlmbWlhZgAAAPJtZXRhAAAAAAAAACtoZGxyAAAAAAAAAABwaWN0AAAAAAAAAAAAAAAAZ28tYXZpZiB2MAAAAAAOcGl0bQAAAAAAAQAAAB5pbG9jAAAAAARAAAEAAQAAAAABFgABAAAAFgAAAChpaW5mAAAAAAABAAAAGmluZmUCAAAAAAEAAGF2MDFJbWFnZQAAAABnaXBycAAAAEhpcGNvAAAAFGlzcGUAAAAAAAAAAQAAAAEAAAAQcGFzcAAAAAEAAAABAAAADGF2MUOBAAwAAAAAEHBpeGkAAAAAAwgICAAAABdpcG1hAAAAAAAAAAEAAQQBAoOEAAAAHm1kYXQSAAoFGAAOwCAyCxAAAAAHx1IMokpg";
 
 const center = (element) => {
   element.style.position = "absolute";
@@ -930,7 +938,8 @@ const playfile = function (event, file = null) {
       document.querySelector(".file.highlight a").dataset.avif ||
       document.querySelector(".file.highlight a").dataset.thumb
     ) {
-      const isAVIF = Boolean(document.querySelector(".file.highlight a").dataset.avif);
+      const isAVIF =
+        supportAVIF && Boolean(document.querySelector(".file.highlight a").dataset.avif);
       const map = [];
       const size = isAVIF ? 24 : 12;
       for (let i = 0; i < size * size; i++) {
