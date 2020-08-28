@@ -37,6 +37,7 @@ const {
   ANIME_PATH,
   ANIME_NEW_PATH,
   ANIME_THUMB_PATH,
+  ANIME_AVIF_PATH,
   ANIME_ADD_PATH,
   WEBPUSH_GCM_API_KEY,
   WEBPUSH_SUBJECT,
@@ -159,6 +160,18 @@ chokidar
         taskList.push(JSON.stringify(["./gentile.js", filePath, jpgPath]));
       }
     }
+    const avifDir = path.dirname(filePath.replace(ANIME_PATH, ANIME_AVIF_PATH));
+    const avifPath = path.join(avifDir, `${path.basename(filePath, ".mp4")}.avif`);
+    fs.ensureDirSync(avifDir);
+    if (!fs.existsSync(avifPath)) {
+      if (workerList.length > 0) {
+        const worker = workerList.pop();
+        worker.send(JSON.stringify(["./gen-avif.js", filePath, avifPath]));
+      } else {
+        console.log(`Queued   ${avifPath}`);
+        taskList.push(JSON.stringify(["./gen-avif.js", filePath, avifPath]));
+      }
+    }
     if (process.argv.includes("--rescan")) {
       return;
     }
@@ -250,6 +263,14 @@ chokidar
     if (fs.existsSync(jpgPath)) {
       fs.removeSync(jpgPath);
       console.log(`Deleted  ${jpgPath}`);
+    }
+    const avifPath = path.join(
+      path.dirname(filePath.replace(ANIME_PATH, ANIME_AVIF_PATH)),
+      `${path.basename(filePath, ".mp4")}.avif`
+    );
+    if (fs.existsSync(avifPath)) {
+      fs.removeSync(avifPath);
+      console.log(`Deleted  ${avifPath}`);
     }
   })
   .on("ready", () => {
