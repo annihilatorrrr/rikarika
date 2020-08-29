@@ -941,7 +941,7 @@ const playfile = function (event, file = null) {
       const isAVIF =
         supportAVIF && Boolean(document.querySelector(".file.highlight a").dataset.avif);
       const map = [];
-      const size = isAVIF ? 24 : 12;
+      const size = 12;
       for (let i = 0; i < size * size; i++) {
         const row = Math.floor(i / size);
         const col = i % size;
