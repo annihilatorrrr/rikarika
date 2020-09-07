@@ -37,7 +37,7 @@ module.exports = (mp4Path, avifPath) => {
     [
       path.join(__dirname, "bin/avif-linux-x64"),
       `-e ${tmpPath}`,
-      `-o '${avifPath.replace(/'/g, "'\\''").replace("%", "%%")}'`,
+      `-o '${avifPath.replace(/'/g, "'\\''")}'`,
       "--best",
       "-q 40",
     ].join(" ")
