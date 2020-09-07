@@ -12,6 +12,7 @@ const {
   ANIME_PATH,
   ANIME_NEW_PATH,
   ANIME_THUMB_PATH,
+  ANIME_AVIF_PATH,
   ANIME_ADD_PATH,
 } = process.env;
 
@@ -32,6 +33,7 @@ const {
   const seasonList = season.map((e) => path.join(ANIME_NEW_PATH, e.season));
   const newList = titleList.map((e) => path.join(ANIME_NEW_PATH, e.season, e.title));
   const thumbList = titleList.map((e) => path.join(ANIME_THUMB_PATH, `${e.id}`));
+  const avifList = titleList.map((e) => path.join(ANIME_AVIF_PATH, `${e.id}`));
 
   console.log("Missing symlink / folders:");
   for (const entry of seasonList) {
@@ -53,6 +55,14 @@ const {
     if (
       !fs.existsSync(entry) &&
       fs.readdirSync(entry.replace(ANIME_THUMB_PATH, ANIME_PATH)).length > 0
+    ) {
+      console.log(entry);
+    }
+  }
+  for (const entry of avifList) {
+    if (
+      !fs.existsSync(entry) &&
+      fs.readdirSync(entry.replace(ANIME_AVIF_PATH, ANIME_PATH)).length > 0
     ) {
       console.log(entry);
     }
@@ -102,7 +112,7 @@ const {
     console.log(entry);
   }
 
-  console.log("Extra jpg / Missing mp4:");
+  console.log("Extra jpg:");
   for (const entry of child_process
     .execSync(`find ${ANIME_THUMB_PATH}/* -type f`, {
       maxBuffer: 1024 * 1024 * 100,
@@ -115,6 +125,32 @@ const {
     console.log(entry.replace(ANIME_PATH, ANIME_THUMB_PATH).replace(".mp4", ".jpg"));
     if (process.argv.includes("--delete")) {
       fs.removeSync(entry.replace(ANIME_PATH, ANIME_THUMB_PATH).replace(".mp4", ".jpg"));
+    }
+  }
+  for (const entry of child_process
+    .execSync(`find ${ANIME_AVIF_PATH}/* -type d`, {
+      maxBuffer: 1024 * 1024 * 100,
+    })
+    .toString()
+    .split("\n")
+    .filter((e) => !avifList.includes(e))
+    .filter((e) => e)) {
+    console.log(entry);
+  }
+
+  console.log("Extra avif:");
+  for (const entry of child_process
+    .execSync(`find ${ANIME_AVIF_PATH}/* -type f`, {
+      maxBuffer: 1024 * 1024 * 100,
+    })
+    .toString()
+    .split("\n")
+    .map((e) => e.replace(ANIME_AVIF_PATH, ANIME_PATH).replace(".avif", ".mp4"))
+    .filter((e) => !fs.existsSync(e))
+    .filter((e) => e)) {
+    console.log(entry.replace(ANIME_PATH, ANIME_AVIF_PATH).replace(".mp4", ".avif"));
+    if (process.argv.includes("--delete")) {
+      fs.removeSync(entry.replace(ANIME_PATH, ANIME_AVIF_PATH).replace(".mp4", ".avif"));
     }
   }
   knex.destroy();

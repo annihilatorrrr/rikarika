@@ -6,7 +6,7 @@ const child_process = require("child_process");
 const OpenCC = require("opencc");
 const opencc = new OpenCC("t2s.json");
 
-const { ANIME_PATH, ANIME_THUMB_PATH } = process.env;
+const { ANIME_PATH, ANIME_THUMB_PATH, ANIME_AVIF_PATH } = process.env;
 
 const fileList = child_process
   .execSync(`find -L ${ANIME_PATH} -type f -name "*.mp4"`, {
@@ -78,6 +78,14 @@ const cleanup = (id, altFilePath) => {
     if (fs.existsSync(jpgPath)) {
       console.log(`Deleting ${jpgPath}`);
       fs.removeSync(jpgPath);
+    }
+    const avifPath = path.join(
+      path.dirname(altFilePath.replace(ANIME_PATH, ANIME_AVIF_ATH)),
+      `${path.basename(altFilePath, ".mp4")}.avif`
+    );
+    if (fs.existsSync(avifPath)) {
+      console.log(`Deleting ${avifPath}`);
+      fs.removeSync(avifPath);
     }
   }
 };
