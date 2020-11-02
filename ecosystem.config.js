@@ -11,7 +11,7 @@ module.exports = {
     {
       name: "rikarika-workers",
       script: "watch.js",
-      node_args: "--max-old-space-size=14336",
+      node_args: "--max-old-space-size=4096",
       instances: 1,
       autorestart: true,
       watch: false,
