@@ -482,9 +482,10 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
       if (field == "pattern") {
         $scope.hits[index].pattern = Array.from(
           new Set(
-            [$scope.hits[index].title.chinese, $scope.hits[index].title.romaji].map((e) =>
-              e.toLowerCase().replace(/ /g, ".*")
-            )
+            [
+              $scope.hits[index].title.chinese,
+              $scope.hits[index].title.romaji.replace(/[\W]+/g, ".*").replace(/\.\*$/, ""),
+            ].map((e) => e.toLowerCase().replace(/ /g, ".*"))
           )
         ).join("|");
         return;
@@ -493,7 +494,9 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
       if (field == "pattern2") {
         $scope.hits[index].pattern2 = $scope.hits[index].title.romaji
           .toLowerCase()
-          .replace(/ /g, ".*");
+          .replace(/ /g, ".*")
+          .replace(/[\W]+/g, ".*")
+          .replace(/\.\*$/, "");
         return;
       }
 
