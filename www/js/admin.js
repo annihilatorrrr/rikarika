@@ -2,8 +2,9 @@ var ruTorrentHost = document.querySelector("meta[name=rutorrent-host]").getAttri
 var ruTorrentHost2 = document.querySelector("meta[name=rutorrent-host-2]").getAttribute("content");
 var app = angular.module("myAniList", []);
 app.controller("searchAniList", function ($scope, $http, $filter) {
-  $scope.start_from_year = 2020;
-  $scope.start_to_year = 2020;
+  var d = new Date();
+  $scope.start_from_year = d.getFullYear();
+  $scope.start_to_year = d.getFullYear();
   $scope.start_from_month = 1;
   $scope.start_to_month = 12;
   $scope.score = -1;
