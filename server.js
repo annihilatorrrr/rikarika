@@ -70,7 +70,7 @@ app.get(/.*\/$/, (req, res) => {
       fs
         .readFileSync(path.join(__dirname, `view/${view}.html`), "utf8")
         .replace("WEBPUSH_PUBLIC_KEY", WEBPUSH_PUBLIC_KEY)
-        .replace("DONATE_URL", DONATE_URL)
+        .replace(/DONATE_URL/g, DONATE_URL)
     );
   } else {
     res.send(fs.readFileSync(path.join(__dirname, "view/login.html")));
@@ -106,6 +106,11 @@ app.use(/\/[^\.\/]+$/, (req, res, next) => {
   } else {
     return res.sendStatus(403);
   }
+});
+
+app.get("/donate-code", async (req, res) => {
+  res.type("image/jpeg");
+  return res.send(fs.readFileSync(path.join(__dirname, "www", "donate-code.jpg")));
 });
 
 app.get("/motd", async (req, res) => {
