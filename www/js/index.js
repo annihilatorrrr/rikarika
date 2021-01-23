@@ -268,10 +268,14 @@ if (iOS || android) {
   document.querySelector("#info").style.display = "none";
   document.querySelector("#list").style.display = "";
 } else {
-  // if(window.CSS && CSS.supports && (CSS.supports("backdrop-filter", "blur()") || CSS.supports("-webkit-backdrop-filter", "blur()"))){
-  //   document.querySelector("#list").classList.add("glass");
-  //   document.querySelector("#info").classList.add("glass");
-  // }
+  if (
+    window.CSS &&
+    CSS.supports &&
+    (CSS.supports("backdrop-filter", "blur()") || CSS.supports("-webkit-backdrop-filter", "blur()"))
+  ) {
+    document.querySelector("#list").classList.add("glass");
+    document.querySelector("#info").classList.add("glass");
+  }
   if (window.matchMedia("(display-mode: standalone)").matches) {
     if (window.screen.width > 1366 && window.screen.height > 800) {
       window.resizeTo(

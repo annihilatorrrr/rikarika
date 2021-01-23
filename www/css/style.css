@@ -37,11 +37,11 @@ div {
 
 #list.glass,
 #info.glass {
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: initial;
+  backdrop-filter: blur(80px) brightness(0.8);
+  -webkit-backdrop-filter: blur(80px);
   text-shadow: 0 0 5px rgba(0, 0, 0, 1), 0 0 10px rgba(0, 0, 0, 1);
   background-color: transparent;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.9);
 }
 
 #ambient,
@@ -236,7 +236,7 @@ a {
   display: inline-block;
   opacity: 0;
   font-size: 2em;
-  z-index: 2;
+  z-index: 4;
   cursor: pointer;
   position: fixed;
   top: 0;
@@ -270,7 +270,7 @@ a {
   visibility: hidden;
   opacity: 0;
   font-size: 2vw;
-  z-index: 4;
+  z-index: 2;
   position: fixed;
   top: 0;
   right: 0;
