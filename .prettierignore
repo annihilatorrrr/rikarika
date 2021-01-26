@@ -3,6 +3,7 @@
 .gitignore
 .prettierignore
 *.sh
+www/*.jpg
 www/*.png
 www/*.txt
 www/css/font-awesome.css
