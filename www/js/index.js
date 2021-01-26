@@ -305,8 +305,7 @@ if (iOS || android) {
     hidingInfoBtn = setTimeout(hideInfoBtn, 3000);
   };
   document.body.onkeypress = function (event) {
-    if (event.charCode === 96) {
-      // ` backtick key
+    if (event.code === "Backquote") {
       document.querySelector("#menu").style.display =
         document.querySelector("#menu").style.display === "block" ? "none" : "block";
       document.querySelector("#infoBtn").style.display =
@@ -530,7 +529,7 @@ const fillBorder = function () {
 };
 
 const playfile = function (event, file = null) {
-  if (event && event.which !== 1) {
+  if (event && event.button !== 0) {
     return;
   }
   const href =
@@ -836,59 +835,46 @@ const playfile = function (event, file = null) {
       document.body.onkeyup = (e) => {
         if (e.target.id !== "search") {
           if (e.ctrlKey) {
-            if (e.which === 37) {
-              // Ctrl + left
+            if (e.code === "ArrowLeft") {
               fastBackward(30);
             }
-            if (e.which === 39) {
-              // Ctrl + right
+            if (e.code === "ArrowRight") {
               fastForward(30);
             }
           } else {
-            if (e.which === 32) {
-              // space
+            if (e.code === "Space") {
               playpause();
             }
-            if (e.which === 37) {
-              // left
+            if (e.code === "ArrowLeft") {
               fastBackward(5);
             }
-            if (e.which === 39) {
-              // right
+            if (e.code === "ArrowRight") {
               fastForward(5);
             }
-            if (e.which === 38) {
-              // up
+            if (e.code === "ArrowUp") {
               window.vjs.volume(window.vjs.volume() > 0.9 ? 1 : window.vjs.volume() + 0.1);
               showOSD(`<i class="fa fa-volume-up"></i> ${parseInt(window.vjs.volume() * 100, 10)}`);
             }
-            if (e.which === 40) {
-              // down
+            if (e.code === "ArrowDown") {
               window.vjs.volume(window.vjs.volume() < 0.1 ? 0 : window.vjs.volume() - 0.1);
               showOSD(`<i class="fa fa-volume-up"></i> ${parseInt(window.vjs.volume() * 100, 10)}`);
             }
-            if (e.which === 33) {
-              // pageup
+            if (e.code === "PageUp") {
               window.playPrev();
             }
-            if (e.which === 34) {
-              // pagedown
+            if (e.code === "PageDown") {
               window.playNext();
             }
-            if (e.which === 13) {
-              // enter
+            if (e.code === "Enter") {
               toggleFullScreen(document.documentElement);
             }
-            if (e.which === 77) {
-              // M
+            if (e.code === "KeyM") {
               window.vjs.volume(window.vjs.volume() > 0 ? 0 : 1);
             }
-            if (e.which === 67) {
-              // C
+            if (e.code === "KeyC") {
               captureScreen();
             }
-            if (e.which === 66) {
-              // B
+            if (e.code === "KeyB") {
               fillBorder();
             }
           }
@@ -896,23 +882,19 @@ const playfile = function (event, file = null) {
       };
       document.body.onkeydown = (e) => {
         if (e.target.id !== "search") {
-          if (e.which >= 37 && e.which <= 40) {
+          if (["ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown"].includes(e.code)) {
             e.preventDefault();
           }
-          if (e.which === 32) {
-            // space
+          if (e.code === "Space") {
             e.preventDefault();
           }
-          if (e.which === 33) {
-            // pageup
+          if (e.code === "PageUp") {
             e.preventDefault();
           }
-          if (e.which === 34) {
-            // pagedown
+          if (e.code === "PageDown") {
             e.preventDefault();
           }
-          if (e.which === 13) {
-            // enter
+          if (e.code === "Enter") {
             e.preventDefault();
           }
         }
@@ -1109,7 +1091,7 @@ const getInfo = async function (dirEntries) {
       const div = document.createElement("div");
       const span = document.createElement("span");
       span.onmouseup = function (event) {
-        if (event.which === 1) {
+        if (event.button === 0) {
           document.querySelector("#info div span a").onmouseup = null;
           history.pushState(null, null, `${url + encodeURIComponent(title)}/`);
           window.getListing(0);
@@ -1125,7 +1107,7 @@ const getInfo = async function (dirEntries) {
       tmp.className = "small";
       const span2 = document.createElement("span");
       span2.onmouseup = function (event) {
-        if (event.which === 1) {
+        if (event.button === 0) {
           // document.querySelector("#info div span a").onmouseup = null;
           history.pushState(null, null, url);
           window.getListing(0);
@@ -1156,7 +1138,7 @@ const getInfo = async function (dirEntries) {
 
     document.querySelectorAll("#info div span a").forEach((each) => {
       each.onclick = (event) => {
-        if (event.which === 1) {
+        if (event.button === 0) {
           event.preventDefault();
         }
       };
@@ -1167,7 +1149,7 @@ const getInfo = async function (dirEntries) {
 };
 
 const navfolder = function (event) {
-  if (event.which !== 1) {
+  if (event.button !== 0) {
     return;
   }
   document.querySelectorAll(".folder").forEach((each) => {
@@ -1440,7 +1422,7 @@ window.getListing = async (scroll) => {
     });
     document.querySelectorAll(".folder a").forEach((each) => {
       each.onclick = (event) => {
-        if (event.which === 1) {
+        if (event.button === 0) {
           event.preventDefault();
         }
       };
@@ -1450,7 +1432,7 @@ window.getListing = async (scroll) => {
     });
     document.querySelectorAll(".file a").forEach((each) => {
       each.onclick = (event) => {
-        if (event.which === 1) {
+        if (event.button === 0) {
           event.preventDefault();
         }
       };
@@ -1475,7 +1457,7 @@ window.getListing = async (scroll) => {
 };
 
 const navSearchFolder = function (event) {
-  if (event.which !== 1) {
+  if (event.button !== 0) {
     return;
   }
   document.querySelectorAll(".folder").forEach((each) => {
@@ -1528,7 +1510,7 @@ window.search = async function () {
     });
     document.querySelectorAll(".folder a").forEach((each) => {
       each.onclick = (event) => {
-        if (event.which === 1) {
+        if (event.button === 0) {
           event.preventDefault();
         }
       };

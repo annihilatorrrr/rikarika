@@ -283,7 +283,7 @@ const render = async () => {
 
   document.querySelectorAll(".folder").forEach((each) => {
     each.onmouseup = function (event) {
-      if (event.which !== 1) {
+      if (event.button !== 0) {
         return;
       }
       document.querySelectorAll(".folder").forEach((each) => {
@@ -295,14 +295,14 @@ const render = async () => {
   });
   document.querySelectorAll(".folder a").forEach((each) => {
     each.onclick = (event) => {
-      if (event.which === 1) {
+      if (event.button === 0) {
         event.preventDefault();
       }
     };
   });
   document.querySelectorAll(".file").forEach((each) => {
     each.onmouseup = function (event) {
-      if (event && event.which !== 1) {
+      if (event && event.button !== 0) {
         return;
       }
       const href = this.querySelector("a").pathname;
@@ -323,7 +323,7 @@ const render = async () => {
   });
   document.querySelectorAll(".file a").forEach((each) => {
     each.onclick = (event) => {
-      if (event.which === 1) {
+      if (event.button === 0) {
         event.preventDefault();
       }
     };
@@ -350,7 +350,7 @@ const renderSearchResult = async function (results) {
   }
   document.querySelectorAll(".folder").forEach((each) => {
     each.onmouseup = function (event) {
-      if (event.which !== 1) {
+      if (event.button !== 0) {
         return;
       }
       history.pushState(null, null, this.querySelector("a").pathname);
@@ -359,7 +359,7 @@ const renderSearchResult = async function (results) {
   });
   document.querySelectorAll(".folder a").forEach((each) => {
     each.onclick = (event) => {
-      if (event.which === 1) {
+      if (event.button === 0) {
         event.preventDefault();
       }
     };

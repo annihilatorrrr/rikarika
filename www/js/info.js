@@ -461,7 +461,7 @@ const displayRanking = function (hits, dirEntries) {
       col4.appendChild(a5);
       col4.onmouseup = navfolder; // eslint-disable-line
       col4.onclick = (event) => {
-        if (event.which === 1) {
+        if (event.button === 0) {
           event.preventDefault();
         }
       };
