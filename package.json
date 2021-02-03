@@ -36,7 +36,7 @@
     "knex": "^0.21.0",
     "mysql": "^2.18.1",
     "node-fetch": "^2.6.1",
-    "opencc": "^1.0.6",
+    "opencc": "^1.1.1",
     "web-push": "^3.4.3"
   },
   "devDependencies": {

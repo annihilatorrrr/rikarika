@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs-extra");
 const os = require("os");
 const child_process = require("child_process");
+const OpenCC = require("opencc");
 
 module.exports = (input, output) => {
   const mediaInfo = JSON.parse(
@@ -19,9 +20,61 @@ module.exports = (input, output) => {
       .toString()
   );
   const videoInfo = mediaInfo.streams.find((e) => e.codec_type === "video");
-  const skipTranscode = ["High", "Main"].includes(videoInfo.profile) && videoInfo.level <= 51;
-
+  const hasSubtitle = Boolean(
+    mediaInfo.streams.find(
+      (e) => e.codec_type === "subtitle" && ["subrip", "ass"].includes(e.codec_name)
+    )
+  );
   const tmpPath = path.join(os.tmpdir(), process.hrtime().join(""));
+  const tcSubtitleID = mediaInfo.streams
+    .filter((e) => e.codec_type === "subtitle" && ["subrip", "ass"].includes(e.codec_name))
+    .map(({ index, codec_name }) => {
+      const subtitleTempPath = `${tmpPath}.${index}.${codec_name === "subrip" ? "srt" : "ass"}`;
+      child_process.execSync(
+        [
+          "ffmpeg",
+          "-y",
+          "-hide_banner",
+          "-loglevel warning",
+          "-nostats",
+          `-i '${input.replace(/'/g, "'\\''")}'`,
+          `-map 0:${index}`,
+          `'${subtitleTempPath}'`,
+        ].join(" ")
+      );
+      const subtitleText = fs.readFileSync(subtitleTempPath, "utf8");
+      fs.removeSync(subtitleTempPath);
+
+      let tcGlyphCount = 0;
+      for (let glyphTC of new Set(new OpenCC("s2t.json").convertSync(subtitleText).split(""))) {
+        if (new Set(subtitleText.split("")).has(glyphTC)) {
+          tcGlyphCount++; // if the subtitle is TC it should have higher count
+        }
+      }
+      return { index, tcGlyphCount };
+    })
+    .sort((a, b) => b.tcGlyphCount - a.tcGlyphCount)[0]?.index; // select highest
+
+  const subtitleFormat =
+    mediaInfo.streams.find((e) => e.index === tcSubtitleID)?.codec_name === "subrip"
+      ? "srt"
+      : "ass";
+  const subtitleTempPath = `${tmpPath}.${subtitleFormat}`;
+  if (hasSubtitle) {
+    child_process.execSync(
+      [
+        "ffmpeg",
+        "-y",
+        "-hide_banner",
+        "-loglevel warning",
+        "-nostats",
+        `-i '${input.replace(/'/g, "'\\''")}'`,
+        `-map 0:${tcSubtitleID}`,
+        `'${subtitleTempPath}'`,
+      ].join(" ")
+    );
+  }
+
   child_process.execSync(
     [
       "ffmpeg",
@@ -44,9 +97,11 @@ module.exports = (input, output) => {
       "-strict experimental",
       "-map_metadata -1",
       "-map_chapters -1",
-      skipTranscode
+      !hasSubtitle && ["High", "Main"].includes(videoInfo.profile) && videoInfo.level <= 51
         ? "-c:v copy"
         : "-c:v libx264 -r 24000/1001 -pix_fmt yuv420p -profile:v high -preset medium",
+      hasSubtitle && subtitleFormat === "srt" ? `-vf "subtitles=${subtitleTempPath}"` : "",
+      hasSubtitle && subtitleFormat === "ass" ? `-vf "ass=${subtitleTempPath}"` : "",
       "-c:a aac",
       "-b:a 128k",
       "-movflags",
@@ -57,6 +112,7 @@ module.exports = (input, output) => {
     ].join(" ")
   );
   fs.removeSync(`${tmpPath}.wav`);
+  fs.removeSync(subtitleTempPath);
   fs.ensureDirSync(path.dirname(output));
   const { atime, mtime } = fs.statSync(path.dirname(output));
   fs.moveSync(`${tmpPath}.mp4`, output, { overwrite: true });
