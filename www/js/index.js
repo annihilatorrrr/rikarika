@@ -269,6 +269,7 @@ if (iOS || android) {
   document.querySelector("#list").style.display = "";
 } else {
   if (
+    false &&
     window.CSS &&
     CSS.supports &&
     (CSS.supports("backdrop-filter", "blur()") || CSS.supports("-webkit-backdrop-filter", "blur()"))
