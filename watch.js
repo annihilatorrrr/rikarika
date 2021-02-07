@@ -160,6 +160,18 @@ chokidar
         taskList.push(JSON.stringify(["./gentile.js", filePath, jpgPath]));
       }
     }
+    const webpDir = path.dirname(filePath.replace(ANIME_PATH, ANIME_WEBP_PATH));
+    const webpPath = path.join(webpDir, `${path.basename(filePath, ".mp4")}.webp`);
+    fs.ensureDirSync(webpDir);
+    if (!fs.existsSync(webpPath)) {
+      if (workerList.length > 0) {
+        const worker = workerList.pop();
+        worker.send(JSON.stringify(["./gen-webp.js", filePath, webpPath]));
+      } else {
+        console.log(`Queued   ${webpPath}`);
+        taskList.push(JSON.stringify(["./gen-webp.js", filePath, webpPath]));
+      }
+    }
     const avifDir = path.dirname(filePath.replace(ANIME_PATH, ANIME_AVIF_PATH));
     const avifPath = path.join(avifDir, `${path.basename(filePath, ".mp4")}.avif`);
     fs.ensureDirSync(avifDir);
