@@ -18,6 +18,7 @@ const {
   ANIME_PATH,
   ANIME_NEW_PATH,
   ANIME_THUMB_PATH,
+  ANIME_WEBP_PATH,
   ANIME_AVIF_PATH,
   RUTORRENT_HOST,
   RUTORRENT_HOST_2,
@@ -213,6 +214,11 @@ app.get("/ls", async (req, res) => {
         path.join(ANIME_THUMB_PATH, `${id}`, `${path.basename(file, ".mp4")}.jpg`)
       )
         ? `${path.basename(file, ".mp4")}.jpg`
+        : null,
+      webp: fs.existsSync(
+        path.join(ANIME_WEBP_PATH, `${id}`, `${path.basename(file, ".mp4")}.webp`)
+      )
+        ? `${path.basename(file, ".mp4")}.webp`
         : null,
       avif: fs.existsSync(
         path.join(ANIME_AVIF_PATH, `${id}`, `${path.basename(file, ".mp4")}.avif`)

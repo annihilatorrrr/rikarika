@@ -923,10 +923,9 @@ const playfile = function (event, file = null) {
     showOSD(`<i class="fa fa-play"></i> ${decodeURIComponent(href).split("/")[2]}`, 3000);
     if (
       document.querySelector(".file.highlight a").dataset.avif ||
+      document.querySelector(".file.highlight a").dataset.webp ||
       document.querySelector(".file.highlight a").dataset.thumb
     ) {
-      const isAVIF =
-        supportAVIF && Boolean(document.querySelector(".file.highlight a").dataset.avif);
       const map = [];
       const size = 12;
       for (let i = 0; i < size * size; i++) {
@@ -938,9 +937,13 @@ const playfile = function (event, file = null) {
       }
       const thumbDIV = document.createElement("div");
       thumbDIV.className = "vjs-thumbnail";
-      if (isAVIF) {
+      if (supportAVIF && Boolean(document.querySelector(".file.highlight a").dataset.avif)) {
         thumbDIV.style.backgroundImage = `url("${
           document.querySelector(".file.highlight a").dataset.avif
+        }")`;
+      } else if (Boolean(document.querySelector(".file.highlight a").dataset.webp)) {
+        thumbDIV.style.backgroundImage = `url("${
+          document.querySelector(".file.highlight a").dataset.webp
         }")`;
       } else {
         thumbDIV.style.backgroundImage = `url("${
@@ -1307,6 +1310,9 @@ window.getListing = async (scroll) => {
         div7.className = `file ${watched}`;
         a4.href = `/${entry.anime_id}/${encodeURIComponent(entry.name)}`;
         a4.dataset.thumb = `/${entry.anime_id}/${encodeURIComponent(entry.thumb)}`;
+        if (entry.webp) {
+          a4.dataset.webp = `/${entry.anime_id}/${encodeURIComponent(entry.webp)}`;
+        }
         if (entry.avif) {
           a4.dataset.avif = `/${entry.anime_id}/${encodeURIComponent(entry.avif)}`;
         }
