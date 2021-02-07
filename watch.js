@@ -8,10 +8,10 @@ const fs = require("fs-extra");
 
 if (!cluster.isMaster) {
   process.on("message", (message) => {
-    const [task, input, output] = JSON.parse(message);
+    const [task, input, output, arg3, arg4] = JSON.parse(message);
     if (fs.existsSync(input)) {
       console.log(`Building ${output}`);
-      require(task)(input, output);
+      require(task)(input, output, arg3, arg4);
     } else {
       console.log(`Gone     ${output}`);
     }
@@ -149,40 +149,22 @@ chokidar
       }
     }
 
-    const jpgDir = path.dirname(filePath.replace(ANIME_PATH, ANIME_THUMB_PATH));
-    const jpgPath = path.join(jpgDir, `${path.basename(filePath, ".mp4")}.jpg`);
-    fs.ensureDirSync(jpgDir);
-    if (!fs.existsSync(jpgPath)) {
-      if (workerList.length > 0) {
-        const worker = workerList.pop();
-        worker.send(JSON.stringify(["./gentile.js", filePath, jpgPath]));
-      } else {
-        console.log(`Queued   ${jpgPath}`);
-        taskList.push(JSON.stringify(["./gentile.js", filePath, jpgPath]));
-      }
-    }
+    const pngDir = path.dirname(filePath.replace(ANIME_PATH, ANIME_THUMB_PATH));
+    const pngPath = path.join(pngDir, `${path.basename(filePath, ".mp4")}.png`);
     const webpDir = path.dirname(filePath.replace(ANIME_PATH, ANIME_WEBP_PATH));
     const webpPath = path.join(webpDir, `${path.basename(filePath, ".mp4")}.webp`);
-    fs.ensureDirSync(webpDir);
-    if (!fs.existsSync(webpPath)) {
-      if (workerList.length > 0) {
-        const worker = workerList.pop();
-        worker.send(JSON.stringify(["./gen-webp.js", filePath, webpPath]));
-      } else {
-        console.log(`Queued   ${webpPath}`);
-        taskList.push(JSON.stringify(["./gen-webp.js", filePath, webpPath]));
-      }
-    }
     const avifDir = path.dirname(filePath.replace(ANIME_PATH, ANIME_AVIF_PATH));
     const avifPath = path.join(avifDir, `${path.basename(filePath, ".mp4")}.avif`);
+    fs.ensureDirSync(pngDir);
+    fs.ensureDirSync(webpDir);
     fs.ensureDirSync(avifDir);
-    if (!fs.existsSync(avifPath)) {
+    if (!fs.existsSync(pngPath)) {
       if (workerList.length > 0) {
         const worker = workerList.pop();
-        worker.send(JSON.stringify(["./gen-avif.js", filePath, avifPath]));
+        worker.send(JSON.stringify(["./gentile.js", filePath, pngPath, webpPath, avifPath]));
       } else {
-        console.log(`Queued   ${avifPath}`);
-        taskList.push(JSON.stringify(["./gen-avif.js", filePath, avifPath]));
+        console.log(`Queued   ${pngPath}`);
+        taskList.push(JSON.stringify(["./gentile.js", filePath, pngPath, webpPath, avifPath]));
       }
     }
     if (process.argv.includes("--rescan")) {

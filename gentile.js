@@ -1,6 +1,8 @@
 const child_process = require("child_process");
+const path = require("path");
+const fs = require("fs-extra");
 
-module.exports = (mp4Path, jpgPath) => {
+module.exports = (mp4Path, pngPath, webpPath, avifPath) => {
   const nb_frames = JSON.parse(
     child_process
       .execSync(
@@ -26,7 +28,31 @@ module.exports = (mp4Path, jpgPath) => {
       "-frames 1",
       `-vf "select=not(mod(n\\,${Math.floor(nb_frames / 144) + 1})),scale=160:90,tile=12x12"`,
       "-qscale:v 2 ",
-      `'${jpgPath.replace(/'/g, "'\\''")}'`,
+      `'${pngPath.replace(/'/g, "'\\''")}'`,
     ].join(" ")
   );
+
+  if (!fs.existsSync(webpPath)) {
+    child_process.execSync(
+      [
+        "cwebp",
+        "-quiet",
+        "-m 6", // compression level (0-6, default 4)
+        "-q 10", // quality (0-100, default 75)
+        `${pngPath}`,
+        `-o '${webpPath.replace(/'/g, "'\\''")}'`,
+      ].join(" ")
+    );
+  }
+  if (!fs.existsSync(avifPath)) {
+    child_process.execSync(
+      [
+        path.join(__dirname, "bin/avif-linux-x64"),
+        `-e ${pngPath}`,
+        `-o '${avifPath.replace(/'/g, "'\\''")}'`,
+        "--best",
+        "-q 40",
+      ].join(" ")
+    );
+  }
 };
