@@ -42,7 +42,7 @@ module.exports = (input, output) => {
           `'${subtitleTempPath}'`,
         ].join(" ")
       );
-      const subtitleText = fs.readFileSync(subtitleTempPath, "utf8");
+      const subtitleText = fs.readFileSync(subtitleTempPath, "utf8").replace(/[ -~]/g, "");
       fs.removeSync(subtitleTempPath);
 
       let tcGlyphCount = 0;
