@@ -32,6 +32,18 @@ module.exports = (mp4Path, pngPath, webpPath, avifPath) => {
     ].join(" ")
   );
 
+  child_process.execSync(
+    [
+      "ffmpeg",
+      "-loglevel panic",
+      "-y",
+      "-i",
+      `'${pngPath.replace(/'/g, "'\\''")}'`,
+      "-qscale:v 2 ",
+      `'${pngPath.replace(/'/g, "'\\''").replace(".png", ".jpg")}'`,
+    ].join(" ")
+  );
+
   if (!fs.existsSync(webpPath)) {
     child_process.execSync(
       [
@@ -39,7 +51,7 @@ module.exports = (mp4Path, pngPath, webpPath, avifPath) => {
         "-quiet",
         "-m 6", // compression level (0-6, default 4)
         "-q 10", // quality (0-100, default 75)
-        `${pngPath}`,
+        `'${pngPath}'`,
         `-o '${webpPath.replace(/'/g, "'\\''")}'`,
       ].join(" ")
     );
@@ -48,7 +60,7 @@ module.exports = (mp4Path, pngPath, webpPath, avifPath) => {
     child_process.execSync(
       [
         path.join(__dirname, "bin/avif-linux-x64"),
-        `-e ${pngPath}`,
+        `-e '${pngPath}'`,
         `-o '${avifPath.replace(/'/g, "'\\''")}'`,
         "--best",
         "-q 40",
