@@ -212,16 +212,17 @@ chokidar
         ["", new Date().toISOString(), title, season, fileName, ""].join("\n")
       );
       // no need to await
-      const escBracket = (str) => str.replace(/([\()])/g, "\\$1");
       fetch(`https://api.telegram.org/${TELEGRAM_TOKEN}/sendMessage`, {
         method: "POST",
         body: new URLSearchParams({
           chat_id: TELEGRAM_ID,
           parse_mode: "Markdown",
           text: [
-            `[${escBracket(title)}](https://${WEB_HOST}/${season}/${escBracket(
-              encodeURIComponent(title)
-            )}/)`,
+            `[${title.replace(/[\[\]]/g, "")}](https://${WEB_HOST}/${season}/${encodeURIComponent(
+              title
+            )
+              .replace(/([\(])/g, "%28")
+              .replace(/([\)])/g, "%29")}/)`,
             `[${season}](https://${WEB_HOST}/${season}/)`,
             `\`${fileName}\``,
           ].join("\n"),
