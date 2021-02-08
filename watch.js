@@ -37,6 +37,7 @@ const {
   ANIME_PATH,
   ANIME_NEW_PATH,
   ANIME_THUMB_PATH,
+  ANIME_PNG_PATH,
   ANIME_WEBP_PATH,
   ANIME_AVIF_PATH,
   ANIME_ADD_PATH,
@@ -149,8 +150,10 @@ chokidar
       }
     }
 
-    const pngDir = path.dirname(filePath.replace(ANIME_PATH, ANIME_THUMB_PATH));
+    const pngDir = path.dirname(filePath.replace(ANIME_PATH, ANIME_PNG_PATH));
     const pngPath = path.join(pngDir, `${path.basename(filePath, ".mp4")}.png`);
+    const jpgDir = path.dirname(filePath.replace(ANIME_PATH, ANIME_THUMB_PATH));
+    const jpgPath = path.join(jpgDir, `${path.basename(filePath, ".mp4")}.jpg`);
     const webpDir = path.dirname(filePath.replace(ANIME_PATH, ANIME_WEBP_PATH));
     const webpPath = path.join(webpDir, `${path.basename(filePath, ".mp4")}.webp`);
     const avifDir = path.dirname(filePath.replace(ANIME_PATH, ANIME_AVIF_PATH));
@@ -161,10 +164,14 @@ chokidar
     if (!fs.existsSync(pngPath)) {
       if (workerList.length > 0) {
         const worker = workerList.pop();
-        worker.send(JSON.stringify(["./gentile.js", filePath, pngPath, webpPath, avifPath]));
+        worker.send(
+          JSON.stringify(["./gentile.js", filePath, pngPath, jpgPath, webpPath, avifPath])
+        );
       } else {
         console.log(`Queued   ${pngPath}`);
-        taskList.push(JSON.stringify(["./gentile.js", filePath, pngPath, webpPath, avifPath]));
+        taskList.push(
+          JSON.stringify(["./gentile.js", filePath, pngPath, jpgPath, webpPath, avifPath])
+        );
       }
     }
     if (process.argv.includes("--rescan")) {

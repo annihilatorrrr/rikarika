@@ -2,7 +2,7 @@ const child_process = require("child_process");
 const path = require("path");
 const fs = require("fs-extra");
 
-module.exports = (mp4Path, pngPath, webpPath, avifPath) => {
+module.exports = (mp4Path, pngPath, jpgPath, webpPath, avifPath) => {
   const nb_frames = JSON.parse(
     child_process
       .execSync(
@@ -40,7 +40,7 @@ module.exports = (mp4Path, pngPath, webpPath, avifPath) => {
       "-i",
       `'${pngPath.replace(/'/g, "'\\''")}'`,
       "-qscale:v 2 ",
-      `'${pngPath.replace(/'/g, "'\\''").replace(".png", ".jpg")}'`,
+      `'${jpgPath.replace(/'/g, "'\\''")}'`,
     ].join(" ")
   );
 
@@ -49,8 +49,8 @@ module.exports = (mp4Path, pngPath, webpPath, avifPath) => {
       [
         "cwebp",
         "-quiet",
-        "-m 6", // compression level (0-6, default 4)
-        "-q 10", // quality (0-100, default 75)
+        "-m 6", // compression level (0-6 highest, default 4)
+        "-q 10", // quality (0-100 highest, default 75)
         `'${pngPath}'`,
         `-o '${webpPath.replace(/'/g, "'\\''")}'`,
       ].join(" ")
@@ -62,8 +62,8 @@ module.exports = (mp4Path, pngPath, webpPath, avifPath) => {
         path.join(__dirname, "bin/avif-linux-x64"),
         `-e '${pngPath}'`,
         `-o '${avifPath.replace(/'/g, "'\\''")}'`,
-        "--best",
-        "-q 40",
+        "-s 4", // speed (0-8 fastest, default 4)
+        "-q 40", // quality (0-63 lowest, default 25)
       ].join(" ")
     );
   }
