@@ -8,10 +8,10 @@ const fs = require("fs-extra");
 
 if (!cluster.isMaster) {
   process.on("message", (message) => {
-    const [task, input, output, arg3, arg4] = JSON.parse(message);
+    const [task, input, output, arg3, arg4, arg5] = JSON.parse(message);
     if (fs.existsSync(input)) {
       console.log(`Building ${output}`);
-      require(task)(input, output, arg3, arg4);
+      require(task)(input, output, arg3, arg4, arg5);
     } else {
       console.log(`Gone     ${output}`);
     }
