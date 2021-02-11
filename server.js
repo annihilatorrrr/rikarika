@@ -110,7 +110,6 @@ app.get(/.*\/$/, (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  console.log(req.ip);
   if (req.body.password === WEB_PASSWORD || req.ip === WEB_WHITELIST_IP) {
     res.setHeader(
       "Set-Cookie",
