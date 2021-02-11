@@ -43,8 +43,34 @@ const knex = require("knex")({
 
 const app = express();
 
-app.set("trust proxy", 1);
 app.disable("x-powered-by");
+
+app.set("trust proxy", 1);
+
+app.use((req, res, next) => {
+  res.set("Referrer-Policy", "no-referrer");
+  res.set("X-Content-Type-Options", "nosniff");
+  res.set(
+    "Content-Security-Policy",
+    [
+      "default-src 'none'",
+      "script-src 'self'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' * data:",
+      "font-src * 'self'",
+      "media-src 'self'",
+      "worker-src 'self'",
+      "form-action 'self'",
+      "base-uri 'none'",
+      "frame-ancestors 'none'",
+      "block-all-mixed-content",
+      "manifest-src 'self'",
+      "connect-src * 'self'",
+    ].join("; ")
+  );
+  next();
+});
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -84,6 +110,7 @@ app.get(/.*\/$/, (req, res) => {
 });
 
 app.post("/login", (req, res) => {
+  console.log(req.ip);
   if (req.body.password === WEB_PASSWORD || req.ip === WEB_WHITELIST_IP) {
     res.setHeader(
       "Set-Cookie",
@@ -331,14 +358,14 @@ app.get("/search", async (req, res) => {
 });
 
 app.post("/subscribe", async (req, res) => {
-  console.log(`subscription registering: ${req.body.endpoint}`);
+  // console.log(`subscription registering: ${req.body.endpoint}`);
   try {
     await knex("subscription").insert({
       id: crypto.createHmac("sha256", "").update(req.body.endpoint).digest("base64"),
       json: JSON.stringify(req.body),
     });
   } catch (e) {
-    console.log("already registered");
+    // console.log("already registered");
   }
   return res.send("subscription registered");
 });
