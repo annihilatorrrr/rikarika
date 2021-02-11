@@ -42,6 +42,8 @@ const knex = require("knex")({
 });
 
 const app = express();
+
+app.set("trust proxy", 1);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -81,7 +83,7 @@ app.get(/.*\/$/, (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  if (req.body.password === WEB_PASSWORD || req.headers["x-real-ip"] === WEB_WHITELIST_IP) {
+  if (req.body.password === WEB_PASSWORD || req.ip === WEB_WHITELIST_IP) {
     res.setHeader(
       "Set-Cookie",
       `session=${crypto
