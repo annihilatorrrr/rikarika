@@ -44,6 +44,7 @@ const knex = require("knex")({
 const app = express();
 
 app.set("trust proxy", 1);
+app.disable("x-powered-by");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
