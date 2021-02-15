@@ -50,7 +50,7 @@ module.exports = (mp4Path, pngPath, jpgPath, webpPath, avifPath) => {
         "cwebp",
         "-quiet",
         "-m 6", // compression level (0-6 highest, default 4)
-        "-q 10", // quality (0-100 highest, default 75)
+        "-q 15", // quality (0-100 highest, default 75)
         `'${pngPath}'`,
         `-o '${webpPath.replace(/'/g, "'\\''")}'`,
       ].join(" ")
