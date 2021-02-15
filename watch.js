@@ -172,6 +172,7 @@ chokidar
         taskList.push(
           JSON.stringify(["./gentile.js", filePath, pngPath, jpgPath, webpPath, avifPath])
         );
+        taskList.sort();
       }
     }
     if (process.argv.includes("--rescan")) {
@@ -341,6 +342,7 @@ if (!process.argv.includes("--rescan")) {
       } else {
         console.log(`Queued   ${newFilePath}`);
         taskList.push(JSON.stringify(["./add-anime.js", filePath, newFilePath]));
+        taskList.sort();
       }
     })
     .on("unlink", (filePath) => {
