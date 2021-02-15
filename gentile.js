@@ -27,8 +27,7 @@ module.exports = (mp4Path, pngPath, jpgPath, webpPath, avifPath) => {
       `'${mp4Path.replace(/'/g, "'\\''")}'`,
       "-frames 1",
       `-vf "select=not(mod(n\\,${Math.floor(nb_frames / 144) + 1})),scale=160:90,tile=12x12"`,
-      "-qscale:v 2 ",
-      `'${pngPath.replace(/'/g, "'\\''")}'`,
+      `'${pngPath.replace(/'/g, "'\\''").replace(/%/g, "%%")}'`,
     ].join(" ")
   );
 
