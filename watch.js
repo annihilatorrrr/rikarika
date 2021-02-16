@@ -158,7 +158,7 @@ chokidar
     fs.ensureDirSync(pngDir);
     fs.ensureDirSync(webpDir);
     fs.ensureDirSync(avifDir);
-    if (!fs.existsSync(pngPath)) {
+    if (!fs.existsSync(pngPath) || !fs.existsSync(webpPath) || !fs.existsSync(avifPath)) {
       if (workerList.length > 0) {
         const worker = workerList.pop();
         worker.send(JSON.stringify(["./gentile.js", filePath, pngPath, webpPath, avifPath]));
@@ -253,6 +253,14 @@ chokidar
   })
   .on("unlink", (filePath) => {
     console.log(`Deleted  ${filePath}`);
+    const pngPath = path.join(
+      path.dirname(filePath.replace(ANIME_PATH, ANIME_PNG_PATH)),
+      `${path.basename(filePath, ".mp4")}.png`
+    );
+    if (fs.existsSync(pngPath)) {
+      fs.removeSync(pngPath);
+      console.log(`Deleted  ${pngPath}`);
+    }
     const webpPath = path.join(
       path.dirname(filePath.replace(ANIME_PATH, ANIME_WEBP_PATH)),
       `${path.basename(filePath, ".mp4")}.webp`
