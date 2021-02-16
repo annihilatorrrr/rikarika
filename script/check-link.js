@@ -11,9 +11,9 @@ const {
   DB_HOST,
   ANIME_PATH,
   ANIME_NEW_PATH,
+  ANIME_PNG_PATH,
   ANIME_WEBP_PATH,
   ANIME_AVIF_PATH,
-  ANIME_ADD_PATH,
 } = process.env;
 
 (async () => {
@@ -32,6 +32,7 @@ const {
   const list = titleList.map((e) => path.join(ANIME_PATH, `${e.id}`));
   const seasonList = season.map((e) => path.join(ANIME_NEW_PATH, e.season));
   const newList = titleList.map((e) => path.join(ANIME_NEW_PATH, e.season, e.title));
+  const pngList = titleList.map((e) => path.join(ANIME_PNG_PATH, `${e.id}`));
   const webpList = titleList.map((e) => path.join(ANIME_WEBP_PATH, `${e.id}`));
   const avifList = titleList.map((e) => path.join(ANIME_AVIF_PATH, `${e.id}`));
 
@@ -48,6 +49,14 @@ const {
   }
   for (const entry of newList) {
     if (!fs.existsSync(entry) || !fs.statSync(entry).isDirectory()) {
+      console.log(entry);
+    }
+  }
+  for (const entry of pngList) {
+    if (
+      !fs.existsSync(entry) &&
+      fs.readdirSync(entry.replace(ANIME_PNG_PATH, ANIME_PATH)).length > 0
+    ) {
       console.log(entry);
     }
   }
@@ -99,6 +108,33 @@ const {
     .filter((e) => !newList.includes(e))
     .filter((e) => e)) {
     console.log(entry);
+  }
+
+  for (const entry of child_process
+    .execSync(`find ${ANIME_PNG_PATH}/* -type d`, {
+      maxBuffer: 1024 * 1024 * 100,
+    })
+    .toString()
+    .split("\n")
+    .filter((e) => !pngList.includes(e))
+    .filter((e) => e)) {
+    console.log(entry);
+  }
+
+  console.log("Extra png:");
+  for (const entry of child_process
+    .execSync(`find ${ANIME_PNG_PATH}/* -type f`, {
+      maxBuffer: 1024 * 1024 * 100,
+    })
+    .toString()
+    .split("\n")
+    .map((e) => e.replace(ANIME_PNG_PATH, ANIME_PATH).replace(".png", ".mp4"))
+    .filter((e) => !fs.existsSync(e))
+    .filter((e) => e)) {
+    console.log(entry.replace(ANIME_PATH, ANIME_PNG_PATH).replace(".mp4", ".png"));
+    if (process.argv.includes("--delete")) {
+      fs.removeSync(entry.replace(ANIME_PATH, ANIME_PNG_PATH).replace(".mp4", ".png"));
+    }
   }
 
   for (const entry of child_process
