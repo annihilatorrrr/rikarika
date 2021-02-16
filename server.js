@@ -17,7 +17,6 @@ const {
   ES_PORT,
   ANIME_PATH,
   ANIME_NEW_PATH,
-  ANIME_THUMB_PATH,
   ANIME_WEBP_PATH,
   ANIME_AVIF_PATH,
   RUTORRENT_HOST,
@@ -241,11 +240,6 @@ app.get("/ls", async (req, res) => {
       name: file,
       modified: fs.lstatSync(path.join(ANIME_PATH, `${id}`, file)).mtime,
       size: fs.lstatSync(path.join(ANIME_PATH, `${id}`, file)).size,
-      thumb: fs.existsSync(
-        path.join(ANIME_THUMB_PATH, `${id}`, `${path.basename(file, ".mp4")}.jpg`)
-      )
-        ? `${path.basename(file, ".mp4")}.jpg`
-        : null,
       webp: fs.existsSync(
         path.join(ANIME_WEBP_PATH, `${id}`, `${path.basename(file, ".mp4")}.webp`)
       )

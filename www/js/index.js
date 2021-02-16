@@ -923,8 +923,7 @@ const playfile = function (event, file = null) {
     showOSD(`<i class="fa fa-play"></i> ${decodeURIComponent(href).split("/")[2]}`, 3000);
     if (
       document.querySelector(".file.highlight a").dataset.avif ||
-      document.querySelector(".file.highlight a").dataset.webp ||
-      document.querySelector(".file.highlight a").dataset.thumb
+      document.querySelector(".file.highlight a").dataset.webp
     ) {
       const map = [];
       const size = 12;
@@ -944,10 +943,6 @@ const playfile = function (event, file = null) {
       } else if (Boolean(document.querySelector(".file.highlight a").dataset.webp)) {
         thumbDIV.style.backgroundImage = `url("${
           document.querySelector(".file.highlight a").dataset.webp
-        }")`;
-      } else {
-        thumbDIV.style.backgroundImage = `url("${
-          document.querySelector(".file.highlight a").dataset.thumb
         }")`;
       }
       setTimeout(() => {
@@ -1309,7 +1304,6 @@ window.getListing = async (scroll) => {
         }
         div7.className = `file ${watched}`;
         a4.href = `/${entry.anime_id}/${encodeURIComponent(entry.name)}`;
-        a4.dataset.thumb = `/${entry.anime_id}/${encodeURIComponent(entry.thumb)}`;
         if (entry.webp) {
           a4.dataset.webp = `/${entry.anime_id}/${encodeURIComponent(entry.webp)}`;
         }

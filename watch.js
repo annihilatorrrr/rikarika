@@ -36,7 +36,7 @@ const {
   DB_HOST,
   ANIME_PATH,
   ANIME_NEW_PATH,
-  ANIME_THUMB_PATH,
+  ANIME_WEBP_PATH,
   ANIME_PNG_PATH,
   ANIME_WEBP_PATH,
   ANIME_AVIF_PATH,
@@ -152,8 +152,6 @@ chokidar
 
     const pngDir = path.dirname(filePath.replace(ANIME_PATH, ANIME_PNG_PATH));
     const pngPath = path.join(pngDir, `${path.basename(filePath, ".mp4")}.png`);
-    const jpgDir = path.dirname(filePath.replace(ANIME_PATH, ANIME_THUMB_PATH));
-    const jpgPath = path.join(jpgDir, `${path.basename(filePath, ".mp4")}.jpg`);
     const webpDir = path.dirname(filePath.replace(ANIME_PATH, ANIME_WEBP_PATH));
     const webpPath = path.join(webpDir, `${path.basename(filePath, ".mp4")}.webp`);
     const avifDir = path.dirname(filePath.replace(ANIME_PATH, ANIME_AVIF_PATH));
@@ -164,14 +162,10 @@ chokidar
     if (!fs.existsSync(pngPath)) {
       if (workerList.length > 0) {
         const worker = workerList.pop();
-        worker.send(
-          JSON.stringify(["./gentile.js", filePath, pngPath, jpgPath, webpPath, avifPath])
-        );
+        worker.send(JSON.stringify(["./gentile.js", filePath, pngPath, webpPath, avifPath]));
       } else {
         console.log(`Queued   ${pngPath}`);
-        taskList.push(
-          JSON.stringify(["./gentile.js", filePath, pngPath, jpgPath, webpPath, avifPath])
-        );
+        taskList.push(JSON.stringify(["./gentile.js", filePath, pngPath, webpPath, avifPath]));
         taskList.sort();
       }
     }
@@ -260,13 +254,13 @@ chokidar
   })
   .on("unlink", (filePath) => {
     console.log(`Deleted  ${filePath}`);
-    const jpgPath = path.join(
-      path.dirname(filePath.replace(ANIME_PATH, ANIME_THUMB_PATH)),
-      `${path.basename(filePath, ".mp4")}.jpg`
+    const webpPath = path.join(
+      path.dirname(filePath.replace(ANIME_PATH, ANIME_WEBP_PATH)),
+      `${path.basename(filePath, ".mp4")}.webp`
     );
-    if (fs.existsSync(jpgPath)) {
-      fs.removeSync(jpgPath);
-      console.log(`Deleted  ${jpgPath}`);
+    if (fs.existsSync(webpPath)) {
+      fs.removeSync(webpPath);
+      console.log(`Deleted  ${webpPath}`);
     }
     const avifPath = path.join(
       path.dirname(filePath.replace(ANIME_PATH, ANIME_AVIF_PATH)),

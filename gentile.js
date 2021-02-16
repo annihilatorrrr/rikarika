@@ -2,7 +2,7 @@ const child_process = require("child_process");
 const path = require("path");
 const fs = require("fs-extra");
 
-module.exports = (mp4Path, pngPath, jpgPath, webpPath, avifPath) => {
+module.exports = (mp4Path, pngPath, webpPath, avifPath) => {
   const nb_frames = JSON.parse(
     child_process
       .execSync(
@@ -28,18 +28,6 @@ module.exports = (mp4Path, pngPath, jpgPath, webpPath, avifPath) => {
       "-frames 1",
       `-vf "select=not(mod(n\\,${Math.floor(nb_frames / 144) + 1})),scale=160:90,tile=12x12"`,
       `'${pngPath.replace(/'/g, "'\\''").replace(/%/g, "%%")}'`,
-    ].join(" ")
-  );
-
-  child_process.execSync(
-    [
-      "ffmpeg",
-      "-loglevel panic",
-      "-y",
-      "-i",
-      `'${pngPath.replace(/'/g, "'\\''")}'`,
-      "-qscale:v 2 ",
-      `'${jpgPath.replace(/'/g, "'\\''")}'`,
     ].join(" ")
   );
 
