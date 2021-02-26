@@ -6,7 +6,7 @@ const child_process = require("child_process");
 const OpenCC = require("opencc");
 const opencc = new OpenCC("t2s.json");
 
-const { ANIME_PATH, ANIME_THUMB_PATH, ANIME_AVIF_PATH } = process.env;
+const { ANIME_PATH, ANIME_PNG_PATH, ANIME_WEBP_PATH, ANIME_AVIF_PATH } = process.env;
 
 const fileList = child_process
   .execSync(`find -L ${ANIME_PATH} -type f -name "*.mp4"`, {
@@ -71,16 +71,24 @@ const cleanup = (id, altFilePath) => {
     fs.removeSync(altFilePath);
     fs.utimesSync(path.dirname(altFilePath), atime, mtime);
 
-    const jpgPath = path.join(
-      path.dirname(altFilePath.replace(ANIME_PATH, ANIME_THUMB_PATH)),
-      `${path.basename(altFilePath, ".mp4")}.jpg`
+    const pngPath = path.join(
+      path.dirname(altFilePath.replace(ANIME_PATH, ANIME_PNG_PATH)),
+      `${path.basename(altFilePath, ".mp4")}.png`
     );
-    if (fs.existsSync(jpgPath)) {
-      console.log(`Deleting ${jpgPath}`);
-      fs.removeSync(jpgPath);
+    if (fs.existsSync(pngPath)) {
+      console.log(`Deleting ${pngPath}`);
+      fs.removeSync(pngPath);
+    }
+    const webpPath = path.join(
+      path.dirname(altFilePath.replace(ANIME_PATH, ANIME_WEBP_PATH)),
+      `${path.basename(altFilePath, ".mp4")}.webp`
+    );
+    if (fs.existsSync(webpPath)) {
+      console.log(`Deleting ${webpPath}`);
+      fs.removeSync(webpPath);
     }
     const avifPath = path.join(
-      path.dirname(altFilePath.replace(ANIME_PATH, ANIME_AVIF_ATH)),
+      path.dirname(altFilePath.replace(ANIME_PATH, ANIME_AVIF_PATH)),
       `${path.basename(altFilePath, ".mp4")}.avif`
     );
     if (fs.existsSync(avifPath)) {
