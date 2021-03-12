@@ -261,48 +261,40 @@ app.get("/info", async (req, res) => {
     return res.send("invalid query");
   }
   if (req.query.title) {
-    const [anime] = await knex("anime")
-      .select("id", "anilist_id")
+    const rows = await knex("anime_view")
+      .select("id", "anilist_id", "json")
       .where({
         season: req.query.season,
         title: decodeURIComponent(req.query.title),
       });
-    if (!anime) {
+    if (!rows.length) {
       return res.send({});
     }
-    return res.send(
-      await fetch(
-        `http://${ES_HOST}:${ES_PORT}/anilist/anime/${anime.anilist_id}`
-      ).then((response) => response.json())
-    );
+    return res.send({ found: true, _source: JSON.parse(rows[0].json) });
   }
-
-  const rows = await knex("anime").select("id", "anilist_id").where("season", req.query.season);
-
-  const result = await fetch(`http://${ES_HOST}:${ES_PORT}/anilist/anime/_search`, {
-    method: "POST",
-    body: JSON.stringify({
-      size: 500,
-      query: {
-        ids: {
-          type: "anime",
-          values: rows.map((row) => row.anilist_id),
-        },
-      },
-      _source: ["id", "title.chinese", "popularity", "stats.statusDistribution", "averageScore"],
-      sort: {
-        averageScore: {
-          order: "desc",
-        },
-        popularity: {
-          order: "desc",
-        },
-      },
-    }),
-    headers: { "Content-Type": "application/json" },
-  }).then((response) => response.json());
-
-  return res.send(result.hits ? result.hits.hits : []);
+  const rows = await knex("anime_view")
+    .select("id", "anilist_id", "json")
+    .where("season", req.query.season);
+  if (!rows.length) {
+    return res.send([]);
+  }
+  return res.send(
+    rows
+      .filter((e) => e.anilist_id)
+      .map((e) => {
+        const json = JSON.parse(e.json);
+        return {
+          _source: {
+            averageScore: json.averageScore,
+            id: json.id,
+            popularity: json.popularity,
+            stats: { statusDistribution: json.stats.statusDistribution },
+            title: json.title,
+          },
+        };
+      })
+      .sort((a, b) => (a._source.averageScore < b._source.averageScore ? 1 : -1))
+  );
 });
 
 app.get("/search", async (req, res) => {
