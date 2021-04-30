@@ -76,6 +76,9 @@ for (let i = 0; i < concurrency; i++) {
       worker.send(taskList.shift());
     } else {
       workerList.push(worker);
+      if (process.argv.includes("--rescan")) {
+        process.exit();
+      }
     }
   });
   workerList.push(worker);
@@ -280,6 +283,11 @@ chokidar
   })
   .on("ready", () => {
     console.log(`Scanned  ${ANIME_PATH}/**/*.mp4`);
+    if (process.argv.includes("--rescan")) {
+      if (taskList.length === 0) {
+        process.exit();
+      }
+    }
   });
 
 if (!process.argv.includes("--rescan")) {
