@@ -1054,9 +1054,9 @@ const getInfo = async function (dirEntries) {
     document.querySelector("#info").innerHTML = "";
     const season = window.location.pathname.split("/")[1];
     const title = window.location.pathname.split("/")[2];
-    const data = await fetch(
-      `/info?season=${season}&title=${encodeURIComponent(title)}`
-    ).then((res) => res.json());
+    const data = await fetch(`/info?season=${season}&title=${encodeURIComponent(title)}`).then(
+      (res) => res.json()
+    );
     if (data.found) {
       displayInfo(data._source);
     }
@@ -1211,9 +1211,9 @@ window.getListing = async (scroll) => {
     );
     window.search();
   } else {
-    const dirEntries = await fetch(
-      `/ls?path=${encodeURIComponent(window.location.pathname)}`
-    ).then((res) => res.json());
+    const dirEntries = await fetch(`/ls?path=${encodeURIComponent(window.location.pathname)}`).then(
+      (res) => res.json()
+    );
     if (!iOS && !android) {
       getInfo(dirEntries);
     }
