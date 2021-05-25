@@ -171,6 +171,7 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
       "id",
       "title.*",
       "synonyms",
+      "synonyms_chinese",
       "format",
       "episodes",
       "isAdult",
