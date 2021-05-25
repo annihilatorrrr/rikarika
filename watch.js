@@ -57,6 +57,9 @@ const knex = require("knex")({
     password: DB_PASS,
     database: DB_NAME,
   },
+  pool: {
+    min: 0,
+  },
 });
 
 const webpush = require("web-push");
@@ -66,7 +69,7 @@ webpush.setVapidDetails(WEBPUSH_SUBJECT, WEBPUSH_PUBLIC_KEY, WEBPUSH_PRIVATE_KEY
 console.log("Scanning folder...");
 const taskList = [];
 const workerList = [];
-const concurrency = Math.ceil(os.cpus().length / 8);
+const concurrency = Math.ceil(os.cpus().length / 2);
 for (let i = 0; i < concurrency; i++) {
   const worker = cluster.fork();
   worker.on("message", (filePath) => {
