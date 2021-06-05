@@ -2,6 +2,7 @@ require("dotenv").config();
 const fs = require("fs-extra");
 const path = require("path");
 const express = require("express");
+const rateLimit = require("express-rate-limit");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const crypto = require("crypto");
@@ -69,6 +70,13 @@ app.use((req, res, next) => {
   );
   next();
 });
+
+app.use(
+  new rateLimit({
+    max: 360, // limit each IP to 60 requests per 60 seconds
+    delayMs: 0, // disable delaying - full speed until the max limit is reached
+  })
+);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
