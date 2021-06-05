@@ -204,7 +204,7 @@ app.get("/list", async (req, res) => {
 });
 
 app.get("/ls", async (req, res) => {
-  if (!req.query || !req.query.path || req.query.path.indexOf("/../") >= 0) {
+  if (!req.query || !req.query.path) {
     return res.send("invalid path");
   }
   if (req.query.path.split("/").length === 2) {
