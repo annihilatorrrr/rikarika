@@ -105,9 +105,13 @@ const hideOSD = function () {
   document.querySelector("#osd").style.visibility = "hidden";
   document.querySelector("#osd").style.opacity = 0;
 };
-const showOSD = function (msg, timeout = 1000) {
+const showOSD = function (icon, msg, timeout = 1000) {
   clearTimeout(hidingOSD);
-  document.querySelector("#osd").innerHTML = msg;
+  document.querySelector("#osd i").className = "";
+  if (icon) {
+    document.querySelector("#osd i").className = `fa ${icon}`;
+  }
+  document.querySelector("#osd span").innerText = ` ${msg}`;
   document.querySelector("#osd").style.visibility = "visible";
   document.querySelector("#osd").style.opacity = 1;
   hidingOSD = setTimeout(hideOSD, timeout);
@@ -116,10 +120,10 @@ const showOSD = function (msg, timeout = 1000) {
 const playpause = () => {
   if (window.vjs.paused()) {
     window.vjs.play();
-    showOSD('<i class="fa fa-play"></i> Play');
+    showOSD("fa-play", "Play");
   } else {
     window.vjs.pause();
-    showOSD('<i class="fa fa-pause"></i> Paused');
+    showOSD("fa-pause", "Paused");
   }
 };
 
@@ -129,7 +133,7 @@ const stepForward = () => {
   setTimeout(() => {
     window.vjs.pause();
   }, 41.7);
-  showOSD('<i class="fa fa-step-forward"></i> 1 Frame');
+  showOSD("fa-step-forward", "1 Frame");
 };
 
 const stepBackward = () => {
@@ -137,7 +141,7 @@ const stepBackward = () => {
   window.vjs.currentTime(
     window.vjs.currentTime() - 0.0417 > 0 ? window.vjs.currentTime() - 0.0417 : 0
   );
-  showOSD('<i class="fa fa-step-backward"></i> 1 Frame');
+  showOSD("fa-step-backward", "1 Frame");
 };
 
 const fastForward = (seek) => {
@@ -146,18 +150,18 @@ const fastForward = (seek) => {
       ? window.vjs.duration()
       : window.vjs.currentTime() + seek
   );
-  showOSD(`<i class="fa fa-forward"></i> 00:${seek.toString().padStart(2, "0")}`);
+  showOSD("fa-forward", `00:${seek.toString().padStart(2, "0")}`);
 };
 
 const fastBackward = (seek) => {
   window.vjs.currentTime(window.vjs.currentTime() < seek ? 0 : window.vjs.currentTime() - seek);
-  showOSD(`<i class="fa fa-backward"></i> 00:${seek.toString().padStart(2, "0")}`);
+  showOSD("fa-backward", `00:${seek.toString().padStart(2, "0")}`);
 };
 
 const toggleVolumeCompress = () => {
   const { active } = document.querySelector(".vjs-compressVolume-control").dataset;
   if (active === "false") {
-    showOSD('<i class="fa fa-assistive-listening-systems"></i> Easy Listening On', 3000);
+    showOSD("fa-assistive-listening-systems", "Easy Listening On", 3000);
     document.querySelector(".vjs-compressVolume-control").dataset.active = true;
     document.querySelector(".vjs-compressVolume-control").dataset.content = "\uf2a4";
     if (audioCtx) {
@@ -166,7 +170,7 @@ const toggleVolumeCompress = () => {
       compressor.connect(audioCtx.destination);
     }
   } else {
-    showOSD('<i class="fa fa-deaf"></i> Easy Listening Off', 3000);
+    showOSD("fa-deaf", "Easy Listening Off", 3000);
     document.querySelector(".vjs-compressVolume-control").dataset.active = false;
     document.querySelector(".vjs-compressVolume-control").dataset.content = "\uf2a2";
     if (audioCtx) {
@@ -633,23 +637,17 @@ const playfile = function (event, file = null) {
         if (window.playmode === "Auto") {
           if (document.querySelector(".file.highlight").nextSibling) {
             showOSD(
-              `<i class="fa fa-toggle-right"></i> ${
-                document.querySelector(".file.highlight").nextSibling.querySelector("a").innerText
-              }`,
+              "fa-toggle-right",
+              document.querySelector(".file.highlight").nextSibling.querySelector("a").innerText,
               3000
             );
             playfile(null, document.querySelector(".file.highlight").nextSibling);
           } else {
-            showOSD("This is the last file in folder", 3000);
+            showOSD("", "This is the last file in folder", 3000);
           }
         }
         if (window.playmode === "Loop") {
-          showOSD(
-            `<i class="fa fa-toggle-right"></i> ${
-              document.querySelector(".file.highlight a").innerText
-            }`,
-            3000
-          );
+          showOSD("fa-toggle-right", document.querySelector(".file.highlight a").innerText, 3000);
           playfile(null, document.querySelector(".file.highlight"));
         }
       });
@@ -854,11 +852,11 @@ const playfile = function (event, file = null) {
             }
             if (e.code === "ArrowUp") {
               window.vjs.volume(window.vjs.volume() > 0.9 ? 1 : window.vjs.volume() + 0.1);
-              showOSD(`<i class="fa fa-volume-up"></i> ${parseInt(window.vjs.volume() * 100, 10)}`);
+              showOSD("fa-volume-up", window.vjs.volume() * 100);
             }
             if (e.code === "ArrowDown") {
               window.vjs.volume(window.vjs.volume() < 0.1 ? 0 : window.vjs.volume() - 0.1);
-              showOSD(`<i class="fa fa-volume-up"></i> ${parseInt(window.vjs.volume() * 100, 10)}`);
+              showOSD("fa-volume-up", window.vjs.volume() * 100);
             }
             if (e.code === "PageUp") {
               window.playPrev();
@@ -904,15 +902,15 @@ const playfile = function (event, file = null) {
       document.querySelector("#player").onwheel = function (e) {
         if (e.deltaY < 0) {
           window.vjs.volume(window.vjs.volume() > 0.9 ? 1 : window.vjs.volume() + 0.1);
-          showOSD(`<i class="fa fa-volume-up"></i> ${parseInt(window.vjs.volume() * 100, 10)}`);
+          showOSD("fa-volume-up", window.vjs.volume() * 100);
         } else {
           window.vjs.volume(window.vjs.volume() < 0.1 ? 0 : window.vjs.volume() - 0.1);
-          showOSD(`<i class="fa fa-volume-up"></i> ${parseInt(window.vjs.volume() * 100, 10)}`);
+          showOSD("fa-volume-up", window.vjs.volume() * 100);
         }
       };
 
       window.vjs.on("volumechange", () => {
-        showOSD(`<i class="fa fa-volume-up"></i> ${parseInt(window.vjs.volume() * 100, 10)}`);
+        showOSD("fa-volume-up", window.vjs.volume() * 100);
       });
     }
     window.vjs.src(href);
@@ -920,7 +918,7 @@ const playfile = function (event, file = null) {
     document.querySelector("#info").style.opacity = 0;
     document.querySelector("#downloadLink").href = href;
     document.querySelector("#downloadLink").download = decodeURIComponent(href).split("/")[2];
-    showOSD(`<i class="fa fa-play"></i> ${decodeURIComponent(href).split("/")[2]}`, 3000);
+    showOSD("fa-play", decodeURIComponent(href).split("/")[2], 3000);
     if (
       document.querySelector(".file.highlight a").dataset.avif ||
       document.querySelector(".file.highlight a").dataset.webp
@@ -1005,7 +1003,7 @@ const playfile = function (event, file = null) {
 window.playPrev = () => {
   if (document.querySelector(".file.highlight").previousSibling) {
     if (document.querySelector(".file.highlight").previousSibling.id === "back") {
-      showOSD("This is the first file in folder", 3000);
+      showOSD("", "This is the first file in folder", 3000);
     } else {
       playfile(null, document.querySelector(".file.highlight").previousSibling);
     }
@@ -1016,7 +1014,7 @@ window.playNext = () => {
   if (document.querySelector(".file.highlight").nextSibling) {
     playfile(null, document.querySelector(".file.highlight").nextSibling);
   } else {
-    showOSD("This is the last file in folder", 3000);
+    showOSD("", "This is the last file in folder", 3000);
   }
 };
 
