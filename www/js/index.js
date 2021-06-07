@@ -852,11 +852,11 @@ const playfile = function (event, file = null) {
             }
             if (e.code === "ArrowUp") {
               window.vjs.volume(window.vjs.volume() > 0.9 ? 1 : window.vjs.volume() + 0.1);
-              showOSD("fa-volume-up", window.vjs.volume() * 100);
+              showOSD("fa-volume-up", (window.vjs.volume() * 100).toFixed(0));
             }
             if (e.code === "ArrowDown") {
               window.vjs.volume(window.vjs.volume() < 0.1 ? 0 : window.vjs.volume() - 0.1);
-              showOSD("fa-volume-up", window.vjs.volume() * 100);
+              showOSD("fa-volume-up", (window.vjs.volume() * 100).toFixed(0));
             }
             if (e.code === "PageUp") {
               window.playPrev();
@@ -902,15 +902,15 @@ const playfile = function (event, file = null) {
       document.querySelector("#player").onwheel = function (e) {
         if (e.deltaY < 0) {
           window.vjs.volume(window.vjs.volume() > 0.9 ? 1 : window.vjs.volume() + 0.1);
-          showOSD("fa-volume-up", window.vjs.volume() * 100);
+          showOSD("fa-volume-up", (window.vjs.volume() * 100).toFixed(0));
         } else {
           window.vjs.volume(window.vjs.volume() < 0.1 ? 0 : window.vjs.volume() - 0.1);
-          showOSD("fa-volume-up", window.vjs.volume() * 100);
+          showOSD("fa-volume-up", (window.vjs.volume() * 100).toFixed(0));
         }
       };
 
       window.vjs.on("volumechange", () => {
-        showOSD("fa-volume-up", window.vjs.volume() * 100);
+        showOSD("fa-volume-up", (window.vjs.volume() * 100).toFixed(0));
       });
     }
     window.vjs.src(href);
