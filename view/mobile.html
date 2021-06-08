@@ -14,6 +14,24 @@
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon.png" />
   <style>
+    :root {
+      --text-main-color: #000;
+      --text-weak-color: #999;
+      --blank-color: transparent;
+      --bg-main-color: #fff;
+      --bg-sub-color: #f6f6f6;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text-main-color: #fff;
+        --text-weak-color: #ccc;
+        --blank-color: transparent;
+        --bg-main-color: #000;
+        --bg-sub-color: #222;
+      }
+    }
+
     html {
       -webkit-text-size-adjust: 100%;
     }
@@ -21,13 +39,12 @@
       margin: 0;
       padding: 0;
       font-family: system-ui, Meiryo, sans-serif, Arial;
+      background: var(--bg-main-color);
     }
-
     a {
       text-decoration: none;
-      color: #000;
+      color: var(--text-main-color);
     }
-
     #list > div {
       position: relative;
       cursor: pointer;
@@ -36,11 +53,15 @@
       font-size: 0.9rem;
       line-height: 1.7rem;
       padding: 0.7rem 0.4rem 0.7rem 0.4rem;
+      color: var(--text-main-color);
     }
     #list > div:nth-child(even) {
-      background-color: #f6f6f6;
+      background-color: var(--bg-sub-color);
     }
-
+    .file a:visited,
+    .file.watched > a {
+      color: var(--text-weak-color);
+    }
     .details_title,
     .details_modified,
     .details_size {
@@ -50,34 +71,31 @@
       right: 0.4rem;
       font-size: 0.8rem;
       line-height: 0.8rem;
-      color: #999;
-    }
-    .details_modified {
-      color: #000;
+      color: var(--text-weak-color);
     }
     .details_size {
       visibility: hidden;
       left: 0.4rem;
       right: auto;
     }
-
-    .file a:visited,
-    .file.watched > a {
-      color: #999;
+    .details_modified {
+      color: var(--text-main-color);
     }
-
     .search {
       padding: 0.7rem 0.4rem 0.7rem 2rem;
       font-size: 1rem;
     }
     .search input {
       -webkit-appearance: none;
+      outline: 0;
       border: none;
+      background: transparent;
       border-radius: 0;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid #ccc;
       font-size: 1rem;
       line-height: 2rem;
       width: 100%;
+      color: var(--text-main-color);
     }
   </style>
   <div id="list">

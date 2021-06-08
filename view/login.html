@@ -34,9 +34,11 @@
     }
     #password {
       -webkit-appearance: none;
+      outline: 0;
+      background: transparent;
       border: 0;
       border-radius: 0;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid #ccc;
       text-align: center;
       margin: 1rem;
       padding: 0.5rem;
@@ -47,11 +49,30 @@
       border: 0;
       border-radius: 0.2rem;
       font-size: 0.8rem;
-      line-height: 2.3rem;
-      padding: 0 1rem;
+      padding: 0.6rem 1rem;
       cursor: pointer;
-      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2),
-        0 1px 5px 0 rgba(0, 0, 0, 0.12);
+      transition: text-shadow ease-out 100ms;
+    }
+    #enter:hover {
+      text-shadow: 0 0 0.3rem #fff;
+    }
+    @media (prefers-color-scheme: light) {
+      body {
+        background: #fff;
+      }
+      #title,
+      #password {
+        color: #000;
+      }
+    }
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #000;
+      }
+      #title,
+      #password {
+        color: #fff;
+      }
     }
   </style>
   <form action="/login" method="POST">
