@@ -1264,7 +1264,7 @@ window.getListing = async (scroll) => {
       window.location.pathname === "/Movie/" ||
       window.location.pathname === "/OVA/" ||
       window.location.pathname === "/Sukebei/" ||
-      window.location.pathname === "/2021-01/" ||
+      window.location.pathname === "/2021-07/" ||
       window.location.pathname === "/2021-04/"
     ) {
       dirEntries.sort((a, b) => (b.modified > a.modified ? 1 : b.modified < a.modified ? -1 : 0));
