@@ -157,7 +157,7 @@ const render = async () => {
     return;
   }
 
-  if (["2021-01", "2021-04", "Movie", "OVA", "Sukebei"].includes(season) && !title) {
+  if (["2021-07", "2021-04", "Movie", "OVA", "Sukebei"].includes(season) && !title) {
     dirEntries.sort((a, b) => (a.modified > b.modified ? -1 : 1));
   } else if (!season) {
     dirEntries.sort((a, b) => (a.name > b.name ? -1 : 1));
