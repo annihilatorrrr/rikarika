@@ -22,7 +22,6 @@ const {
   ANIME_AVIF_PATH,
   RUTORRENT_HOST,
   RUTORRENT_HOST_2,
-  TRACE_SECRET,
   WEB_PORT,
   WEB_PASSWORD,
   WEB_WHITELIST_IP,
@@ -94,7 +93,6 @@ app.get(/.*\/$/, (req, res) => {
         .readFileSync(path.join(__dirname, "view/admin.html"), "utf8")
         .replace("RUTORRENT_HOST", RUTORRENT_HOST)
         .replace("RUTORRENT_HOST_2", RUTORRENT_HOST_2)
-        .replace(/TRACE_SECRET/g, TRACE_SECRET)
     );
     return;
   }

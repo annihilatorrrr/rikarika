@@ -1,6 +1,5 @@
 var ruTorrentHost = document.querySelector("meta[name=rutorrent-host]").getAttribute("content");
 var ruTorrentHost2 = document.querySelector("meta[name=rutorrent-host-2]").getAttribute("content");
-var traceSecret = document.querySelector("meta[name=trace-secret]").getAttribute("content");
 var app = angular.module("myAniList", []);
 app.controller("searchAniList", function ($scope, $http, $filter) {
   var d = new Date();
@@ -462,12 +461,6 @@ app.controller("searchAniList", function ($scope, $http, $filter) {
           ? $scope.hits[index].synonyms_chinese
           : [],
       };
-      $http({
-        method: "PUT",
-        url: `https://api.trace.moe/anilist_chinese/${anilist_id}`,
-        headers: { "x-trace-secret": traceSecret },
-        data: entry,
-      });
       $http.post("add_anilist_chinese?anilist_id=" + anilist_id, entry);
       $http.post("anilist/anime/" + anilist_id + "/_update", { doc: entry });
     }
