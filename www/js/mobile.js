@@ -114,7 +114,92 @@ const urlBase64ToUint8Array = (base64String) => {
   return outputArray;
 };
 
+const preventClick = (event) => {
+  if (event.button === 0) {
+    event.preventDefault();
+  }
+};
+
+const clickFile = function (event) {
+  if (event && event.button !== 0) {
+    return;
+  }
+  const href = this.querySelector("a").pathname;
+  this.classList.add("watched");
+  localStorage.setItem(decodeURIComponent(href), 1);
+
+  if (android && localStorage.getItem("player") && href.slice(-4) === ".mp4") {
+    const url = this.querySelector("a").href;
+    const a = document.createElement("a");
+    a.href = `intent:${url}#Intent;package=${localStorage.getItem(
+      "player"
+    )};S.browser_fallback_url=${url};end`;
+    a.click();
+  } else {
+    location.href = href;
+  }
+};
+
+const clickFolder = function (event) {
+  if (event.button !== 0) {
+    return;
+  }
+  history.pushState(null, null, this.querySelector("a").pathname);
+  render();
+};
+
+const appendChunk = (chunk) => {
+  document.querySelector("#list").append(
+    ...chunk.map(({ name, modified, size, anime_id }) => {
+      const div7 = document.createElement("div");
+      const a4 = document.createElement("a");
+      const span1 = document.createElement("span");
+      const span2 = document.createElement("span");
+      span1.className = "details_modified";
+      span1.dataset.modified = modified;
+      span1.style.opacity = getDateTimeOpacity(modified);
+      span1.innerText = formatDateTime(modified);
+      span2.className = "details_size";
+      span2.innerText = formatFileSize(size || 0);
+      switch (name.slice(-4)) {
+        case ".mp4":
+        case ".txt":
+        case ".ass":
+          div7.className = "file";
+          if (localStorage.getItem(`/${anime_id}/${name}`)) {
+            div7.classList.add("watched");
+          }
+          div7.onmouseup = clickFile;
+          a4.href = `/${anime_id}/${encodeURIComponent(name)}`;
+          a4.appendChild(
+            document.createTextNode(
+              `${name.slice(-4) === ".mp4" ? "▶" : "📄"} ${name.slice(0, -4)}`
+            )
+          );
+          a4.onclick = preventClick;
+          break;
+        default:
+          div7.className = "folder";
+          div7.onmouseup = clickFolder;
+          a4.href = `${encodeURIComponent(name)}/`;
+          a4.appendChild(document.createTextNode(`📁 ${name}`));
+          a4.onclick = preventClick;
+      }
+      div7.appendChild(a4);
+      div7.appendChild(document.createElement("br"));
+      div7.appendChild(span1);
+      div7.appendChild(span2);
+      return div7;
+    })
+  );
+};
+
+let lazyLoadHandleList = [];
+
 const render = async () => {
+  for (const handle of lazyLoadHandleList) {
+    clearTimeout(handle);
+  }
   const [season, title] = location.pathname
     .split("/")
     .filter((e) => e)
@@ -172,6 +257,8 @@ const render = async () => {
     const a2 = document.createElement("a");
     a2.href = title ? `/${season}/` : "/";
     a2.appendChild(document.createTextNode("▲ .."));
+    a2.onclick = preventClick;
+    div4.onmouseup = clickFolder;
     div4.appendChild(a2);
     div4.appendChild(document.createElement("br"));
     const span1 = document.createElement("span");
@@ -185,47 +272,28 @@ const render = async () => {
     const a3 = document.createElement("a");
     a3.href = "/list";
     a3.appendChild(document.createTextNode("📄 動畫列表"));
+    a3.onclick = preventClick;
+    div6.onmouseup = clickFile;
     div6.appendChild(a3);
     div6.appendChild(document.createElement("br"));
     document.querySelector("#list").appendChild(div6);
   }
 
-  for (const { name, modified, size, anime_id } of dirEntries) {
-    const div7 = document.createElement("div");
-    const a4 = document.createElement("a");
-    const span1 = document.createElement("span");
-    const span2 = document.createElement("span");
-    span1.className = "details_modified";
-    span1.dataset.modified = modified;
-    span1.style.opacity = getDateTimeOpacity(modified);
-    span1.innerText = formatDateTime(modified);
-    span2.className = "details_size";
-    span2.innerText = formatFileSize(size || 0);
-    switch (name.slice(-4)) {
-      case ".mp4":
-        div7.className = "file";
-        if (localStorage.getItem(`/${anime_id}/${name}`)) {
-          div7.classList.add("watched");
-        }
-        a4.href = `/${anime_id}/${encodeURIComponent(name)}`;
-        a4.appendChild(document.createTextNode(`▶ ${name.slice(0, -4)}`));
-        break;
-      case ".txt":
-      case ".ass":
-        div7.className = "file";
-        a4.href = `/${anime_id}/${encodeURIComponent(name)}`;
-        a4.appendChild(document.createTextNode(`📄 ${name.slice(0, -4)}`));
-        break;
-      default:
-        div7.className = "folder";
-        a4.href = `${encodeURIComponent(name)}/`;
-        a4.appendChild(document.createTextNode(`📁 ${name}`));
-    }
-    div7.appendChild(a4);
-    div7.appendChild(document.createElement("br"));
-    div7.appendChild(span1);
-    div7.appendChild(span2);
-    document.querySelector("#list").appendChild(div7);
+  const chunkList = dirEntries.reduce(
+    (acc, cur, index, array) => (index % 100 ? acc : [...acc, array.slice(index, index + 100)]),
+    []
+  );
+  appendChunk(chunkList[0]);
+  lazyLoadHandleList = [];
+  for (const chunk of chunkList.slice(1)) {
+    await new Promise((resolve) =>
+      lazyLoadHandleList.push(
+        setTimeout(() => {
+          appendChunk(chunk);
+          resolve();
+        }, 0)
+      )
+    );
   }
 
   if (!season && android) {
@@ -280,54 +348,6 @@ const render = async () => {
     document.querySelector("#list").appendChild(div13);
   }
   renderFileSizeStyle();
-
-  document.querySelectorAll(".folder").forEach((each) => {
-    each.onmouseup = function (event) {
-      if (event.button !== 0) {
-        return;
-      }
-      document.querySelectorAll(".folder").forEach((each) => {
-        each.onmouseup = null;
-      });
-      history.pushState(null, null, this.querySelector("a").pathname);
-      render();
-    };
-  });
-  document.querySelectorAll(".folder a").forEach((each) => {
-    each.onclick = (event) => {
-      if (event.button === 0) {
-        event.preventDefault();
-      }
-    };
-  });
-  document.querySelectorAll(".file").forEach((each) => {
-    each.onmouseup = function (event) {
-      if (event && event.button !== 0) {
-        return;
-      }
-      const href = this.querySelector("a").pathname;
-      this.classList.add("watched");
-      localStorage.setItem(decodeURIComponent(href), 1);
-
-      if (android && localStorage.getItem("player") && href.slice(-4) === ".mp4") {
-        const url = this.querySelector("a").href;
-        const a = document.createElement("a");
-        a.href = `intent:${url}#Intent;package=${localStorage.getItem(
-          "player"
-        )};S.browser_fallback_url=${url};end`;
-        a.click();
-      } else {
-        location.href = href;
-      }
-    };
-  });
-  document.querySelectorAll(".file a").forEach((each) => {
-    each.onclick = (event) => {
-      if (event.button === 0) {
-        event.preventDefault();
-      }
-    };
-  });
 };
 
 const renderSearchResult = async function (results) {
