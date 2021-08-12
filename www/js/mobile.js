@@ -199,7 +199,6 @@ const appendChunk = (chunk) => {
 let lazyLoadHandleList = [];
 
 const render = async (scrollTo) => {
-  window.scrollTo(0, 0);
   for (const handle of lazyLoadHandleList) {
     clearTimeout(handle);
   }
@@ -296,6 +295,8 @@ const render = async (scrollTo) => {
   appendChunk(chunkList[0]);
   if (scrollTo && document.querySelector("#list").clientHeight >= scrollTo) {
     window.scrollTo(0, scrollTo);
+  } else {
+    window.scrollTo(0, 0);
   }
 
   lazyLoadHandleList = [];
