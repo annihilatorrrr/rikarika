@@ -140,10 +140,12 @@ const clickFile = function (event) {
   }
 };
 
+const scrollTop = [];
 const clickFolder = function (event) {
   if (event.button !== 0) {
     return;
   }
+  scrollTop[window.location.pathname.split("/").length - 2] = window.scrollY;
   history.pushState(null, null, this.querySelector("a").pathname);
   render();
 };
@@ -196,7 +198,8 @@ const appendChunk = (chunk) => {
 
 let lazyLoadHandleList = [];
 
-const render = async () => {
+const render = async (scrollTo) => {
+  window.scrollTo(0, 0);
   for (const handle of lazyLoadHandleList) {
     clearTimeout(handle);
   }
@@ -259,7 +262,13 @@ const render = async () => {
     a2.href = title ? `/${season}/` : "/";
     a2.appendChild(document.createTextNode("▲ .."));
     a2.onclick = preventClick;
-    div4.onmouseup = clickFolder;
+    div4.onmouseup = async function (event) {
+      if (event.button !== 0) {
+        return;
+      }
+      history.pushState(null, null, this.querySelector("a").pathname);
+      await render(scrollTop[window.location.pathname.split("/").length - 2] || 0);
+    };
     div4.appendChild(a2);
     div4.appendChild(document.createElement("br"));
     const span1 = document.createElement("span");
@@ -285,6 +294,10 @@ const render = async () => {
     []
   );
   appendChunk(chunkList[0]);
+  if (scrollTo && document.querySelector("#list").clientHeight >= scrollTo) {
+    window.scrollTo(0, scrollTo);
+  }
+
   lazyLoadHandleList = [];
   document.querySelector(".progress").style.visibility = "visible";
   for (const chunk of chunkList.slice(1)) {
@@ -292,6 +305,9 @@ const render = async () => {
       lazyLoadHandleList.push(
         setTimeout(() => {
           appendChunk(chunk);
+          if (scrollTo && document.querySelector("#list").clientHeight >= scrollTo) {
+            window.scrollTo(0, scrollTo);
+          }
           resolve();
         }, 0)
       )
@@ -391,7 +407,9 @@ const renderSearchResult = async function (results) {
 
 render();
 
-window.onpopstate = render;
+window.onpopstate = async () => {
+  await render(scrollTop[window.location.pathname.split("/").length - 2] || 0);
+};
 
 let typing = null;
 document.querySelector("#search").oninput = (e) => {
