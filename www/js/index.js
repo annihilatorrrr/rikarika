@@ -1201,9 +1201,11 @@ window.getListing = async (scroll) => {
     div3.appendChild(i2);
     div3.appendChild(document.createTextNode("Loading..."));
     document.querySelector("#list").appendChild(div3);
+    document.querySelector(".progress").style.visibility = "visible";
   }, 300);
   if (window.location.pathname.indexOf("/search/") === 0) {
     clearTimeout(slowload);
+    document.querySelector(".progress").style.visibility = "hidden";
     document.querySelector("#search").value = decodeURIComponent(
       window.location.pathname.split("/")[2]
     );
@@ -1216,6 +1218,7 @@ window.getListing = async (scroll) => {
       getInfo(dirEntries);
     }
     clearTimeout(slowload);
+    document.querySelector(".progress").style.visibility = "hidden";
     document.querySelectorAll("#list .item").forEach((each) => {
       each.remove();
     });

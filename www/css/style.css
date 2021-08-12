@@ -200,6 +200,45 @@ a {
   color: #000;
   box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
 }
+.progress {
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 2px;
+  background: rgb(137, 146, 255, 0.4);
+}
+.progress > div {
+  position: absolute;
+  background: rgb(137, 146, 255);
+  height: 2px;
+}
+.progress > div:first-child {
+  animation: increase 2s infinite;
+}
+.progress > div:last-child {
+  animation: decrease 2s 0.5s infinite;
+}
+@keyframes increase {
+  from {
+    left: -5%;
+    width: 5%;
+  }
+  to {
+    left: 130%;
+    width: 100%;
+  }
+}
+@keyframes decrease {
+  from {
+    left: -80%;
+    width: 80%;
+  }
+  to {
+    left: 110%;
+    width: 10%;
+  }
+}
 #list.mobile {
   width: 100%;
   min-width: 100%;
