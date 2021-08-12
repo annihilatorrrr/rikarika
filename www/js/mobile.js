@@ -226,6 +226,7 @@ const render = async () => {
     const div3 = document.createElement("div");
     div3.className = "folder";
     div3.appendChild(document.createTextNode("Loading..."));
+    document.querySelector(".progress").style.visibility = "visible";
     document.querySelector("#list").appendChild(div3);
   }, 300);
   const dirEntries = await fetch(
@@ -285,6 +286,7 @@ const render = async () => {
   );
   appendChunk(chunkList[0]);
   lazyLoadHandleList = [];
+  document.querySelector(".progress").style.visibility = "visible";
   for (const chunk of chunkList.slice(1)) {
     await new Promise((resolve) =>
       lazyLoadHandleList.push(
@@ -295,6 +297,7 @@ const render = async () => {
       )
     );
   }
+  document.querySelector(".progress").style.visibility = "hidden";
 
   if (!season && android) {
     const div10 = document.createElement("div");
