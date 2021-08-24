@@ -1387,6 +1387,33 @@ window.getListing = async (scroll) => {
         updatePlayerSettingUI();
       }
 
+      const div16 = document.createElement("div");
+      div16.className = "item";
+      div16.onclick = (event) => {
+        event.preventDefault();
+        if (confirm("你確定要刪除所有播放紀錄嗎？")) {
+          for (const key in localStorage) {
+            if (key.startsWith("/")) {
+              localStorage.removeItem(key);
+            }
+          }
+          event.target.childNodes[1].textContent = `清除播放紀錄 (${
+            Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
+          } 個)`;
+        }
+      };
+      const i11 = document.createElement("i");
+      i11.className = "fa fa-trash";
+      div16.appendChild(i11);
+      div16.appendChild(
+        document.createTextNode(
+          `清除播放紀錄 (${
+            Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
+          } 個)`
+        )
+      );
+      document.querySelector("#list").appendChild(div16);
+
       const div14 = document.createElement("div");
       div14.className = "item";
       div14.onclick = (event) => {

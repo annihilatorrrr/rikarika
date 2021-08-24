@@ -282,7 +282,9 @@ const render = async (scrollTo) => {
     };
     div15.appendChild(document.createTextNode("⚙️ 設定"));
     document.querySelector("#list").appendChild(div15);
+  }
 
+  if (season === "setting") {
     const div6 = document.createElement("div");
     div6.className = "file";
     const a3 = document.createElement("a");
@@ -293,9 +295,31 @@ const render = async (scrollTo) => {
     div6.appendChild(a3);
     div6.appendChild(document.createElement("br"));
     document.querySelector("#list").appendChild(div6);
-  }
 
-  if (season === "setting") {
+    const div16 = document.createElement("div");
+    div16.className = "item";
+    div16.onclick = (event) => {
+      event.preventDefault();
+      if (confirm("你確定要刪除所有播放紀錄嗎？")) {
+        for (const key in localStorage) {
+          if (key.startsWith("/")) {
+            localStorage.removeItem(key);
+          }
+        }
+        event.target.innerText = `🗑️ 清除播放紀錄 (${
+          Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
+        } 個)`;
+      }
+    };
+    div16.appendChild(
+      document.createTextNode(
+        `🗑️ 清除播放紀錄 (${
+          Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
+        } 個)`
+      )
+    );
+    document.querySelector("#list").appendChild(div16);
+
     if (android) {
       const div10 = document.createElement("div");
       div10.className = "item";
