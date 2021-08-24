@@ -110,7 +110,11 @@ app.get(/.*\/$/, (req, res) => {
         .replace(/DONATE_URL/g, DONATE_URL)
     );
   } else {
-    res.send(fs.readFileSync(path.join(__dirname, "view/login.html")));
+    res.send(
+      fs
+        .readFileSync(path.join(__dirname, "view/login.html"), "utf8")
+        .replace("REDIRECT", req.path.startsWith("/") ? req.path : "/")
+    );
   }
 });
 
@@ -124,12 +128,12 @@ app.post("/login", (req, res) => {
         .digest("hex")}; Secure; HttpOnly; SameSite=Strict`
     );
   }
-  return res.redirect(302, req.headers["referer"] ? new URL(req.headers["referer"]).pathname : "/");
+  return res.redirect(302, req.body.redirect ?? "/");
 });
 
 app.get("/logout", (req, res) => {
   res.setHeader("Set-Cookie", `session=; Secure; HttpOnly; SameSite=Strict`);
-  return res.redirect(302, req.headers["referer"] ? new URL(req.headers["referer"]).pathname : "/");
+  return res.redirect(302, "/");
 });
 
 // path without extension and not end with /
