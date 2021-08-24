@@ -231,9 +231,14 @@ const render = async (scrollTo) => {
     document.querySelector(".progress").style.visibility = "visible";
     document.querySelector("#list").appendChild(div3);
   }, 300);
-  const dirEntries = await fetch(
-    season === "search" ? `/search?q=${title}` : `/ls?path=${encodeURIComponent(location.pathname)}`
-  ).then((res) => res.json());
+  const dirEntries =
+    season === "setting"
+      ? []
+      : await fetch(
+          season === "search"
+            ? `/search?q=${title}`
+            : `/ls?path=${encodeURIComponent(location.pathname)}`
+        ).then((res) => res.json());
   clearTimeout(loadingTimer);
 
   document.querySelectorAll("#list > div:not(.search)").forEach((each) => {
@@ -243,14 +248,6 @@ const render = async (scrollTo) => {
   if (season === "search") {
     renderSearchResult(dirEntries);
     return;
-  }
-
-  if (["2021-07", "2021-04", "Movie", "OVA", "Sukebei"].includes(season) && !title) {
-    dirEntries.sort((a, b) => (a.modified > b.modified ? -1 : 1));
-  } else if (!season) {
-    dirEntries.sort((a, b) => (a.name > b.name ? -1 : 1));
-  } else {
-    dirEntries.sort((a, b) => (a.name > b.name ? 1 : -1));
   }
 
   if (season) {
@@ -276,6 +273,16 @@ const render = async (scrollTo) => {
     div4.appendChild(span1);
     document.querySelector("#list").appendChild(div4);
   } else {
+    const div15 = document.createElement("div");
+    div15.className = "item";
+    div15.onclick = (event) => {
+      event.preventDefault();
+      history.pushState(null, null, "/setting/");
+      render();
+    };
+    div15.appendChild(document.createTextNode("⚙️ 設定"));
+    document.querySelector("#list").appendChild(div15);
+
     const div6 = document.createElement("div");
     div6.className = "file";
     const a3 = document.createElement("a");
@@ -286,6 +293,68 @@ const render = async (scrollTo) => {
     div6.appendChild(a3);
     div6.appendChild(document.createElement("br"));
     document.querySelector("#list").appendChild(div6);
+  }
+
+  if (season === "setting") {
+    if (android) {
+      const div10 = document.createElement("div");
+      div10.className = "item";
+      div10.dataset.app = "";
+      div10.onclick = changePlayer;
+      const span6 = document.createElement("span");
+      span6.appendChild(document.createTextNode("✅ "));
+      div10.appendChild(span6);
+      div10.appendChild(document.createTextNode("使用預設播放器"));
+      document.querySelector("#list").appendChild(div10);
+
+      const div11 = document.createElement("div");
+      div11.className = "item";
+      div11.dataset.app = "com.mxtech.videoplayer.ad";
+      div11.onclick = changePlayer;
+      const span7 = document.createElement("span");
+      span7.appendChild(document.createTextNode("✅ "));
+      div11.appendChild(span7);
+      div11.appendChild(document.createTextNode("使用 MXPlayer"));
+      document.querySelector("#list").appendChild(div11);
+
+      const div12 = document.createElement("div");
+      div12.className = "item";
+      div12.dataset.app = "com.mxtech.videoplayer.pro";
+      div12.onclick = changePlayer;
+      const span8 = document.createElement("span");
+      span8.appendChild(document.createTextNode("✅ "));
+      div12.appendChild(span8);
+      div12.appendChild(document.createTextNode("使用 MXPlayer Pro"));
+      document.querySelector("#list").appendChild(div12);
+      updatePlayerSettingUI();
+    }
+
+    const div14 = document.createElement("div");
+    div14.className = "item";
+    div14.onclick = (event) => {
+      event.preventDefault();
+      location.href = document.querySelector("meta[name=donate-url]").getAttribute("content");
+    };
+    div14.appendChild(document.createTextNode("💖 PayMe 捐助"));
+    document.querySelector("#list").appendChild(div14);
+
+    const div13 = document.createElement("div");
+    div13.className = "item";
+    div13.onclick = (event) => {
+      event.preventDefault();
+      location.href = "/logout";
+    };
+    div13.appendChild(document.createTextNode("💨 登出"));
+    document.querySelector("#list").appendChild(div13);
+    return;
+  }
+
+  if (["2021-07", "2021-04", "Movie", "OVA", "Sukebei"].includes(season) && !title) {
+    dirEntries.sort((a, b) => (a.modified > b.modified ? -1 : 1));
+  } else if (!season) {
+    dirEntries.sort((a, b) => (a.name > b.name ? -1 : 1));
+  } else {
+    dirEntries.sort((a, b) => (a.name > b.name ? 1 : -1));
   }
 
   const chunkList = dirEntries.reduce(
@@ -316,57 +385,6 @@ const render = async (scrollTo) => {
   }
   document.querySelector(".progress").style.visibility = "hidden";
 
-  if (!season && android) {
-    const div10 = document.createElement("div");
-    div10.className = "item";
-    div10.dataset.app = "";
-    div10.onclick = changePlayer;
-    const span6 = document.createElement("span");
-    span6.appendChild(document.createTextNode("✅ "));
-    div10.appendChild(span6);
-    div10.appendChild(document.createTextNode("使用預設播放器"));
-    document.querySelector("#list").appendChild(div10);
-
-    const div11 = document.createElement("div");
-    div11.className = "item";
-    div11.dataset.app = "com.mxtech.videoplayer.ad";
-    div11.onclick = changePlayer;
-    const span7 = document.createElement("span");
-    span7.appendChild(document.createTextNode("✅ "));
-    div11.appendChild(span7);
-    div11.appendChild(document.createTextNode("使用 MXPlayer"));
-    document.querySelector("#list").appendChild(div11);
-
-    const div12 = document.createElement("div");
-    div12.className = "item";
-    div12.dataset.app = "com.mxtech.videoplayer.pro";
-    div12.onclick = changePlayer;
-    const span8 = document.createElement("span");
-    span8.appendChild(document.createTextNode("✅ "));
-    div12.appendChild(span8);
-    div12.appendChild(document.createTextNode("使用 MXPlayer Pro"));
-    document.querySelector("#list").appendChild(div12);
-    updatePlayerSettingUI();
-  }
-  if (!season) {
-    const div14 = document.createElement("div");
-    div14.className = "item";
-    div14.onclick = (event) => {
-      event.preventDefault();
-      location.href = document.querySelector("meta[name=donate-url]").getAttribute("content");
-    };
-    div14.appendChild(document.createTextNode("❤️ PayMe 捐助"));
-    document.querySelector("#list").appendChild(div14);
-
-    const div13 = document.createElement("div");
-    div13.className = "item";
-    div13.onclick = (event) => {
-      event.preventDefault();
-      location.href = "/logout";
-    };
-    div13.appendChild(document.createTextNode("💨 登出"));
-    document.querySelector("#list").appendChild(div13);
-  }
   renderFileSizeStyle();
 };
 
