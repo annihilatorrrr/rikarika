@@ -1,6 +1,3 @@
-const android = /(Android)/g.test(navigator.userAgent);
-const iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
-const safari = /^((?!chrome).)*safari/i.test(navigator.userAgent);
 window.vjs = null;
 var player = null;
 const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -66,7 +63,7 @@ const captureScreen = () => {
     download.target = "_blank";
     const image = canvas.toDataURL("image/jpeg", 0.92);
     download.href = image;
-    if (!safari) {
+    if (!/^((?!chrome).)*safari/i.test(navigator.userAgent)) {
       download.click();
     }
     canvas = null;
@@ -260,68 +257,55 @@ const checkCursor = function () {
   hidingInfoBtn = setTimeout(hideInfoBtn, 3000);
 };
 
-if (iOS || android) {
-  document.querySelector("body").style.background = "transparent";
-  document.querySelector("#list").classList.add("mobile");
-  document.querySelector("#osd").classList.add("mobile");
-  document.querySelector("#menu").classList.add("mobile");
-  document.querySelector("#infoBtn").classList.add("mobile");
-  document.querySelector("#blind").classList.add("mobile");
-  document.querySelector("#messagebox").classList.add("mobile");
-  document.querySelector("#player").style.display = "none";
-  document.querySelector("#info").style.display = "none";
-  document.querySelector("#list").style.display = "";
-} else {
-  if (
-    false &&
-    window.CSS &&
-    CSS.supports &&
-    (CSS.supports("backdrop-filter", "blur()") || CSS.supports("-webkit-backdrop-filter", "blur()"))
-  ) {
-    document.querySelector("#list").classList.add("glass");
-    document.querySelector("#info").classList.add("glass");
-  }
-  if (window.matchMedia("(display-mode: standalone)").matches) {
-    if (window.screen.width > 1366 && window.screen.height > 800) {
-      window.resizeTo(
-        window.outerWidth - window.innerWidth + 1280,
-        window.outerHeight - window.innerHeight + 720
-      );
-    } else {
-      window.resizeTo(
-        window.outerWidth - window.innerWidth + 1024,
-        window.outerHeight - window.innerHeight + 576
-      );
-    }
-  }
-  document.body.style.backgroundColor = "rgb(0, 0, 0)";
-  document.querySelector("#player").style.display = "block";
-  document.querySelector("#list").style.display = "block";
-
-  document.querySelector("#menu").onclick = showList;
-  document.querySelector("#infoBtn").onclick = showInfo;
-  showList();
-  document.querySelector("#player").onclick = hideList;
-  document.querySelector("#player").onmousemove = checkCursor;
-  document.body.onmouseleave = function () {
-    clearTimeout(hidingMenu);
-    clearTimeout(hidingInfoBtn);
-    hidingMenu = setTimeout(hideMenu, 3000);
-    hidingInfoBtn = setTimeout(hideInfoBtn, 3000);
-  };
-  document.body.onkeypress = function (event) {
-    if (event.code === "Backquote") {
-      document.querySelector("#menu").style.display =
-        document.querySelector("#menu").style.display === "block" ? "none" : "block";
-      document.querySelector("#infoBtn").style.display =
-        document.querySelector("#infoBtn").style.display === "block" ? "none" : "block";
-      document.querySelector(".vjs-control-bar").style.visibility =
-        document.querySelector(".vjs-control-bar").style.visibility === "visible"
-          ? "hidden"
-          : "visible";
-    }
-  };
+if (
+  false &&
+  window.CSS &&
+  CSS.supports &&
+  (CSS.supports("backdrop-filter", "blur()") || CSS.supports("-webkit-backdrop-filter", "blur()"))
+) {
+  document.querySelector("#list").classList.add("glass");
+  document.querySelector("#info").classList.add("glass");
 }
+if (window.matchMedia("(display-mode: standalone)").matches) {
+  if (window.screen.width > 1366 && window.screen.height > 800) {
+    window.resizeTo(
+      window.outerWidth - window.innerWidth + 1280,
+      window.outerHeight - window.innerHeight + 720
+    );
+  } else {
+    window.resizeTo(
+      window.outerWidth - window.innerWidth + 1024,
+      window.outerHeight - window.innerHeight + 576
+    );
+  }
+}
+document.body.style.backgroundColor = "rgb(0, 0, 0)";
+document.querySelector("#player").style.display = "block";
+document.querySelector("#list").style.display = "block";
+
+document.querySelector("#menu").onclick = showList;
+document.querySelector("#infoBtn").onclick = showInfo;
+showList();
+document.querySelector("#player").onclick = hideList;
+document.querySelector("#player").onmousemove = checkCursor;
+document.body.onmouseleave = function () {
+  clearTimeout(hidingMenu);
+  clearTimeout(hidingInfoBtn);
+  hidingMenu = setTimeout(hideMenu, 3000);
+  hidingInfoBtn = setTimeout(hideInfoBtn, 3000);
+};
+document.body.onkeypress = function (event) {
+  if (event.code === "Backquote") {
+    document.querySelector("#menu").style.display =
+      document.querySelector("#menu").style.display === "block" ? "none" : "block";
+    document.querySelector("#infoBtn").style.display =
+      document.querySelector("#infoBtn").style.display === "block" ? "none" : "block";
+    document.querySelector(".vjs-control-bar").style.visibility =
+      document.querySelector(".vjs-control-bar").style.visibility === "visible"
+        ? "hidden"
+        : "visible";
+  }
+};
 
 window.playmode = "Default";
 
@@ -556,17 +540,6 @@ const playfile = function (event, file = null) {
 
   if (href.slice(-4) === ".txt" || href.slice(-4) === ".ass" || href.slice(-5) === "/list") {
     window.open(href, "_blank");
-  } else if (android) {
-    const a = document.createElement("a");
-    a.href = href;
-    if (window.localStorage.getItem("player")) {
-      a.href = `intent:${url}#Intent;package=${window.localStorage.getItem(
-        "player"
-      )};S.browser_fallback_url=${url};end`;
-    }
-    a.click();
-  } else if (iOS) {
-    window.location.href = href;
   } else {
     if (document.querySelector("#vjs-tip")) {
       document.querySelector("#vjs-tip").remove();
@@ -1161,11 +1134,7 @@ const navfolder = function (event) {
   if (event.target.id === "back") {
     window.getListing(prev_scrollTop);
   } else {
-    if (iOS || android) {
-      prev_scrollTop = window.pageYOffset;
-    } else {
-      prev_scrollTop = document.querySelector("#list").scrollTop;
-    }
+    prev_scrollTop = document.querySelector("#list").scrollTop;
     window.getListing(0);
   }
 };
@@ -1214,9 +1183,7 @@ window.getListing = async (scroll) => {
     const dirEntries = await fetch(`/ls?path=${encodeURIComponent(window.location.pathname)}`).then(
       (res) => res.json()
     );
-    if (!iOS && !android) {
-      getInfo(dirEntries);
-    }
+    getInfo(dirEntries);
     clearTimeout(slowload);
     document.querySelector(".progress").style.visibility = "hidden";
     document.querySelectorAll("#list .item").forEach((each) => {
@@ -1354,39 +1321,6 @@ window.getListing = async (scroll) => {
           "min-height: auto; padding-left: 30px; padding-right: 10px; text-indent: -11px";
       });
 
-      if (android) {
-        const div10 = document.createElement("div");
-        div10.className = "item";
-        div10.dataset.app = "";
-        div10.onclick = changePlayer;
-        const i6 = document.createElement("i");
-        i6.className = "fa";
-        div10.appendChild(i6);
-        div10.appendChild(document.createTextNode("使用預設播放器"));
-        document.querySelector("#list").appendChild(div10);
-
-        const div11 = document.createElement("div");
-        div11.className = "item";
-        div11.dataset.app = "com.mxtech.videoplayer.ad";
-        div11.onclick = changePlayer;
-        const i7 = document.createElement("i");
-        i7.className = "fa";
-        div11.appendChild(i7);
-        div11.appendChild(document.createTextNode("使用 MXPlayer"));
-        document.querySelector("#list").appendChild(div11);
-
-        const div12 = document.createElement("div");
-        div12.className = "item";
-        div12.dataset.app = "com.mxtech.videoplayer.pro";
-        div12.onclick = changePlayer;
-        const i8 = document.createElement("i");
-        i8.className = "fa";
-        div12.appendChild(i8);
-        div12.appendChild(document.createTextNode("使用 MXPlayer Pro"));
-        document.querySelector("#list").appendChild(div12);
-        updatePlayerSettingUI();
-      }
-
       const div16 = document.createElement("div");
       div16.className = "item";
       div16.onclick = (event) => {
@@ -1453,11 +1387,7 @@ window.getListing = async (scroll) => {
     if (navigator.connection) {
       toggleFileSizeDisplay();
     }
-    if (iOS || android) {
-      window.scrollTo(0, scroll);
-    } else {
-      document.querySelector("#list").scrollTo(0, scroll);
-    }
+    document.querySelector("#list").scrollTo(0, scroll);
     document.querySelectorAll(".folder").forEach((each) => {
       each.onmouseup = navfolder;
     });
@@ -1591,9 +1521,7 @@ const popStateHandler = function (event) {
   } else {
     window.getListing();
   }
-  if (!iOS && !android) {
-    showList();
-  }
+  showList();
 };
 window.onpopstate = popStateHandler;
 

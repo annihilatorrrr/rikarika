@@ -75,13 +75,6 @@ div {
 .white .smallest {
   color: #666;
 }
-#menu.mobile,
-#infoBtn.mobile,
-#commentBtn.mobile,
-#blind.mobile,
-#messagebox.mobile {
-  display: none;
-}
 #messagebox {
   visibility: hidden;
   font-family: Arial;
@@ -239,35 +232,6 @@ a {
     width: 10%;
   }
 }
-#list.mobile {
-  width: 100%;
-  min-width: 100%;
-  max-width: 100%;
-  border: none;
-  bottom: auto;
-  background-color: transparent;
-  color: #000;
-  overflow-y: visible;
-  position: static;
-  box-shadow: none;
-  visibility: visible;
-  opacity: 1;
-}
-#list.mobile .folder,
-#list.mobile .file,
-#list.mobile .search,
-#list.mobile .item {
-  padding-top: 1em;
-  padding-bottom: 1em;
-  margin-left: 0;
-  margin-right: 0;
-  color: #000;
-}
-#list.mobile .folder:nth-child(even),
-#list.mobile .file:nth-child(even),
-#list.mobile .item:nth-child(even) {
-  background-color: #f6f6f6;
-}
 #menu,
 #infoBtn,
 #commentBtn {
@@ -300,11 +264,6 @@ a {
   text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
   color: rgba(255, 255, 255, 1);
 }
-#menu.mobile,
-#infoBtn.mobile,
-#commentBtn.mobile {
-  display: none;
-}
 #osd {
   visibility: hidden;
   opacity: 0;
@@ -319,9 +278,6 @@ a {
   text-shadow: 0 0 0.2em #000, 0 0 0.4em #000, 0 0 0.6em #000, 0 0 0.9em, 0 0 1.5em #000,
     0 0 2.1em #000;
   transition: visibility 100ms ease-out, opacity 100ms ease-out !important;
-}
-#osd.mobile {
-  display: none;
 }
 #info,
 #comment {
@@ -479,15 +435,6 @@ a {
   padding: 10px;
   text-align: center;
 }
-#info.mobile {
-  display: none;
-}
-.mobile a {
-  color: #000;
-}
-.mobile .file a:visited {
-  color: #999;
-}
 .folder,
 .file,
 .item {
@@ -555,10 +502,6 @@ a {
 .search input::selection {
   background: rgba(255, 255, 255, 0.5);
 }
-#list.mobile .search input {
-  border: none;
-  color: #000;
-}
 .folder i,
 .file i,
 .item i {
@@ -598,9 +541,6 @@ a {
   font-size: 12px;
   color: #fff;
 }
-#list.mobile .details_modified {
-  color: #000;
-}
 .white #list .details_modified {
   color: #000;
 }
@@ -631,8 +571,7 @@ a {
   background-color: rgba(228, 231, 255, 0.8);
 }
 .highlight a,
-.highlight a:visited,
-.mobile .file.highlight a:visited {
+.highlight a:visited {
   color: #000;
 }
 
