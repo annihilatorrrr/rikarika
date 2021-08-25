@@ -1414,6 +1414,18 @@ window.getListing = async (scroll) => {
       );
       document.querySelector("#list").appendChild(div16);
 
+      const div17 = document.createElement("div");
+      div17.className = "item";
+      div17.onclick = (event) => {
+        event.preventDefault();
+        location.href = `/?view=mobile`;
+      };
+      const i12 = document.createElement("i");
+      i12.className = "fa fa-mobile";
+      div17.appendChild(i12);
+      div17.appendChild(document.createTextNode("切換至手機版網頁"));
+      document.querySelector("#list").appendChild(div17);
+
       const div14 = document.createElement("div");
       div14.className = "item";
       div14.onclick = (event) => {

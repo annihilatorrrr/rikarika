@@ -353,6 +353,15 @@ const render = async (scrollTo) => {
       updatePlayerSettingUI();
     }
 
+    const div17 = document.createElement("div");
+    div17.className = "item";
+    div17.onclick = (event) => {
+      event.preventDefault();
+      location.href = `/?view=desktop`;
+    };
+    div17.appendChild(document.createTextNode("💻 切換至桌面版網頁"));
+    document.querySelector("#list").appendChild(div17);
+
     const div14 = document.createElement("div");
     div14.className = "item";
     div14.onclick = (event) => {

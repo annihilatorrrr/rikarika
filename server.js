@@ -86,6 +86,16 @@ app.get(/[^\/]+\.[^\/]+$/, express.static(path.join(__dirname, "www")));
 
 // path ends with /
 app.get(/.*\/$/, (req, res) => {
+  if (req.query.view) {
+    if (["desktop", "mobile"].includes(req.query.view)) {
+      res.setHeader(
+        "Set-Cookie",
+        `view=${req.query.view}; Path=/; Secure; HttpOnly; SameSite=Strict`
+      );
+    }
+    return res.redirect(302, req.path ?? "/");
+  }
+
   res.setHeader("Content-Type", "text/html");
   if (req.path === "/admin/") {
     res.send(
@@ -101,7 +111,9 @@ app.get(/.*\/$/, (req, res) => {
     req.cookies.session ===
       crypto.createHmac("sha256", WEB_PASSWORD).update(WEB_SECRET).digest("hex")
   ) {
-    const view = /(Android|iPad|iPhone|iPod)/g.test(req.headers["user-agent"])
+    const view = ["desktop", "mobile"].includes(req.cookies.view)
+      ? req.cookies.view
+      : /(Android|iPad|iPhone|iPod)/g.test(req.headers["user-agent"])
       ? "mobile"
       : "desktop";
     res.setHeader("Link", `</js/${view}.js>; as=script; rel=preload`);
@@ -135,6 +147,7 @@ app.post("/login", (req, res) => {
 
 app.get("/logout", (req, res) => {
   res.setHeader("Set-Cookie", `session=; Path=/; Max-Age=0; Secure; HttpOnly; SameSite=Strict`);
+  res.append("Set-Cookie", `view=; Path=/; Max-Age=0; Secure; HttpOnly; SameSite=Strict`);
   return res.redirect(302, "/");
 });
 
