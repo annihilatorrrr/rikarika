@@ -285,16 +285,23 @@ const render = async (scrollTo) => {
   }
 
   if (season === "setting") {
-    const div6 = document.createElement("div");
-    div6.className = "file";
-    const a3 = document.createElement("a");
-    a3.href = "/list";
-    a3.appendChild(document.createTextNode("📄 動畫列表"));
-    a3.onclick = preventClick;
-    div6.onmouseup = clickFile;
-    div6.appendChild(a3);
-    div6.appendChild(document.createElement("br"));
-    document.querySelector("#list").appendChild(div6);
+    const div13 = document.createElement("div");
+    div13.className = "item";
+    div13.onclick = (event) => {
+      event.preventDefault();
+      location.href = "/logout";
+    };
+    div13.appendChild(document.createTextNode("💨 登出"));
+    document.querySelector("#list").appendChild(div13);
+
+    const div17 = document.createElement("div");
+    div17.className = "item";
+    div17.onclick = (event) => {
+      event.preventDefault();
+      location.href = `/?view=desktop`;
+    };
+    div17.appendChild(document.createTextNode("💻 切換至桌面版網頁"));
+    document.querySelector("#list").appendChild(div17);
 
     const div16 = document.createElement("div");
     div16.className = "item";
@@ -319,6 +326,24 @@ const render = async (scrollTo) => {
       )
     );
     document.querySelector("#list").appendChild(div16);
+
+    const div14 = document.createElement("div");
+    div14.className = "item";
+    div14.onclick = (event) => {
+      event.preventDefault();
+      location.href = document.querySelector("meta[name=donate-url]").getAttribute("content");
+    };
+    div14.appendChild(document.createTextNode("💖 PayMe 捐助"));
+    document.querySelector("#list").appendChild(div14);
+
+    const div6 = document.createElement("div");
+    div6.className = "item";
+    div6.onclick = (event) => {
+      event.preventDefault();
+      window.open("/list", "_blank");
+    };
+    div6.appendChild(document.createTextNode("📄 動畫列表"));
+    document.querySelector("#list").appendChild(div6);
 
     if (android) {
       const div10 = document.createElement("div");
@@ -353,13 +378,42 @@ const render = async (scrollTo) => {
       updatePlayerSettingUI();
     }
 
+    const registration = await navigator.serviceWorker.ready;
+    if (registration) {
+      const subscription = await registration?.pushManager?.getSubscription();
+      if (subscription) {
+        const res = await fetch("/subscribed/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(subscription),
+        });
+        if (res.status === 200) {
+          const div19 = document.createElement("div");
+          div19.className = "item";
+          div19.onclick = async (event) => {
+            event.target.innerText = "🔕 正在停用推送通知...";
+            const res = await fetch("/unsubscribe/", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(subscription),
+            });
+            if (res.status >= 400) {
+              event.target.innerText = "🔕 無法停用推送通知";
+            } else {
+              await render();
+            }
+          };
+          div19.appendChild(document.createTextNode("🔕 停用推送通知"));
+          document.querySelector("#list").appendChild(div19);
+          return;
+        }
+      }
+    }
     const div18 = document.createElement("div");
     div18.className = "item";
     div18.onclick = async (event) => {
       event.preventDefault();
       event.target.innerText = "🔔 正在嘗試啟用推送通知...";
-      await navigator.serviceWorker.register("/serviceworker.js");
-      const registration = await navigator.serviceWorker.ready;
       const subscription =
         (await registration?.pushManager?.getSubscription()) ??
         (await registration?.pushManager
@@ -382,37 +436,15 @@ const render = async (scrollTo) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(subscription),
       });
-      event.target.innerText = res.status >= 400 ? "🔔 無法啟用推送通知" : "🔔 已啟用推送通知";
+      if (res.status >= 400) {
+        event.target.innerText = "🔔 無法啟用推送通知";
+      } else {
+        await render();
+      }
     };
     div18.appendChild(document.createTextNode("🔔 啟用推送通知"));
     document.querySelector("#list").appendChild(div18);
 
-    const div17 = document.createElement("div");
-    div17.className = "item";
-    div17.onclick = (event) => {
-      event.preventDefault();
-      location.href = `/?view=desktop`;
-    };
-    div17.appendChild(document.createTextNode("💻 切換至桌面版網頁"));
-    document.querySelector("#list").appendChild(div17);
-
-    const div14 = document.createElement("div");
-    div14.className = "item";
-    div14.onclick = (event) => {
-      event.preventDefault();
-      location.href = document.querySelector("meta[name=donate-url]").getAttribute("content");
-    };
-    div14.appendChild(document.createTextNode("💖 PayMe 捐助"));
-    document.querySelector("#list").appendChild(div14);
-
-    const div13 = document.createElement("div");
-    div13.className = "item";
-    div13.onclick = (event) => {
-      event.preventDefault();
-      location.href = "/logout";
-    };
-    div13.appendChild(document.createTextNode("💨 登出"));
-    document.querySelector("#list").appendChild(div13);
     return;
   }
 
@@ -515,3 +547,5 @@ document.querySelector("#search").onfocus = (e) => {
     render();
   }
 };
+
+navigator.serviceWorker.register("/serviceworker.js");

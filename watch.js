@@ -231,7 +231,7 @@ chokidar
         }),
       });
 
-      const rows = await knex("subscription").select("*");
+      const rows = await knex("subscriber").select("*");
       for (let i = 0; i < rows.length; i += 1) {
         await webpush // do this one-by-one to avoid spamming
           .sendNotification(
@@ -248,8 +248,8 @@ chokidar
           )
           .catch(async (e) => {
             if (e.statusCode === 403 || e.statusCode === 410) {
-              await knex("subscription").where("id", rows[i].id).delete();
-              console.log(`Deleted  ${rows[i].id}`);
+              await knex("subscriber").where("endpoint", rows[i].endpoint).delete();
+              console.log(`Deleted  ${rows[i].endpoint}`);
             } else {
               console.log(e);
             }

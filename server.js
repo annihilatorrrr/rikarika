@@ -368,16 +368,41 @@ app.get("/search", async (req, res) => {
 });
 
 app.post("/subscribe", async (req, res) => {
-  // console.log(`subscription registering: ${req.body.endpoint}`);
   try {
-    await knex("subscription").insert({
-      id: crypto.createHmac("sha256", "").update(req.body.endpoint).digest("base64"),
-      json: JSON.stringify(req.body),
-    });
+    await knex.raw(
+      knex("subscriber")
+        .insert({
+          endpoint: req.body.endpoint,
+          json: JSON.stringify(req.body),
+        })
+        .toString()
+        .replace(/^insert/i, "insert ignore")
+    );
   } catch (e) {
-    // console.log("already registered");
+    console.log(e);
+    return res.sendStatus(400);
   }
-  return res.send("subscription registered");
+  return res.sendStatus(201);
+});
+
+app.post("/subscribed", async (req, res) => {
+  try {
+    const rows = await knex("subscriber").where("endpoint", req.body.endpoint);
+    return res.sendStatus(rows.length ? 200 : 204);
+  } catch (e) {
+    console.log(e);
+    return res.sendStatus(400);
+  }
+});
+
+app.post("/unsubscribe", async (req, res) => {
+  try {
+    await knex("subscriber").where("endpoint", req.body.endpoint).delete();
+  } catch (e) {
+    console.log(e);
+    return res.sendStatus(400);
+  }
+  return res.sendStatus(204);
 });
 
 app.use("/admin/get_series", async (req, res) => {
