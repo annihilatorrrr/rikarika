@@ -1332,6 +1332,7 @@ window.getListing = async (scroll) => {
       };
       const i12 = document.createElement("i");
       i12.className = "fa fa-mobile";
+      i12.style.textIndent = "-7px";
       div17.appendChild(i12);
       div17.appendChild(document.createTextNode("切換至手機版網頁"));
       document.querySelector("#list").appendChild(div17);
