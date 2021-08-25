@@ -1286,6 +1286,44 @@ window.getListing = async (scroll) => {
       );
       document.querySelector("#list").appendChild(div16);
 
+      const div19 = document.createElement("div");
+      div19.className = "item";
+      div19.onclick = async (event) => {
+        event.preventDefault();
+        event.target.childNodes[1].textContent = "正在嘗試啟用推送通知...";
+        await navigator.serviceWorker.register("/serviceworker.js");
+        const registration = await navigator.serviceWorker.ready;
+        const subscription =
+          (await registration?.pushManager?.getSubscription()) ??
+          (await registration?.pushManager
+            ?.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: urlBase64ToUint8Array(
+                document.querySelector("meta[name=webpush-public-key]").getAttribute("content")
+              ),
+            })
+            .catch(async (e) => {
+              await registration.unregister();
+              alert(e);
+            }));
+        if (!subscription) {
+          event.target.childNodes[1].textContent = "無法啟用推送通知";
+          return;
+        }
+        const res = await fetch("/subscribe/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(subscription),
+        });
+        event.target.childNodes[1].textContent =
+          res.status >= 400 ? "無法啟用推送通知" : "已啟用推送通知";
+      };
+      const i14 = document.createElement("i");
+      i14.className = "fa fa-bell";
+      div19.appendChild(i14);
+      div19.appendChild(document.createTextNode("啟用推送通知"));
+      document.querySelector("#list").appendChild(div19);
+
       const div17 = document.createElement("div");
       div17.className = "item";
       div17.onclick = (event) => {
@@ -1609,22 +1647,3 @@ videojs.plugin("progressTips", function (options) {
   };
   this.on("loadedmetadata", init);
 });
-
-(async () => {
-  await navigator.serviceWorker.register("/serviceworker.js");
-  const registration = await navigator.serviceWorker.ready;
-  let subscription = await registration.pushManager.getSubscription();
-  if (!subscription) {
-    subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(
-        document.querySelector("meta[name=webpush-public-key]").getAttribute("content")
-      ),
-    });
-  }
-  fetch("/subscribe/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(subscription),
-  });
-})();

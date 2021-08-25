@@ -353,6 +353,40 @@ const render = async (scrollTo) => {
       updatePlayerSettingUI();
     }
 
+    const div18 = document.createElement("div");
+    div18.className = "item";
+    div18.onclick = async (event) => {
+      event.preventDefault();
+      event.target.innerText = "🔔 正在嘗試啟用推送通知...";
+      await navigator.serviceWorker.register("/serviceworker.js");
+      const registration = await navigator.serviceWorker.ready;
+      const subscription =
+        (await registration?.pushManager?.getSubscription()) ??
+        (await registration?.pushManager
+          ?.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(
+              document.querySelector("meta[name=webpush-public-key]").getAttribute("content")
+            ),
+          })
+          .catch(async (e) => {
+            await registration.unregister();
+            alert(e);
+          }));
+      if (!subscription) {
+        event.target.innerText = "🔔 無法啟用推送通知";
+        return;
+      }
+      const res = await fetch("/subscribe/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(subscription),
+      });
+      event.target.innerText = res.status >= 400 ? "🔔 無法啟用推送通知" : "🔔 已啟用推送通知";
+    };
+    div18.appendChild(document.createTextNode("🔔 啟用推送通知"));
+    document.querySelector("#list").appendChild(div18);
+
     const div17 = document.createElement("div");
     div17.className = "item";
     div17.onclick = (event) => {
@@ -481,22 +515,3 @@ document.querySelector("#search").onfocus = (e) => {
     render();
   }
 };
-
-(async () => {
-  await navigator.serviceWorker.register("/serviceworker.js");
-  const registration = await navigator.serviceWorker.ready;
-  let subscription = await registration.pushManager.getSubscription();
-  if (!subscription) {
-    subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(
-        document.querySelector("meta[name=webpush-public-key]").getAttribute("content")
-      ),
-    });
-  }
-  fetch("/subscribe/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(subscription),
-  });
-})();
