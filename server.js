@@ -125,14 +125,14 @@ app.post("/login", (req, res) => {
       `session=${crypto
         .createHmac("sha256", WEB_PASSWORD)
         .update(WEB_SECRET)
-        .digest("hex")}; Secure; HttpOnly; SameSite=Strict`
+        .digest("hex")}; Path=/; Secure; HttpOnly; SameSite=Strict`
     );
   }
   return res.redirect(302, req.body.redirect ?? "/");
 });
 
 app.get("/logout", (req, res) => {
-  res.setHeader("Set-Cookie", `session=; Secure; HttpOnly; SameSite=Strict`);
+  res.setHeader("Set-Cookie", `session=; Path=/; Max-Age=0; Secure; HttpOnly; SameSite=Strict`);
   return res.redirect(302, "/");
 });
 
