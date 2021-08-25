@@ -101,7 +101,9 @@ app.get(/.*\/$/, (req, res) => {
     req.cookies.session ===
       crypto.createHmac("sha256", WEB_PASSWORD).update(WEB_SECRET).digest("hex")
   ) {
-    const view = /(Android|iPad|iPhone|iPod)/g.test(req.headers["user-agent"]) ? "mobile" : "index";
+    const view = /(Android|iPad|iPhone|iPod)/g.test(req.headers["user-agent"])
+      ? "mobile"
+      : "desktop";
     res.setHeader("Link", `</js/${view}.js>; as=script; rel=preload`);
     res.send(
       fs
