@@ -1180,9 +1180,12 @@ window.getListing = async (scroll) => {
     );
     window.search();
   } else {
-    const dirEntries = await fetch(`/ls?path=${encodeURIComponent(window.location.pathname)}`).then(
-      (res) => res.json()
-    );
+    const dirEntries =
+      window.location.pathname === "/setting/"
+        ? []
+        : await fetch(`/ls?path=${encodeURIComponent(window.location.pathname)}`).then((res) =>
+            res.json()
+          );
     getInfo(dirEntries);
     clearTimeout(slowload);
     document.querySelector(".progress").style.visibility = "hidden";
@@ -1201,6 +1204,19 @@ window.getListing = async (scroll) => {
     if (window.location.pathname === "/") {
       dirEntries.reverse();
       document.querySelector("#list .search").style.display = "";
+
+      const div18 = document.createElement("div");
+      div18.className = "item";
+      div18.onclick = (event) => {
+        event.preventDefault();
+        history.pushState(null, null, "/setting/");
+        window.getListing(0);
+      };
+      const i13 = document.createElement("i");
+      i13.className = "fa fa-cogs";
+      div18.appendChild(i13);
+      div18.appendChild(document.createTextNode("設定"));
+      document.querySelector("#list").appendChild(div18);
     } else {
       if (document.querySelector("#search").value.length === 0) {
         const div4 = document.createElement("div");
@@ -1230,96 +1246,18 @@ window.getListing = async (scroll) => {
       dirEntries.sort();
     }
 
-    if (
-      window.location.pathname === "/Movie/" ||
-      window.location.pathname === "/OVA/" ||
-      window.location.pathname === "/Sukebei/" ||
-      window.location.pathname === "/2021-07/" ||
-      window.location.pathname === "/2021-04/"
-    ) {
-      dirEntries.sort((a, b) => (b.modified > a.modified ? 1 : b.modified < a.modified ? -1 : 0));
-    } else if (window.location.pathname === "/") {
-      dirEntries.sort((a, b) => (b.name > a.name ? 1 : b.name < a.name ? -1 : 0));
-    } else {
-      dirEntries.sort((a, b) => (a.name > b.name ? 1 : a.name < b.name ? -1 : 0));
-    }
-    if (window.location.pathname === "/") {
+    if (window.location.pathname === "/setting/") {
       const div6 = document.createElement("div");
-      div6.className = "file";
-      const a3 = document.createElement("a");
-      a3.href = "/list";
+      div6.className = "item";
+      div6.onclick = (event) => {
+        event.preventDefault();
+        window.open("/list", "_blank");
+      };
       const i4 = document.createElement("i");
       i4.className = "fa fa-file-text";
-      a3.appendChild(i4);
-      a3.appendChild(document.createTextNode("動畫列表"));
-      div6.appendChild(a3);
-      div6.appendChild(document.createElement("br"));
+      div6.appendChild(i4);
+      div6.appendChild(document.createTextNode("動畫列表"));
       document.querySelector("#list").appendChild(div6);
-    }
-    dirEntries.forEach((entry) => {
-      const div7 = document.createElement("div");
-      const a4 = document.createElement("a");
-      const i5 = document.createElement("i");
-      const div8 = document.createElement("div");
-      div8.className = "details_modified";
-      div8.dataset.modified = entry.modified;
-      div8.style.opacity = getDateTimeOpacity(entry.modified);
-      div8.innerText = formatDateTime(entry.modified);
-      if (entry.name.slice(-4) === ".mp4") {
-        let watched = "";
-        if (localStorage.getItem(`/${entry.anime_id}/${encodeURIComponent(entry.name)}`)) {
-          watched = "watched";
-        }
-        div7.className = `file ${watched}`;
-        a4.href = `/${entry.anime_id}/${encodeURIComponent(entry.name)}`;
-        if (entry.webp) {
-          a4.dataset.webp = `/${entry.anime_id}/${encodeURIComponent(entry.webp)}`;
-        }
-        if (entry.avif) {
-          a4.dataset.avif = `/${entry.anime_id}/${encodeURIComponent(entry.avif)}`;
-        }
-        i5.className = "fa fa-toggle-right";
-        a4.appendChild(i5);
-        a4.appendChild(document.createTextNode(entry.name.slice(0, -4)));
-        div7.appendChild(a4);
-        div7.appendChild(document.createElement("br"));
-        div7.appendChild(div8);
-        const div9 = document.createElement("div");
-        div9.className = "details_filesize";
-        div9.innerText = formatFilesize(entry.size);
-        div7.appendChild(div9);
-      } else if (entry.name.slice(-4) === ".txt" || entry.name.slice(-4) === ".ass") {
-        div7.className = "file";
-        a4.href = `/${entry.anime_id}/${encodeURIComponent(entry.name)}`;
-        i5.className = "fa fa-file-text";
-        a4.appendChild(i5);
-        a4.appendChild(document.createTextNode(entry.name.slice(0, -4)));
-        div7.appendChild(a4);
-        div7.appendChild(document.createElement("br"));
-        div7.appendChild(div8);
-        const div9 = document.createElement("div");
-        div9.className = "details_filesize";
-        div9.innerText = formatFilesize(entry.size);
-        div7.appendChild(div9);
-      } else {
-        div7.className = "folder";
-        a4.href = `${encodeURIComponent(entry.name)}/`;
-        a4.dataset.anime_id = entry.anime_id;
-        i5.className = "fa fa-folder";
-        a4.appendChild(i5);
-        a4.appendChild(document.createTextNode(entry.name));
-        div7.appendChild(a4);
-        div7.appendChild(document.createElement("br"));
-        div7.appendChild(div8);
-      }
-      document.querySelector("#list").appendChild(div7);
-    });
-
-    if (window.location.pathname === "/") {
-      document.querySelectorAll(".file").forEach((each) => {
-        each.style =
-          "min-height: auto; padding-left: 30px; padding-right: 10px; text-indent: -11px";
-      });
 
       const div16 = document.createElement("div");
       div16.className = "item";
@@ -1384,6 +1322,80 @@ window.getListing = async (scroll) => {
       div13.appendChild(document.createTextNode("登出"));
       document.querySelector("#list").appendChild(div13);
     }
+
+    if (
+      window.location.pathname === "/Movie/" ||
+      window.location.pathname === "/OVA/" ||
+      window.location.pathname === "/Sukebei/" ||
+      window.location.pathname === "/2021-07/" ||
+      window.location.pathname === "/2021-04/"
+    ) {
+      dirEntries.sort((a, b) => (b.modified > a.modified ? 1 : b.modified < a.modified ? -1 : 0));
+    } else if (window.location.pathname === "/") {
+      dirEntries.sort((a, b) => (b.name > a.name ? 1 : b.name < a.name ? -1 : 0));
+    } else {
+      dirEntries.sort((a, b) => (a.name > b.name ? 1 : a.name < b.name ? -1 : 0));
+    }
+
+    dirEntries.forEach((entry) => {
+      const div7 = document.createElement("div");
+      const a4 = document.createElement("a");
+      const i5 = document.createElement("i");
+      const div8 = document.createElement("div");
+      div8.className = "details_modified";
+      div8.dataset.modified = entry.modified;
+      div8.style.opacity = getDateTimeOpacity(entry.modified);
+      div8.innerText = formatDateTime(entry.modified);
+      if (entry.name.slice(-4) === ".mp4") {
+        let watched = "";
+        if (localStorage.getItem(`/${entry.anime_id}/${encodeURIComponent(entry.name)}`)) {
+          watched = "watched";
+        }
+        div7.className = `file ${watched}`;
+        a4.href = `/${entry.anime_id}/${encodeURIComponent(entry.name)}`;
+        if (entry.webp) {
+          a4.dataset.webp = `/${entry.anime_id}/${encodeURIComponent(entry.webp)}`;
+        }
+        if (entry.avif) {
+          a4.dataset.avif = `/${entry.anime_id}/${encodeURIComponent(entry.avif)}`;
+        }
+        i5.className = "fa fa-toggle-right";
+        a4.appendChild(i5);
+        a4.appendChild(document.createTextNode(entry.name.slice(0, -4)));
+        div7.appendChild(a4);
+        div7.appendChild(document.createElement("br"));
+        div7.appendChild(div8);
+        const div9 = document.createElement("div");
+        div9.className = "details_filesize";
+        div9.innerText = formatFilesize(entry.size);
+        div7.appendChild(div9);
+      } else if (entry.name.slice(-4) === ".txt" || entry.name.slice(-4) === ".ass") {
+        div7.className = "file";
+        a4.href = `/${entry.anime_id}/${encodeURIComponent(entry.name)}`;
+        i5.className = "fa fa-file-text";
+        a4.appendChild(i5);
+        a4.appendChild(document.createTextNode(entry.name.slice(0, -4)));
+        div7.appendChild(a4);
+        div7.appendChild(document.createElement("br"));
+        div7.appendChild(div8);
+        const div9 = document.createElement("div");
+        div9.className = "details_filesize";
+        div9.innerText = formatFilesize(entry.size);
+        div7.appendChild(div9);
+      } else {
+        div7.className = "folder";
+        a4.href = `${encodeURIComponent(entry.name)}/`;
+        a4.dataset.anime_id = entry.anime_id;
+        i5.className = "fa fa-folder";
+        a4.appendChild(i5);
+        a4.appendChild(document.createTextNode(entry.name));
+        div7.appendChild(a4);
+        div7.appendChild(document.createElement("br"));
+        div7.appendChild(div8);
+      }
+      document.querySelector("#list").appendChild(div7);
+    });
+
     if (navigator.connection) {
       toggleFileSizeDisplay();
     }
