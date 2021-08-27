@@ -114,8 +114,6 @@ module.exports = (input, output) => {
   fs.removeSync(`${tmpPath}.wav`);
   fs.removeSync(subtitleTempPath);
   fs.ensureDirSync(path.dirname(output));
-  const { atime, mtime } = fs.statSync(path.dirname(output));
   fs.moveSync(`${tmpPath}.mp4`, output, { overwrite: true });
-  fs.utimesSync(path.dirname(output), atime, mtime);
   fs.removeSync(input);
 };

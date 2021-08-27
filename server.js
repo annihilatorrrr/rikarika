@@ -225,24 +225,28 @@ app.get("/ls", async (req, res) => {
     return res.send("invalid path");
   }
   if (req.query.path.split("/").length === 2) {
-    const rows = await knex("anime").distinct("season").orderBy("season", "asc");
+    const rows = await knex("anime")
+      .select("season")
+      .max("updated", { as: "updated" })
+      .groupBy("season")
+      .orderBy("season", "desc");
     return res.send(
       rows.map((row) => ({
         name: row.season,
-        modified: fs.lstatSync(fs.realpathSync(path.join(ANIME_NEW_PATH, row.season))).mtime,
+        modified: row.updated,
       }))
     );
   }
   if (req.query.path.split("/").length === 3) {
     const rows = await knex("anime")
-      .select("id", "anilist_id", "season", "title")
+      .select("id", "anilist_id", "season", "title", "updated")
       .where("season", req.query.path.split("/")[1]);
     return res.send(
       rows.map((row) => ({
         anime_id: row.id,
         anilist_id: row.anilist_id,
         name: row.title,
-        modified: fs.lstatSync(path.join(ANIME_PATH, row.id.toString())).mtime,
+        modified: row.updated,
       }))
     );
   }

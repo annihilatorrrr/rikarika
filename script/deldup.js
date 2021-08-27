@@ -67,9 +67,7 @@ const cleanup = (id, altFilePath) => {
   }
   if (process.argv.slice(2).includes("--delete")) {
     console.log(`Deleting ${altFilePath}`);
-    const { atime, mtime } = fs.statSync(path.dirname(altFilePath));
     fs.removeSync(altFilePath);
-    fs.utimesSync(path.dirname(altFilePath), atime, mtime);
 
     const pngPath = path.join(
       path.dirname(altFilePath.replace(ANIME_PATH, ANIME_PNG_PATH)),

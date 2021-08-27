@@ -180,35 +180,11 @@ chokidar
 
     const dirName = path.dirname(filePath);
     const fileName = path.basename(filePath);
-    const { season, title } = (
-      await knex("anime")
-        .select("season", "title")
-        .where("id", dirName.replace(ANIME_PATH, "").split("/")[1])
-    )[0];
-    if (season === "Sukebei" || title === "Test") {
-      fs.utimesSync(
-        path.dirname(filePath),
-        fs.statSync(filePath).atime,
-        fs.statSync(filePath).mtime
-      );
-      fs.utimesSync(
-        path.join(ANIME_NEW_PATH, season),
-        fs.statSync(filePath).atime,
-        fs.statSync(filePath).mtime
-      );
-      return;
-    }
+    const id = dirName.replace(ANIME_PATH, "").split("/")[1];
+    const { season, title } = (await knex("anime").select("season", "title").where("id", id))[0];
+    await knex("anime").where("id", id).update({ updated: new Date() });
+    if (season === "Sukebei" || title === "Test") return;
     if (!isRAW(fileName) && (isSP(fileName) || isNewEP(fileName, fs.readdirSync(dirName)))) {
-      fs.utimesSync(
-        path.dirname(filePath),
-        fs.statSync(filePath).atime,
-        fs.statSync(filePath).mtime
-      );
-      fs.utimesSync(
-        path.join(ANIME_NEW_PATH, season),
-        fs.statSync(filePath).atime,
-        fs.statSync(filePath).mtime
-      );
       fs.appendFileSync(
         "./www/message.txt",
         ["", new Date().toISOString(), title, season, fileName, ""].join("\n")
