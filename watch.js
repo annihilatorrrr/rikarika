@@ -182,9 +182,9 @@ chokidar
     const fileName = path.basename(filePath);
     const id = dirName.replace(ANIME_PATH, "").split("/")[1];
     const { season, title } = (await knex("anime").select("season", "title").where("id", id))[0];
-    await knex("anime").where("id", id).update({ updated: new Date() });
     if (season === "Sukebei" || title === "Test") return;
     if (!isRAW(fileName) && (isSP(fileName) || isNewEP(fileName, fs.readdirSync(dirName)))) {
+      await knex("anime").where("id", id).update({ updated: new Date() });
       fs.appendFileSync(
         "./www/message.txt",
         ["", new Date().toISOString(), title, season, fileName, ""].join("\n")
