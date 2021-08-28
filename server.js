@@ -229,26 +229,38 @@ app.get("/ls", async (req, res) => {
     const rows = await knex("anime")
       .select("season")
       .max("updated", { as: "updated" })
-      .groupBy("season")
-      .orderBy("season", "desc");
+      .groupBy("season");
     return res.send(
-      rows.map((row) => ({
-        name: row.season,
-        modified: row.updated,
-      }))
+      rows
+        .map((row) => ({
+          name: row.season,
+          modified: row.updated,
+        }))
+        .sort((a, b) => (a.name > b.name ? -1 : 1))
     );
   }
   if (req.query.path.split("/").length === 3) {
+    const season = req.query.path.split("/")[1];
     const rows = await knex("anime")
       .select("id", "anilist_id", "season", "title", "updated")
-      .where("season", req.query.path.split("/")[1]);
+      .where("season", season);
     return res.send(
-      rows.map((row) => ({
-        anime_id: row.id,
-        anilist_id: row.anilist_id,
-        name: row.title,
-        modified: row.updated,
-      }))
+      rows
+        .map((row) => ({
+          anime_id: row.id,
+          anilist_id: row.anilist_id,
+          name: row.title,
+          modified: row.updated,
+        }))
+        .sort((a, b) =>
+          ["2021-07", "2021-04", "Movie", "OVA", "Sukebei"].includes(season)
+            ? a.modified > b.modified
+              ? -1
+              : 1
+            : a.name > b.name
+            ? 1
+            : -1
+        )
     );
   }
   if (req.query.path.split("/").length === 4) {
@@ -281,7 +293,7 @@ app.get("/ls", async (req, res) => {
         ? `${path.basename(file, ".mp4")}.avif`
         : null,
     }));
-    return res.send(path_series);
+    return res.send(path_series.sort((a, b) => (a.name > b.name ? -1 : 1)));
   }
   return res.send([]);
 });
