@@ -91,6 +91,9 @@ a {
 .menu .item:last-child {
   border-bottom: none;
 }
+.menu .item.install.hidden {
+  display: none;
+}
 .menu .defaultPlayer {
   display: flex;
   flex-direction: column;
@@ -104,7 +107,7 @@ a {
   background-color: var(--bg-main-color);
   height: 2rem;
   font-size: 0.9rem;
-  margin-left: 1.5rem;
+  margin-left: 1rem;
 }
 .bar.blur,
 .list.blur {

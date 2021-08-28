@@ -400,6 +400,17 @@ document.querySelector(".logout").onclick = () => {
   location.href = "/logout";
 };
 
+let beforeInstallPromptEvent;
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  beforeInstallPromptEvent = e;
+  document.querySelector(".install").classList.remove("hidden");
+});
+
+document.querySelector(".install").onclick = () => {
+  beforeInstallPromptEvent.prompt();
+};
+
 document.querySelector(".history").innerText = `🗑️ 清除播放紀錄 (${
   Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
 } 個)`;
