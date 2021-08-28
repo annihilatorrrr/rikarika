@@ -221,6 +221,13 @@ const render = async (scrollTo) => {
     each.onmouseup = null;
   });
 
+  if (season === "setting") {
+    document.querySelector(".list").innerHTML = "";
+    await renderBackButton(season, title);
+    await renderSettingList();
+    return;
+  }
+
   const loadingTimer = setTimeout(() => {
     document.querySelector(".list").innerHTML = "";
     const div3 = document.createElement("div");
@@ -229,32 +236,27 @@ const render = async (scrollTo) => {
     document.querySelector(".progress").style.visibility = "visible";
     document.querySelector(".list").appendChild(div3);
   }, 300);
-  const dirEntries =
-    season === "setting"
-      ? []
-      : await fetch(
-          season === "search"
-            ? `/search?q=${title}`
-            : `/ls?path=${encodeURIComponent(location.pathname)}`
-        ).then((res) => res.json());
+
+  const dirEntries = await fetch(
+    season === "search" ? `/search?q=${title}` : `/ls?path=${encodeURIComponent(location.pathname)}`
+  )
+    .then((res) => res.json())
+    .catch((e) => e);
   clearTimeout(loadingTimer);
 
   document.querySelector(".list").innerHTML = "";
+  if (!Array.isArray(dirEntries)) {
+    await renderRetryButton(dirEntries);
+    return;
+  }
 
   if (season === "search") {
     renderSearchResult(dirEntries);
     return;
-  }
-
-  if (season) {
-    await renderBackButton();
+  } else if (season) {
+    await renderBackButton(season, title);
   } else {
     await renderSettingButton();
-  }
-
-  if (season === "setting") {
-    await renderSettingList();
-    return;
   }
 
   if (["2021-07", "2021-04", "Movie", "OVA", "Sukebei"].includes(season) && !title) {
@@ -296,6 +298,21 @@ const render = async (scrollTo) => {
   renderFileSizeStyle();
 };
 
+const renderRetryButton = async (error) => {
+  const div15 = document.createElement("div");
+  div15.className = "item";
+  div15.onclick = (event) => {
+    event.preventDefault();
+    render();
+  };
+  const span1 = document.createElement("span");
+  span1.className = "details_title";
+  span1.innerText = error;
+  div15.appendChild(span1);
+  div15.appendChild(document.createTextNode("📶 無法連線至伺服器，按此重試"));
+  document.querySelector(".list").appendChild(div15);
+};
+
 const renderSearchResult = async function (results) {
   for (const { season, title } of results) {
     if (season === "Sukebei") {
@@ -332,7 +349,7 @@ const renderSearchResult = async function (results) {
   });
 };
 
-const renderBackButton = async () => {
+const renderBackButton = async (season, title) => {
   const div4 = document.createElement("div");
   div4.className = "folder";
   div4.id = "back";
@@ -355,6 +372,7 @@ const renderBackButton = async () => {
   div4.appendChild(span1);
   document.querySelector(".list").appendChild(div4);
 };
+
 const renderSettingButton = async () => {
   const div15 = document.createElement("div");
   div15.className = "item";
@@ -366,6 +384,7 @@ const renderSettingButton = async () => {
   div15.appendChild(document.createTextNode("⚙️ 設定"));
   document.querySelector(".list").appendChild(div15);
 };
+
 const renderSettingList = async () => {
   const div13 = document.createElement("div");
   div13.className = "item";
