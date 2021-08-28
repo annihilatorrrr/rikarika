@@ -175,7 +175,7 @@ a {
   box-sizing: border-box;
   border-radius: 6px;
 }
-.search {
+.bar {
   position: fixed;
   top: 0;
   left: 0;
@@ -183,7 +183,7 @@ a {
   display: flex;
   align-items: center;
 }
-.search input {
+.bar input {
   padding: 0;
   margin: 0.5rem 0.5rem 0.5rem 0;
   -webkit-appearance: none;
