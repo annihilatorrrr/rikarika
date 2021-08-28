@@ -111,7 +111,7 @@ a {
 
 .list {
   position: fixed;
-  top: 3.5rem;
+  top: 4rem;
   bottom: 0;
   left: 0;
   right: 0;
@@ -167,10 +167,17 @@ a {
   word-break: keep-all;
 }
 .icon {
-  width: 2.5rem;
-  height: 2.5rem;
-  margin: 0.5rem;
+  width: 4rem;
+  height: 4rem;
   cursor: pointer;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+}
+.icon img {
+  width: 3rem;
+  height: 3rem;
   border: 3px double var(--theme-color);
   box-sizing: border-box;
   border-radius: 6px;
@@ -193,7 +200,7 @@ a {
   border-radius: 0;
   border-bottom: 1px dashed var(--theme-color);
   font-size: 1rem;
-  height: 2.5rem;
+  height: 3rem;
   flex-grow: 1;
   color: var(--text-main-color);
 }

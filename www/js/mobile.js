@@ -359,7 +359,7 @@ document.querySelector(".search").onfocus = (e) => {
   }
 };
 
-document.querySelector(".icon").onclick = async () => {
+document.querySelector(".bar .icon").onclick = async () => {
   document.querySelector(".overlay").classList.remove("hidden");
   document.querySelector(".overlay").classList.add("hide");
   setTimeout(() => {
