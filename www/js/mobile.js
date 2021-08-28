@@ -1,30 +1,6 @@
 const android = /(Android)/g.test(navigator.userAgent);
 // const iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
 
-const updatePlayerSettingUI = function () {
-  Array.from(document.querySelectorAll(".item"))
-    .filter((each) => typeof each.dataset.app === "string")
-    .forEach((item) => {
-      if (
-        item.dataset.app.includes(localStorage.getItem("player")) ||
-        (item.dataset.app === "" && !localStorage.getItem("player"))
-      ) {
-        item.querySelector("span").style.visibility = "visible";
-      } else {
-        item.querySelector("span").style.visibility = "hidden";
-      }
-    });
-};
-
-const changePlayer = function () {
-  if (this.dataset.app) {
-    localStorage.setItem("player", this.dataset.app);
-  } else {
-    localStorage.removeItem("player");
-  }
-  updatePlayerSettingUI();
-};
-
 const formatFileSize = function (bytes) {
   let size = parseInt(bytes, 10);
   if (bytes > 1000000000) {
@@ -145,7 +121,8 @@ const clickFolder = function (event) {
   if (event.button !== 0) {
     return;
   }
-  scrollTop[window.location.pathname.split("/").length - 2] = window.scrollY;
+  scrollTop[window.location.pathname.split("/").length - 2] =
+    document.querySelector(".list").scrollTop;
   history.pushState(null, null, this.querySelector("a").pathname);
   render();
 };
@@ -221,13 +198,6 @@ const render = async (scrollTo) => {
     each.onmouseup = null;
   });
 
-  if (season === "setting") {
-    document.querySelector(".list").innerHTML = "";
-    await renderBackButton(season, title);
-    await renderSettingList();
-    return;
-  }
-
   const loadingTimer = setTimeout(() => {
     document.querySelector(".list").innerHTML = "";
     const div3 = document.createElement("div");
@@ -255,8 +225,6 @@ const render = async (scrollTo) => {
     return;
   } else if (season) {
     await renderBackButton(season, title);
-  } else {
-    await renderSettingButton();
   }
 
   if (["2021-07", "2021-04", "Movie", "OVA", "Sukebei"].includes(season) && !title) {
@@ -272,10 +240,10 @@ const render = async (scrollTo) => {
     []
   );
   appendChunk(chunkList[0]);
-  if (scrollTo && document.querySelector(".list").clientHeight >= scrollTo) {
-    window.scrollTo(0, scrollTo);
+  if (scrollTo && document.querySelector(".list").scrollHeight >= scrollTo) {
+    document.querySelector(".list").scrollTo(0, scrollTo);
   } else {
-    window.scrollTo(0, 0);
+    document.querySelector(".list").scrollTo(0, 0);
   }
 
   lazyLoadHandleList = [];
@@ -285,8 +253,8 @@ const render = async (scrollTo) => {
       lazyLoadHandleList.push(
         setTimeout(() => {
           appendChunk(chunk);
-          if (scrollTo && document.querySelector(".list").clientHeight >= scrollTo) {
-            window.scrollTo(0, scrollTo);
+          if (scrollTo && document.querySelector(".list").scrollHeight >= scrollTo) {
+            document.querySelector(".list").scrollTo(0, scrollTo);
           }
           resolve();
         }, 0)
@@ -300,16 +268,14 @@ const render = async (scrollTo) => {
 
 const renderRetryButton = async (error) => {
   const div15 = document.createElement("div");
-  div15.className = "item";
-  div15.onclick = (event) => {
-    event.preventDefault();
-    render();
-  };
-  const span1 = document.createElement("span");
-  span1.className = "details_title";
-  span1.innerText = error;
-  div15.appendChild(span1);
-  div15.appendChild(document.createTextNode("📶 無法連線至伺服器，按此重試"));
+  div15.classList.add("error");
+  div15.onclick = render;
+  div15.appendChild(document.createTextNode(`無法連線至伺服器 📶`));
+  div15.appendChild(document.createElement("br"));
+  div15.appendChild(document.createTextNode(`(${error})`));
+  div15.appendChild(document.createElement("br"));
+  div15.appendChild(document.createElement("br"));
+  div15.appendChild(document.createTextNode("按這裡重試"));
   document.querySelector(".list").appendChild(div15);
 };
 
@@ -373,180 +339,6 @@ const renderBackButton = async (season, title) => {
   document.querySelector(".list").appendChild(div4);
 };
 
-const renderSettingButton = async () => {
-  const div15 = document.createElement("div");
-  div15.className = "item";
-  div15.onclick = (event) => {
-    event.preventDefault();
-    history.pushState(null, null, "/setting/");
-    render();
-  };
-  div15.appendChild(document.createTextNode("⚙️ 設定"));
-  document.querySelector(".list").appendChild(div15);
-};
-
-const renderSettingList = async () => {
-  const div13 = document.createElement("div");
-  div13.className = "item";
-  div13.onclick = (event) => {
-    event.preventDefault();
-    location.href = "/logout";
-  };
-  div13.appendChild(document.createTextNode("💨 登出"));
-  document.querySelector(".list").appendChild(div13);
-
-  const div17 = document.createElement("div");
-  div17.className = "item";
-  div17.onclick = (event) => {
-    event.preventDefault();
-    location.href = `/?view=desktop`;
-  };
-  div17.appendChild(document.createTextNode("💻 切換至桌面版網頁"));
-  document.querySelector(".list").appendChild(div17);
-
-  const div16 = document.createElement("div");
-  div16.className = "item";
-  div16.onclick = (event) => {
-    event.preventDefault();
-    if (confirm("你確定要刪除所有播放紀錄嗎？")) {
-      for (const key in localStorage) {
-        if (key.startsWith("/")) {
-          localStorage.removeItem(key);
-        }
-      }
-      event.target.innerText = `🗑️ 清除播放紀錄 (${
-        Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
-      } 個)`;
-    }
-  };
-  div16.appendChild(
-    document.createTextNode(
-      `🗑️ 清除播放紀錄 (${
-        Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
-      } 個)`
-    )
-  );
-  document.querySelector(".list").appendChild(div16);
-
-  const div14 = document.createElement("div");
-  div14.className = "item";
-  div14.onclick = (event) => {
-    event.preventDefault();
-    location.href = document.querySelector("meta[name=donate-url]").getAttribute("content");
-  };
-  div14.appendChild(document.createTextNode("💖 PayMe 捐助"));
-  document.querySelector(".list").appendChild(div14);
-
-  const div6 = document.createElement("div");
-  div6.className = "item";
-  div6.onclick = (event) => {
-    event.preventDefault();
-    window.open("/list", "_blank");
-  };
-  div6.appendChild(document.createTextNode("📄 動畫列表"));
-  document.querySelector(".list").appendChild(div6);
-
-  if (android) {
-    const div10 = document.createElement("div");
-    div10.className = "item";
-    div10.dataset.app = "";
-    div10.onclick = changePlayer;
-    const span6 = document.createElement("span");
-    span6.appendChild(document.createTextNode("✅ "));
-    div10.appendChild(span6);
-    div10.appendChild(document.createTextNode("使用預設播放器"));
-    document.querySelector(".list").appendChild(div10);
-
-    const div11 = document.createElement("div");
-    div11.className = "item";
-    div11.dataset.app = "com.mxtech.videoplayer.ad";
-    div11.onclick = changePlayer;
-    const span7 = document.createElement("span");
-    span7.appendChild(document.createTextNode("✅ "));
-    div11.appendChild(span7);
-    div11.appendChild(document.createTextNode("使用 MXPlayer"));
-    document.querySelector(".list").appendChild(div11);
-
-    const div12 = document.createElement("div");
-    div12.className = "item";
-    div12.dataset.app = "com.mxtech.videoplayer.pro";
-    div12.onclick = changePlayer;
-    const span8 = document.createElement("span");
-    span8.appendChild(document.createTextNode("✅ "));
-    div12.appendChild(span8);
-    div12.appendChild(document.createTextNode("使用 MXPlayer Pro"));
-    document.querySelector(".list").appendChild(div12);
-    updatePlayerSettingUI();
-  }
-
-  const registration = await navigator.serviceWorker.ready;
-  if (registration) {
-    const subscription = await registration?.pushManager?.getSubscription();
-    if (subscription) {
-      const res = await fetch("/subscribed/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(subscription),
-      });
-      if (res.status === 200) {
-        const div19 = document.createElement("div");
-        div19.className = "item";
-        div19.onclick = async (event) => {
-          event.target.innerText = "🔕 正在停用推送通知...";
-          const res = await fetch("/unsubscribe/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(subscription),
-          });
-          if (res.status >= 400) {
-            event.target.innerText = "🔕 無法停用推送通知";
-          } else {
-            await render();
-          }
-        };
-        div19.appendChild(document.createTextNode("🔕 停用推送通知"));
-        document.querySelector(".list").appendChild(div19);
-        return;
-      }
-    }
-  }
-  const div18 = document.createElement("div");
-  div18.className = "item";
-  div18.onclick = async (event) => {
-    event.preventDefault();
-    event.target.innerText = "🔔 正在嘗試啟用推送通知...";
-    const subscription =
-      (await registration?.pushManager?.getSubscription()) ??
-      (await registration?.pushManager
-        ?.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(
-            document.querySelector("meta[name=webpush-public-key]").getAttribute("content")
-          ),
-        })
-        .catch(async (e) => {
-          await registration.unregister();
-          alert(e);
-        }));
-    if (!subscription) {
-      event.target.innerText = "🔔 無法啟用推送通知";
-      return;
-    }
-    const res = await fetch("/subscribe/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(subscription),
-    });
-    if (res.status >= 400) {
-      event.target.innerText = "🔔 無法啟用推送通知";
-    } else {
-      await render();
-    }
-  };
-  div18.appendChild(document.createTextNode("🔔 啟用推送通知"));
-  document.querySelector(".list").appendChild(div18);
-};
-
 render();
 
 window.onpopstate = async () => {
@@ -562,7 +354,7 @@ document.querySelector("#search").oninput = (e) => {
     return;
   }
   history.replaceState(null, null, `/search/${encodeURIComponent(e.target.value)}/`);
-  typing = setTimeout(render, 200);
+  typing = setTimeout(render, 300);
 };
 
 document.querySelector("#search").onfocus = (e) => {
@@ -571,5 +363,164 @@ document.querySelector("#search").onfocus = (e) => {
     render();
   }
 };
+
+document.querySelector(".icon").onclick = async () => {
+  document.querySelector(".overlay").classList.remove("hidden");
+  document.querySelector(".overlay").classList.add("hide");
+  setTimeout(() => {
+    document.querySelector(".overlay").classList.remove("hide");
+  }, 1);
+};
+
+document.querySelector(".overlay").onclick = async (e) => {
+  if (e.target !== document.querySelector(".overlay")) return;
+  document.querySelector(".overlay").classList.add("hide");
+  setTimeout(() => {
+    document.querySelector(".overlay").classList.remove("hiding");
+    document.querySelector(".overlay").classList.add("hidden");
+  }, 300);
+};
+
+document.querySelector(".home").onclick = () => {
+  location.href = "/";
+};
+document.querySelector(".toDesktop").onclick = () => {
+  location.href = "/?view=desktop";
+};
+
+document.querySelector(".fullList").onclick = () => {
+  window.open("/list", "_blank");
+};
+
+document.querySelector(".donate").onclick = () => {
+  window.open(document.querySelector("meta[name=donate-url]").getAttribute("content"), "_blank");
+};
+
+document.querySelector(".logout").onclick = () => {
+  location.href = "/logout";
+};
+
+document.querySelector(".history").innerText = `🗑️ 清除播放紀錄 (${
+  Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
+} 個)`;
+document.querySelector(".history").onclick = (event) => {
+  if (confirm("你確定要刪除所有播放紀錄嗎？")) {
+    for (const key in localStorage) {
+      if (key.startsWith("/")) {
+        localStorage.removeItem(key);
+      }
+    }
+    event.target.innerText = `🗑️ 清除播放紀錄 (${
+      Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
+    } 個)`;
+  }
+};
+
+if (android) {
+  for (const supportedPlayer of [
+    ["com.mxtech.videoplayer.ad", "MXPlayer"],
+    ["com.mxtech.videoplayer.pro", "MXPlayer Pro"],
+  ]) {
+    const option = document.createElement("option");
+    option.value = supportedPlayer[0];
+    option.innerText = supportedPlayer[1];
+    option.selected = localStorage.getItem("player") === supportedPlayer[0];
+    document.querySelector(".defaultPlayer select").appendChild(option);
+  }
+
+  document.querySelector(".defaultPlayer select").onchange = (e) => {
+    const selectedPlayer = e.target.options[e.target.selectedIndex].value;
+    if (selectedPlayer) {
+      localStorage.setItem("player", selectedPlayer);
+    } else {
+      localStorage.removeItem("player");
+    }
+  };
+} else {
+  document.querySelector(".defaultPlayer").style.display = "none";
+}
+
+const subscribe = async (event) => {
+  event.target.innerText = "🔔 正在嘗試啟用推送通知...";
+  const registration = await navigator.serviceWorker.ready;
+  if (!registration) {
+    event.target.innerText = "🔔 無法啟用推送通知";
+    return;
+  }
+  const subscription =
+    (await registration?.pushManager?.getSubscription()) ??
+    (await registration?.pushManager
+      ?.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(
+          document.querySelector("meta[name=webpush-public-key]").getAttribute("content")
+        ),
+      })
+      .catch(async (e) => {
+        await registration.unregister();
+        alert(e);
+      }));
+  if (!subscription) {
+    event.target.innerText = "🔔 無法啟用推送通知";
+    return;
+  }
+  const res = await fetch("/subscribe/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(subscription),
+  });
+  if (res.status >= 400) {
+    event.target.innerText = "🔔 無法啟用推送通知";
+  } else {
+    document.querySelector(".notification").onclick = unsubscribe;
+    event.target.innerText = "🔕 停用推送通知";
+  }
+};
+
+const unsubscribe = async (event) => {
+  event.target.innerText = "🔕 正在停用推送通知...";
+  const registration = await navigator.serviceWorker.ready;
+  if (!registration) {
+    event.target.innerText = "🔕 無法停用推送通知";
+    return;
+  }
+  const subscription = await registration?.pushManager?.getSubscription();
+  if (!subscription) {
+    event.target.innerText = "🔕 無法停用推送通知";
+    return;
+  }
+  const res = await fetch("/unsubscribe/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(subscription),
+  });
+  if (res.status >= 400) {
+    event.target.innerText = "🔕 無法停用推送通知";
+  } else {
+    document.querySelector(".notification").onclick = subscribe;
+    event.target.innerText = "🔔 啟用推送通知";
+  }
+};
+
+(async () => {
+  const registration = await navigator.serviceWorker.ready;
+  if (registration) {
+    const subscription = await registration?.pushManager?.getSubscription();
+    if (subscription) {
+      const res = await fetch("/subscribed/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(subscription),
+      });
+      if (res.status === 200) {
+        document.querySelector(".notification").onclick = unsubscribe;
+        document.querySelector(".notification").innerText = "🔕 停用推送通知";
+        return;
+      }
+    }
+  }
+  document.querySelector(".notification").onclick = subscribe;
+  document.querySelector(".notification").innerText = "🔔 啟用推送通知";
+})();
 
 navigator.serviceWorker.register("/serviceworker.js");
