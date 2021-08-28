@@ -1695,4 +1695,4 @@ videojs.plugin("progressTips", function (options) {
   this.on("loadedmetadata", init);
 });
 
-navigator.serviceWorker.register("/serviceworker.js");
+navigator.serviceWorker.register("/sw.js");

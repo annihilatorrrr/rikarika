@@ -538,4 +538,4 @@ const unsubscribe = async (event) => {
   document.querySelector(".notification").innerText = "🔔 啟用推送通知";
 })();
 
-navigator.serviceWorker.register("/serviceworker.js");
+navigator.serviceWorker.register("/sw.js");
