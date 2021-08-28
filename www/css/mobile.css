@@ -21,7 +21,12 @@
     --overlay-color-hide: rgba(137, 146, 255, 0);
   }
 }
-
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--theme-color);
+}
 html {
   -webkit-text-size-adjust: 100%;
 }
