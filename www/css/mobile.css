@@ -65,11 +65,18 @@ a {
 .details_modified {
   color: var(--text-main-color);
 }
+.icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0.5rem;
+}
 .search {
-  padding: 0.5rem 0.4rem;
-  font-size: 1rem;
+  display: flex;
+  align-items: center;
 }
 .search input {
+  padding: 0;
+  margin: 0.5rem 0.5rem 0.5rem 0;
   -webkit-appearance: none;
   outline: 0;
   border: none;
@@ -77,8 +84,8 @@ a {
   border-radius: 0;
   border-bottom: 1px solid #ccc;
   font-size: 1rem;
-  line-height: 2rem;
-  width: 100%;
+  height: 2.5rem;
+  flex-grow: 1;
   color: var(--text-main-color);
 }
 .progress {
