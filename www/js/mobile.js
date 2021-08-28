@@ -365,10 +365,15 @@ document.querySelector(".bar .icon").onclick = async () => {
   setTimeout(() => {
     document.querySelector(".overlay").classList.remove("hide");
   }, 1);
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  document.querySelector(".bar").classList.add("blur");
+  document.querySelector(".list").classList.add("blur");
 };
 
 document.querySelector(".overlay").onclick = async (e) => {
   if (e.target !== document.querySelector(".overlay")) return;
+  document.querySelector(".bar").classList.remove("blur");
+  document.querySelector(".list").classList.remove("blur");
   document.querySelector(".overlay").classList.add("hide");
   setTimeout(() => {
     document.querySelector(".overlay").classList.remove("hiding");
