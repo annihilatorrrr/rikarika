@@ -227,7 +227,10 @@ const render = async (scrollTo) => {
     await renderBackButton(season, title);
   }
 
-  const chunkList = dirEntries.reduce(
+  const filteredEntries = localStorage.getItem("nsfw")
+    ? dirEntries
+    : dirEntries.filter((e) => e.name !== "Sukebei");
+  const chunkList = filteredEntries.reduce(
     (acc, cur, index, array) => (index % 100 ? acc : [...acc, array.slice(index, index + 100)]),
     []
   );
@@ -273,7 +276,7 @@ const renderRetryButton = async (error) => {
 
 const renderSearchResult = async function (results) {
   for (const { season, title } of results) {
-    if (season === "Sukebei") {
+    if (!localStorage.getItem("nsfw") && season === "Sukebei") {
       continue;
     }
     const div1 = document.createElement("div");
@@ -406,6 +409,21 @@ document.querySelector(".history").onclick = (event) => {
       Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
     } 個)`;
   }
+};
+
+document.querySelector(".sukebei").innerText = localStorage.getItem("nsfw")
+  ? "🔞 安全模式已關閉"
+  : "😏 我了解並且我要繼續";
+
+document.querySelector(".sukebei").onclick = async (event) => {
+  if (localStorage.getItem("nsfw")) {
+    localStorage.removeItem("nsfw");
+    event.target.innerText = "😏 我了解並且我要繼續";
+  } else {
+    localStorage.setItem("nsfw", "nsfw");
+    event.target.innerText = "🔞 安全模式已關閉";
+  }
+  await render();
 };
 
 if (android) {
