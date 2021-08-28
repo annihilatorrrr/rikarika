@@ -117,6 +117,7 @@ app.get(/.*\/$/, (req, res) => {
       ? "mobile"
       : "desktop";
     res.setHeader("Link", `</js/${view}.js>; as=script; rel=preload`);
+    res.append("Link", `</css/${view}.css>; as=style; rel=preload`);
     res.send(
       fs
         .readFileSync(path.join(__dirname, `view/${view}.html`), "utf8")
