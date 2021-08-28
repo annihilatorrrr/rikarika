@@ -151,7 +151,7 @@ const clickFolder = function (event) {
 };
 
 const appendChunk = (chunk) => {
-  document.querySelector("#list").append(
+  document.querySelector(".list").append(
     ...chunk.map(({ name, modified, size, anime_id }) => {
       const div7 = document.createElement("div");
       const a4 = document.createElement("a");
@@ -222,14 +222,12 @@ const render = async (scrollTo) => {
   });
 
   const loadingTimer = setTimeout(() => {
-    document.querySelectorAll("#list > div:not(.search)").forEach((each) => {
-      each.remove();
-    });
+    document.querySelector(".list").innerHTML = "";
     const div3 = document.createElement("div");
     div3.className = "folder";
     div3.appendChild(document.createTextNode("Loading..."));
     document.querySelector(".progress").style.visibility = "visible";
-    document.querySelector("#list").appendChild(div3);
+    document.querySelector(".list").appendChild(div3);
   }, 300);
   const dirEntries =
     season === "setting"
@@ -241,9 +239,7 @@ const render = async (scrollTo) => {
         ).then((res) => res.json());
   clearTimeout(loadingTimer);
 
-  document.querySelectorAll("#list > div:not(.search)").forEach((each) => {
-    each.remove();
-  });
+  document.querySelector(".list").innerHTML = "";
 
   if (season === "search") {
     renderSearchResult(dirEntries);
@@ -271,7 +267,7 @@ const render = async (scrollTo) => {
     span1.className = "details_title";
     span1.innerText = title || season;
     div4.appendChild(span1);
-    document.querySelector("#list").appendChild(div4);
+    document.querySelector(".list").appendChild(div4);
   } else {
     const div15 = document.createElement("div");
     div15.className = "item";
@@ -281,7 +277,7 @@ const render = async (scrollTo) => {
       render();
     };
     div15.appendChild(document.createTextNode("⚙️ 設定"));
-    document.querySelector("#list").appendChild(div15);
+    document.querySelector(".list").appendChild(div15);
   }
 
   if (season === "setting") {
@@ -292,7 +288,7 @@ const render = async (scrollTo) => {
       location.href = "/logout";
     };
     div13.appendChild(document.createTextNode("💨 登出"));
-    document.querySelector("#list").appendChild(div13);
+    document.querySelector(".list").appendChild(div13);
 
     const div17 = document.createElement("div");
     div17.className = "item";
@@ -301,7 +297,7 @@ const render = async (scrollTo) => {
       location.href = `/?view=desktop`;
     };
     div17.appendChild(document.createTextNode("💻 切換至桌面版網頁"));
-    document.querySelector("#list").appendChild(div17);
+    document.querySelector(".list").appendChild(div17);
 
     const div16 = document.createElement("div");
     div16.className = "item";
@@ -325,7 +321,7 @@ const render = async (scrollTo) => {
         } 個)`
       )
     );
-    document.querySelector("#list").appendChild(div16);
+    document.querySelector(".list").appendChild(div16);
 
     const div14 = document.createElement("div");
     div14.className = "item";
@@ -334,7 +330,7 @@ const render = async (scrollTo) => {
       location.href = document.querySelector("meta[name=donate-url]").getAttribute("content");
     };
     div14.appendChild(document.createTextNode("💖 PayMe 捐助"));
-    document.querySelector("#list").appendChild(div14);
+    document.querySelector(".list").appendChild(div14);
 
     const div6 = document.createElement("div");
     div6.className = "item";
@@ -343,7 +339,7 @@ const render = async (scrollTo) => {
       window.open("/list", "_blank");
     };
     div6.appendChild(document.createTextNode("📄 動畫列表"));
-    document.querySelector("#list").appendChild(div6);
+    document.querySelector(".list").appendChild(div6);
 
     if (android) {
       const div10 = document.createElement("div");
@@ -354,7 +350,7 @@ const render = async (scrollTo) => {
       span6.appendChild(document.createTextNode("✅ "));
       div10.appendChild(span6);
       div10.appendChild(document.createTextNode("使用預設播放器"));
-      document.querySelector("#list").appendChild(div10);
+      document.querySelector(".list").appendChild(div10);
 
       const div11 = document.createElement("div");
       div11.className = "item";
@@ -364,7 +360,7 @@ const render = async (scrollTo) => {
       span7.appendChild(document.createTextNode("✅ "));
       div11.appendChild(span7);
       div11.appendChild(document.createTextNode("使用 MXPlayer"));
-      document.querySelector("#list").appendChild(div11);
+      document.querySelector(".list").appendChild(div11);
 
       const div12 = document.createElement("div");
       div12.className = "item";
@@ -374,7 +370,7 @@ const render = async (scrollTo) => {
       span8.appendChild(document.createTextNode("✅ "));
       div12.appendChild(span8);
       div12.appendChild(document.createTextNode("使用 MXPlayer Pro"));
-      document.querySelector("#list").appendChild(div12);
+      document.querySelector(".list").appendChild(div12);
       updatePlayerSettingUI();
     }
 
@@ -404,7 +400,7 @@ const render = async (scrollTo) => {
             }
           };
           div19.appendChild(document.createTextNode("🔕 停用推送通知"));
-          document.querySelector("#list").appendChild(div19);
+          document.querySelector(".list").appendChild(div19);
           return;
         }
       }
@@ -443,7 +439,7 @@ const render = async (scrollTo) => {
       }
     };
     div18.appendChild(document.createTextNode("🔔 啟用推送通知"));
-    document.querySelector("#list").appendChild(div18);
+    document.querySelector(".list").appendChild(div18);
 
     return;
   }
@@ -461,7 +457,7 @@ const render = async (scrollTo) => {
     []
   );
   appendChunk(chunkList[0]);
-  if (scrollTo && document.querySelector("#list").clientHeight >= scrollTo) {
+  if (scrollTo && document.querySelector(".list").clientHeight >= scrollTo) {
     window.scrollTo(0, scrollTo);
   } else {
     window.scrollTo(0, 0);
@@ -474,7 +470,7 @@ const render = async (scrollTo) => {
       lazyLoadHandleList.push(
         setTimeout(() => {
           appendChunk(chunk);
-          if (scrollTo && document.querySelector("#list").clientHeight >= scrollTo) {
+          if (scrollTo && document.querySelector(".list").clientHeight >= scrollTo) {
             window.scrollTo(0, scrollTo);
           }
           resolve();
@@ -503,7 +499,7 @@ const renderSearchResult = async function (results) {
     span1.className = "details_title";
     span1.innerText = season;
     div1.appendChild(span1);
-    document.querySelector("#list").appendChild(div1);
+    document.querySelector(".list").appendChild(div1);
   }
   document.querySelectorAll(".folder").forEach((each) => {
     each.onmouseup = function (event) {
