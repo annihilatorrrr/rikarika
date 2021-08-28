@@ -160,9 +160,11 @@ a {
   visibility: hidden;
   left: 0.4rem;
   right: auto;
+  word-break: keep-all;
 }
 .details_modified {
   color: var(--text-main-color);
+  word-break: keep-all;
 }
 .icon {
   width: 2.5rem;
