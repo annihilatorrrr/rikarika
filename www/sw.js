@@ -13,3 +13,11 @@ self.onnotificationclick = function (event) {
       .then((clientList) => clients.openWindow(event.notification.data.url))
   );
 };
+
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
+  );
+});
