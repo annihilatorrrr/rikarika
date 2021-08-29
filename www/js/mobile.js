@@ -313,24 +313,10 @@ const renderSearchResult = async function (results) {
 const renderBackButton = async (season, title) => {
   const div4 = document.createElement("div");
   div4.className = "folder";
-  div4.id = "back";
-  const a2 = document.createElement("a");
-  a2.href = title ? `/${season}/` : "/";
-  a2.appendChild(document.createTextNode("▲ .."));
-  a2.onclick = preventClick;
-  div4.onmouseup = async function (event) {
-    if (event.button !== 0) {
-      return;
-    }
-    history.pushState(null, null, this.querySelector("a").pathname);
-    await render(scrollTop[window.location.pathname.split("/").length - 2] || 0);
+  div4.onclick = (event) => {
+    history.back();
   };
-  div4.appendChild(a2);
-  div4.appendChild(document.createElement("br"));
-  const span1 = document.createElement("span");
-  span1.className = "details_title";
-  span1.innerText = title || season;
-  div4.appendChild(span1);
+  div4.appendChild(document.createTextNode("🔙 上一頁"));
   document.querySelector(".list").appendChild(div4);
 };
 
