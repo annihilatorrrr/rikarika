@@ -7,6 +7,7 @@
   --bg-sub-color: #f6f6f6;
   --overlay-color: rgba(137, 146, 255, 0.25);
   --overlay-color-hide: rgba(137, 146, 255, 0);
+  scrollbar-color: var(--theme-color) transparent;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -19,10 +20,17 @@
     --bg-sub-color: #222;
     --overlay-color: rgba(137, 146, 255, 0.25);
     --overlay-color-hide: rgba(137, 146, 255, 0);
+    scrollbar-color: var(--theme-color) transparent;
   }
 }
 ::-webkit-scrollbar {
   -webkit-appearance: none;
+  width: 0.2rem;
+}
+@media (pointer: fine) {
+  ::-webkit-scrollbar {
+    width: 0.5rem;
+  }
 }
 ::-webkit-scrollbar-thumb {
   background: var(--theme-color);
@@ -72,6 +80,7 @@ a {
   bottom: 0;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
   background-color: var(--bg-main-color);
   transition: all 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
   z-index: 2;
@@ -126,6 +135,7 @@ a {
   right: 0;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
 }
 .list > .error {
   text-align: center;
