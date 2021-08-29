@@ -226,34 +226,44 @@ app.get("/ls", async (req, res) => {
     return res.send("invalid path");
   }
   if (req.query.path.split("/").length === 2) {
+    const latests = await knex("anime").select("updated").orderBy("updated", "desc").limit(1);
     const rows = await knex("anime")
       .select("season")
       .max("updated", { as: "updated" })
       .groupBy("season");
     return res.send(
-      rows
-        .map((row) => ({
-          name: row.season,
-          modified: row.updated,
-        }))
-        .sort((a, b) => (a.name > b.name ? -1 : 1))
+      [{ name: "Latest", modified: latests[0].updated }].concat(
+        rows
+          .map((row) => ({
+            name: row.season,
+            modified: row.updated,
+          }))
+          .sort((a, b) => (a.name > b.name ? -1 : 1))
+      )
     );
   }
   if (req.query.path.split("/").length === 3) {
     const season = req.query.path.split("/")[1];
-    const rows = await knex("anime")
-      .select("id", "anilist_id", "season", "title", "updated")
-      .where("season", season);
+    const rows =
+      season === "Latest"
+        ? await knex("anime")
+            .select("id", "anilist_id", "season", "title", "updated")
+            .orderBy("updated", "desc")
+            .limit(100)
+        : await knex("anime")
+            .select("id", "anilist_id", "season", "title", "updated")
+            .where("season", season);
     return res.send(
       rows
         .map((row) => ({
           anime_id: row.id,
           anilist_id: row.anilist_id,
+          season: row.season,
           name: row.title,
           modified: row.updated,
         }))
         .sort((a, b) =>
-          ["2021-07", "2021-04", "Movie", "OVA", "Sukebei"].includes(season)
+          ["2021-07", "2021-04", "Movie", "OVA", "Sukebei", "Latest"].includes(season)
             ? a.modified > b.modified
               ? -1
               : 1

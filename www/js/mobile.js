@@ -129,7 +129,7 @@ const clickFolder = function (event) {
 
 const appendChunk = (chunk) => {
   document.querySelector(".list").append(
-    ...chunk.map(({ name, modified, size, anime_id }) => {
+    ...chunk.map(({ season, name, modified, size, anime_id }) => {
       const div7 = document.createElement("div");
       const a4 = document.createElement("a");
       const span1 = document.createElement("span");
@@ -152,7 +152,7 @@ const appendChunk = (chunk) => {
           a4.href = `/${anime_id}/${encodeURIComponent(name)}`;
           a4.appendChild(
             document.createTextNode(
-              `${name.slice(-4) === ".mp4" ? "▶" : "📄"} ${name.slice(0, -4)}`
+              `${name.slice(-4) === ".mp4" ? "🎞️" : "📄"} ${name.slice(0, -4)}`
             )
           );
           a4.onclick = preventClick;
@@ -160,7 +160,9 @@ const appendChunk = (chunk) => {
         default:
           div7.className = "folder";
           div7.onmouseup = clickFolder;
-          a4.href = `${encodeURIComponent(name)}/`;
+          a4.href = season
+            ? `/${season}/${encodeURIComponent(name)}/`
+            : `${encodeURIComponent(name)}/`;
           a4.appendChild(document.createTextNode(`📁 ${name}`));
           a4.onclick = preventClick;
       }
