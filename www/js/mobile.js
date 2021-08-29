@@ -413,17 +413,42 @@ document.querySelector(".logout").onclick = () => {
 };
 
 if (document.body.requestFullscreen) {
+  let isOrientationLocked = false;
   document.querySelector(".fullscreen").classList.remove("hidden");
-  document.querySelector(".fullscreen").innerText = "🔳 切換至全螢幕";
+  document.querySelector(".orientation").classList.remove("hidden");
+  document.querySelector(".fullscreen").innerText = "⬜ 全螢幕";
+  document.querySelector(".orientation").innerText = "🔓 固定此螢幕方向";
+  document.addEventListener("fullscreenchange", (event) => {
+    if (document.fullscreenElement) {
+      document.querySelector(".fullscreen").innerText = "✅ 全螢幕";
+      document.querySelector(".orientation").innerText = isOrientationLocked
+        ? "🔒 螢幕方向已固定"
+        : "🔓 固定此螢幕方向";
+    } else {
+      document.querySelector(".fullscreen").innerText = "⬜ 全螢幕";
+      document.querySelector(".orientation").innerText = "🔓 固定此螢幕方向";
+      isOrientationLocked = false;
+    }
+  });
   document.querySelector(".fullscreen").onclick = async () => {
     if (!document.fullscreenElement) {
-      await document.body.requestFullscreen().catch((err) => {
-        document.querySelector(".fullscreen").innerText = "🔳 無法切換至全螢幕";
-      });
-      document.querySelector(".fullscreen").innerText = "🔳 退出全螢幕";
+      await document.body.requestFullscreen();
     } else {
       document.exitFullscreen();
-      document.querySelector(".fullscreen").innerText = "🔳 切換至全螢幕";
+    }
+  };
+  document.querySelector(".orientation").onclick = async () => {
+    if (isOrientationLocked) {
+      screen.orientation.unlock();
+      isOrientationLocked = false;
+      document.querySelector(".orientation").innerText = "🔓 固定此螢幕方向";
+    } else {
+      if (!document.fullscreenElement) {
+        await document.body.requestFullscreen();
+      }
+      screen.orientation.lock(screen.orientation.type);
+      isOrientationLocked = true;
+      document.querySelector(".orientation").innerText = "🔒 螢幕方向已固定";
     }
   };
 }
