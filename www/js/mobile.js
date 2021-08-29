@@ -361,13 +361,31 @@ const openMenu = async () => {
 document.querySelector(".bar .icon").onclick = openMenu;
 document.querySelector(".edge").onclick = openMenu;
 
+let startTouchX = 0;
+let startTouchY = 0;
+let touchStartTime = 0;
+document.addEventListener("touchstart", function (e) {
+  startTouchX = e.touches[0].screenX;
+  startTouchY = e.touches[0].screenY;
+  touchStartTime = e.timeStamp;
+});
+document.addEventListener("touchend", async (e) => {
+  if (
+    e.changedTouches[0].screenX - startTouchX > 100 &&
+    Math.abs(e.changedTouches[0].screenY - startTouchY) < 100 &&
+    e.timeStamp - touchStartTime < 300
+  ) {
+    await openMenu();
+  }
+});
+
 document.querySelector(".overlay").onclick = async (e) => {
   if (e.target !== document.querySelector(".overlay")) return;
   document.querySelector(".bar").classList.remove("blur");
   document.querySelector(".list").classList.remove("blur");
   document.querySelector(".overlay").classList.add("hide");
   setTimeout(() => {
-    document.querySelector(".overlay").classList.remove("hiding");
+    document.querySelector(".overlay").classList.remove("hide");
     document.querySelector(".overlay").classList.add("hidden");
   }, 300);
 };
