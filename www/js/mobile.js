@@ -142,7 +142,7 @@ const appendChunk = (chunk) => {
           a1.onclick = preventClick;
           break;
         default:
-          a1.onmouseup = (event) => {
+          a1.onmouseup = async (event) => {
             if (event.button !== 0) {
               return;
             }
@@ -153,7 +153,7 @@ const appendChunk = (chunk) => {
               null,
               event.target.parentNode.pathname ?? event.target.parentNode.parentNode.pathname
             );
-            render();
+            await render(scrollTop[window.location.pathname.split("/").length - 2] || 0);
           };
           a1.href = season
             ? `/${season}/${encodeURIComponent(name)}/`
