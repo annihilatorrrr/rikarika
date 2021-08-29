@@ -1,6 +1,3 @@
-const android = /(Android)/g.test(navigator.userAgent);
-// const iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
-
 const formatFileSize = function (bytes) {
   let size = parseInt(bytes, 10);
   if (bytes > 1000000000) {
@@ -104,13 +101,21 @@ const clickFile = function (event) {
   this.classList.add("watched");
   localStorage.setItem(decodeURIComponent(href), 1);
 
-  if (android && localStorage.getItem("player") && href.slice(-4) === ".mp4") {
-    const url = this.querySelector("a").href;
-    const a = document.createElement("a");
-    a.href = `intent:${url}#Intent;package=${localStorage.getItem(
-      "player"
-    )};S.browser_fallback_url=${url};end`;
-    a.click();
+  if (href.slice(-4) === ".mp4") {
+    if (localStorage.getItem("player") === "external") {
+      window.open(href, "_blank");
+    } else if (localStorage.getItem("player")) {
+      const url = this.querySelector("a").href;
+      const a = document.createElement("a");
+      a.href = `intent:${url}#Intent;package=${localStorage.getItem(
+        "player"
+      )};S.browser_fallback_url=${url};end`;
+      a.click();
+    } else {
+      location.href = href;
+    }
+  } else if (localStorage.getItem("player") === "external") {
+    window.open(href, "_blank");
   } else {
     location.href = href;
   }
@@ -446,12 +451,12 @@ document.querySelector(".history").onclick = (event) => {
 
 document.querySelector(".sukebei").innerText = localStorage.getItem("nsfw")
   ? "🛐 我有罪並且已懺悔"
-  : "🈲 我了解並且要繼續";
+  : "🔞 我了解並且要繼續";
 
 document.querySelector(".sukebei").onclick = async (event) => {
   if (localStorage.getItem("nsfw")) {
     localStorage.removeItem("nsfw");
-    event.target.innerText = "🈲 我了解並且要繼續";
+    event.target.innerText = "🔞 我了解並且要繼續";
   } else {
     localStorage.setItem("nsfw", "nsfw");
     event.target.innerText = "🛐 我有罪並且已懺悔";
@@ -459,29 +464,27 @@ document.querySelector(".sukebei").onclick = async (event) => {
   await render();
 };
 
-if (android) {
-  for (const supportedPlayer of [
-    ["com.mxtech.videoplayer.ad", "MXPlayer"],
-    ["com.mxtech.videoplayer.pro", "MXPlayer Pro"],
-  ]) {
-    const option = document.createElement("option");
-    option.value = supportedPlayer[0];
-    option.innerText = supportedPlayer[1];
-    option.selected = localStorage.getItem("player") === supportedPlayer[0];
-    document.querySelector(".defaultPlayer select").appendChild(option);
-  }
-
-  document.querySelector(".defaultPlayer select").onchange = (e) => {
-    const selectedPlayer = e.target.options[e.target.selectedIndex].value;
-    if (selectedPlayer) {
-      localStorage.setItem("player", selectedPlayer);
-    } else {
-      localStorage.removeItem("player");
-    }
-  };
-} else {
-  document.querySelector(".defaultPlayer").style.display = "none";
+const supportedPlayers = [["external", "外部應用程式"]];
+if (/(Android)/g.test(navigator.userAgent)) {
+  supportedPlayers.push(["com.mxtech.videoplayer.ad", "MXPlayer"]);
+  supportedPlayers.push(["com.mxtech.videoplayer.pro", "MXPlayer Pro"]);
 }
+for (const supportedPlayer of supportedPlayers) {
+  const option = document.createElement("option");
+  option.value = supportedPlayer[0];
+  option.innerText = supportedPlayer[1];
+  option.selected = localStorage.getItem("player") === supportedPlayer[0];
+  document.querySelector(".defaultPlayer select").appendChild(option);
+}
+
+document.querySelector(".defaultPlayer select").onchange = (e) => {
+  const selectedPlayer = e.target.options[e.target.selectedIndex].value;
+  if (selectedPlayer) {
+    localStorage.setItem("player", selectedPlayer);
+  } else {
+    localStorage.removeItem("player");
+  }
+};
 
 const subscribe = async (event) => {
   event.target.innerText = "🔔 正在嘗試啟用推送通知...";
