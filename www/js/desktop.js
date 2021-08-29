@@ -1695,4 +1695,8 @@ videojs.plugin("progressTips", function (options) {
   this.on("loadedmetadata", init);
 });
 
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+});
+
 navigator.serviceWorker.register("/sw.js");
