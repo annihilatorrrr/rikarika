@@ -28,6 +28,7 @@ const {
   WEB_SECRET,
   WEBPUSH_PUBLIC_KEY,
   DONATE_URL,
+  TELEGRAM_JOIN_URL,
 } = process.env;
 
 const knex = require("knex")({
@@ -123,6 +124,7 @@ app.get(/.*\/$/, (req, res) => {
         .readFileSync(path.join(__dirname, `view/${view}.html`), "utf8")
         .replace("WEBPUSH_PUBLIC_KEY", WEBPUSH_PUBLIC_KEY)
         .replace(/DONATE_URL/g, DONATE_URL)
+        .replace(/TELEGRAM_JOIN_URL/g, TELEGRAM_JOIN_URL)
     );
   } else {
     res.send(

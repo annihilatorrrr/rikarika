@@ -383,6 +383,10 @@ document.querySelector(".fullList").onclick = () => {
   window.open("/list", "_blank");
 };
 
+document.querySelector(".telegram").onclick = () => {
+  window.open(document.querySelector("meta[name=telegram-url]").getAttribute("content"), "_blank");
+};
+
 document.querySelector(".donate").onclick = () => {
   window.open(document.querySelector("meta[name=donate-url]").getAttribute("content"), "_blank");
 };
