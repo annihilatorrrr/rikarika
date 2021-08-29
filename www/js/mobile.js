@@ -349,10 +349,7 @@ document.querySelector(".search").onfocus = (e) => {
 
 const openMenu = async () => {
   document.querySelector(".overlay").classList.remove("hidden");
-  document.querySelector(".overlay").classList.add("hide");
-  setTimeout(() => {
-    document.querySelector(".overlay").classList.remove("hide");
-  }, 1);
+  document.querySelector(".menu").classList.remove("hidden");
   await new Promise((resolve) => setTimeout(resolve, 300));
   document.querySelector(".bar").classList.add("blur");
   document.querySelector(".list").classList.add("blur");
@@ -383,11 +380,8 @@ document.querySelector(".overlay").onclick = async (e) => {
   if (e.target !== document.querySelector(".overlay")) return;
   document.querySelector(".bar").classList.remove("blur");
   document.querySelector(".list").classList.remove("blur");
-  document.querySelector(".overlay").classList.add("hide");
-  setTimeout(() => {
-    document.querySelector(".overlay").classList.remove("hide");
-    document.querySelector(".overlay").classList.add("hidden");
-  }, 300);
+  document.querySelector(".overlay").classList.add("hidden");
+  document.querySelector(".menu").classList.add("hidden");
 };
 
 document.querySelector(".home").onclick = () => {
