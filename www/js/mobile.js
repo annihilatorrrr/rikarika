@@ -12,21 +12,6 @@ const formatFileSize = function (bytes) {
   return size;
 };
 
-const renderFileSizeStyle = function () {
-  if (navigator.connection && navigator.connection.type === "cellular") {
-    document.querySelectorAll(".file .details_size").forEach((each) => {
-      each.style.visibility = "visible";
-    });
-  } else {
-    document.querySelectorAll(".details_size").forEach((each) => {
-      each.style.visibility = "hidden";
-    });
-  }
-};
-if (navigator.connection) {
-  navigator.connection.ontypechange = renderFileSizeStyle;
-}
-
 const getDateTimeOpacity = function (timeStringUTC) {
   const lastModified = new Date(timeStringUTC);
   const seconds = Math.floor((new Date() - lastModified) / 1000);
@@ -93,89 +78,81 @@ const preventClick = (event) => {
   }
 };
 
-const clickFile = function (event) {
-  if (event && event.button !== 0) {
-    return;
-  }
-  const href = this.querySelector("a").pathname;
-  this.classList.add("watched");
-  localStorage.setItem(decodeURIComponent(href), 1);
-
-  if (href.slice(-4) === ".mp4") {
-    if (localStorage.getItem("player") === "external") {
-      window.open(href, "_blank");
-    } else if (localStorage.getItem("player")) {
-      const url = this.querySelector("a").href;
-      const a = document.createElement("a");
-      a.href = `intent:${url}#Intent;package=${localStorage.getItem(
-        "player"
-      )};S.browser_fallback_url=${url};end`;
-      a.click();
-    } else {
-      location.href = href;
-    }
-  } else if (localStorage.getItem("player") === "external") {
-    window.open(href, "_blank");
-  } else {
-    location.href = href;
-  }
-};
-
 const scrollTop = [];
-const clickFolder = function (event) {
-  if (event.button !== 0) {
-    return;
-  }
-  scrollTop[window.location.pathname.split("/").length - 2] =
-    document.querySelector(".list").scrollTop;
-  history.pushState(null, null, this.querySelector("a").pathname);
-  render();
-};
 
 const appendChunk = (chunk) => {
   document.querySelector(".list").append(
     ...chunk.map(({ season, name, modified, size, anime_id }) => {
-      const div7 = document.createElement("div");
-      const a4 = document.createElement("a");
-      const span1 = document.createElement("span");
-      const span2 = document.createElement("span");
-      span1.className = "details_modified";
-      span1.dataset.modified = modified;
-      span1.style.opacity = getDateTimeOpacity(modified);
-      span1.innerText = formatDateTime(modified);
-      span2.className = "details_size";
-      span2.innerText = formatFileSize(size || 0);
+      const div1 = document.createElement("div");
+      const a1 = document.createElement("a");
+      const div2 = document.createElement("div");
+      div2.className = "details";
+      const div3 = document.createElement("div");
+      div3.className = "left";
+      const div4 = document.createElement("div");
+      div4.className = "right";
+
+      div3.innerText = size ? formatFileSize(size) : "";
+      div4.style.opacity = getDateTimeOpacity(modified);
+      div4.innerText = formatDateTime(modified);
+      div2.append(div3, div4);
+
       switch (name.slice(-4)) {
         case ".mp4":
         case ".txt":
         case ".ass":
-          div7.className = "file";
           if (localStorage.getItem(`/${anime_id}/${name}`)) {
-            div7.classList.add("watched");
+            div1.classList.add("watched");
           }
-          div7.onmouseup = clickFile;
-          a4.href = `/${anime_id}/${encodeURIComponent(name)}`;
-          a4.appendChild(
-            document.createTextNode(
-              `${name.slice(-4) === ".mp4" ? "🎞️" : "📄"} ${name.slice(0, -4)}`
-            )
-          );
-          a4.onclick = preventClick;
+          div1.onmouseup = function (event) {
+            if (event && event.button !== 0) {
+              return;
+            }
+            const href = this.querySelector("a").pathname;
+            this.classList.add("watched");
+            localStorage.setItem(decodeURIComponent(href), 1);
+
+            if (href.slice(-4) === ".mp4") {
+              if (localStorage.getItem("player") === "external") {
+                window.open(href, "_blank");
+              } else if (localStorage.getItem("player")) {
+                const url = this.querySelector("a").href;
+                const a = document.createElement("a");
+                a.href = `intent:${url}#Intent;package=${localStorage.getItem(
+                  "player"
+                )};S.browser_fallback_url=${url};end`;
+                a.click();
+              } else {
+                location.href = href;
+              }
+            } else if (localStorage.getItem("player") === "external") {
+              window.open(href, "_blank");
+            } else {
+              location.href = href;
+            }
+          };
+          a1.href = `/${anime_id}/${encodeURIComponent(name)}`;
+          a1.innerText = name.slice(0, -4);
+          a1.onclick = preventClick;
           break;
         default:
-          div7.className = "folder";
-          div7.onmouseup = clickFolder;
-          a4.href = season
+          div1.onmouseup = function (event) {
+            if (event.button !== 0) {
+              return;
+            }
+            scrollTop[window.location.pathname.split("/").length - 2] =
+              document.querySelector(".list").scrollTop;
+            history.pushState(null, null, this.querySelector("a").pathname);
+            render();
+          };
+          a1.href = season
             ? `/${season}/${encodeURIComponent(name)}/`
             : `${encodeURIComponent(name)}/`;
-          a4.appendChild(document.createTextNode(`📁 ${name}`));
-          a4.onclick = preventClick;
+          a1.innerText = `📁 ${name}`;
+          a1.onclick = preventClick;
       }
-      div7.appendChild(a4);
-      div7.appendChild(document.createElement("br"));
-      div7.appendChild(span1);
-      div7.appendChild(span2);
-      return div7;
+      div1.append(a1, div2);
+      return div1;
     })
   );
 };
@@ -201,15 +178,14 @@ const render = async (scrollTo) => {
   if (season === "search") {
     document.querySelector(".search").value = title;
   }
-  document.querySelectorAll(".folder").forEach((each) => {
+  document.querySelectorAll(".list > div").forEach((each) => {
     each.onmouseup = null;
   });
 
   const loadingTimer = setTimeout(() => {
     document.querySelector(".list").innerHTML = "";
     const div3 = document.createElement("div");
-    div3.className = "folder";
-    div3.appendChild(document.createTextNode("Loading..."));
+    div3.innerText = "Loading...";
     document.querySelector(".progress").style.visibility = "visible";
     document.querySelector(".list").appendChild(div3);
   }, 300);
@@ -264,20 +240,20 @@ const render = async (scrollTo) => {
     );
   }
   document.querySelector(".progress").style.visibility = "hidden";
-
-  renderFileSizeStyle();
 };
 
 const renderRetryButton = async (error) => {
   const div15 = document.createElement("div");
   div15.classList.add("error");
   div15.onclick = render;
-  div15.appendChild(document.createTextNode(`無法連線至伺服器 📶`));
-  div15.appendChild(document.createElement("br"));
-  div15.appendChild(document.createTextNode(`(${error})`));
-  div15.appendChild(document.createElement("br"));
-  div15.appendChild(document.createElement("br"));
-  div15.appendChild(document.createTextNode("按這裡重試"));
+  div15.append(
+    document.createTextNode(`無法連線至伺服器 📶`),
+    document.createElement("br"),
+    document.createTextNode(`(${error})`),
+    document.createElement("br"),
+    document.createElement("br"),
+    document.createTextNode("按這裡重試")
+  );
   document.querySelector(".list").appendChild(div15);
 };
 
@@ -287,19 +263,24 @@ const renderSearchResult = async function (results) {
       continue;
     }
     const div1 = document.createElement("div");
-    div1.className = "folder";
     const a1 = document.createElement("a");
+    const div2 = document.createElement("div");
+    div2.className = "details";
+    const div3 = document.createElement("div");
+    div3.className = "left";
+    const div4 = document.createElement("div");
+    div4.className = "right";
+
     a1.href = `/${season}/${encodeURIComponent(title)}/`;
-    a1.appendChild(document.createTextNode(`📁 ${title}`));
-    div1.appendChild(a1);
-    div1.appendChild(document.createElement("br"));
-    const span1 = document.createElement("span");
-    span1.className = "details_title";
-    span1.innerText = season;
-    div1.appendChild(span1);
+    a1.innerText = `📁 ${title}`;
+    div3.innerText = season;
+    div4.innerText = season;
+    div2.append(div3, div4);
+    div1.append(a1, div2);
+
     document.querySelector(".list").appendChild(div1);
   }
-  document.querySelectorAll(".folder").forEach((each) => {
+  document.querySelectorAll(".list > div").forEach((each) => {
     each.onmouseup = function (event) {
       if (event.button !== 0) {
         return;
@@ -308,7 +289,7 @@ const renderSearchResult = async function (results) {
       render();
     };
   });
-  document.querySelectorAll(".folder a").forEach((each) => {
+  document.querySelectorAll(".list > div a").forEach((each) => {
     each.onclick = (event) => {
       if (event.button === 0) {
         event.preventDefault();
@@ -318,13 +299,16 @@ const renderSearchResult = async function (results) {
 };
 
 const renderBackButton = async (season, title) => {
-  const div4 = document.createElement("div");
-  div4.className = "folder";
-  div4.onclick = (event) => {
+  const div1 = document.createElement("div");
+  const div2 = document.createElement("div");
+  div2.className = "details";
+  const div3 = document.createElement("div");
+  div3.innerText = "🔙 上一頁";
+  div1.append(div3, div2);
+  div1.onclick = (event) => {
     history.back();
   };
-  div4.appendChild(document.createTextNode("🔙 上一頁"));
-  document.querySelector(".list").appendChild(div4);
+  document.querySelector(".list").appendChild(div1);
 };
 
 render();
