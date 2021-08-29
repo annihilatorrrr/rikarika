@@ -435,16 +435,16 @@ document.querySelector(".history").onclick = (event) => {
 };
 
 document.querySelector(".sukebei").innerText = localStorage.getItem("nsfw")
-  ? "🔞 安全模式已關閉"
-  : "😏 我了解並且我要繼續";
+  ? "🛐 我有罪並且已懺悔"
+  : "🈲 我了解並且要繼續";
 
 document.querySelector(".sukebei").onclick = async (event) => {
   if (localStorage.getItem("nsfw")) {
     localStorage.removeItem("nsfw");
-    event.target.innerText = "😏 我了解並且我要繼續";
+    event.target.innerText = "🈲 我了解並且要繼續";
   } else {
     localStorage.setItem("nsfw", "nsfw");
-    event.target.innerText = "🔞 安全模式已關閉";
+    event.target.innerText = "🛐 我有罪並且已懺悔";
   }
   await render();
 };
