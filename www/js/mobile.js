@@ -236,7 +236,7 @@ const render = async (scrollTo) => {
 
   const filteredEntries = localStorage.getItem("nsfw")
     ? dirEntries
-    : dirEntries.filter((e) => e.name !== "Sukebei");
+    : dirEntries.filter((e) => e.name !== "Sukebei" && e.season !== "Sukebei");
   const chunkList = filteredEntries.reduce(
     (acc, cur, index, array) => (index % 100 ? acc : [...acc, array.slice(index, index + 100)]),
     []
