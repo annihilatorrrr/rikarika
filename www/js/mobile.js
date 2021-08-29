@@ -359,7 +359,7 @@ document.querySelector(".search").onfocus = (e) => {
   }
 };
 
-document.querySelector(".bar .icon").onclick = async () => {
+const openMenu = async () => {
   document.querySelector(".overlay").classList.remove("hidden");
   document.querySelector(".overlay").classList.add("hide");
   setTimeout(() => {
@@ -369,6 +369,9 @@ document.querySelector(".bar .icon").onclick = async () => {
   document.querySelector(".bar").classList.add("blur");
   document.querySelector(".list").classList.add("blur");
 };
+
+document.querySelector(".bar .icon").onclick = openMenu;
+document.querySelector(".edge").onclick = openMenu;
 
 document.querySelector(".overlay").onclick = async (e) => {
   if (e.target !== document.querySelector(".overlay")) return;
