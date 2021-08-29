@@ -89,9 +89,13 @@ app.get(/[^\/]+\.[^\/]+$/, express.static(path.join(__dirname, "www")));
 app.get(/.*\/$/, (req, res) => {
   if (req.query.view) {
     if (["desktop", "mobile"].includes(req.query.view)) {
+      const date = new Date();
+      date.setTime(date.getTime() + 30 * 24 * 60 * 60 * 1000);
       res.setHeader(
         "Set-Cookie",
-        `view=${req.query.view}; Path=/; Secure; HttpOnly; SameSite=Strict`
+        `view=${
+          req.query.view
+        }; Path=/; Expires=${date.toGMTString()} Secure; HttpOnly; SameSite=Strict`
       );
     }
     return res.redirect(302, req.path ?? "/");
