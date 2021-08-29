@@ -268,6 +268,7 @@ const renderRetryButton = async (error) => {
 };
 
 const renderSearchResult = async (results) => {
+  document.querySelector(".list").scrollTo(0, 0);
   for (const { season, title } of results) {
     if (!localStorage.getItem("nsfw") && season === "Sukebei") {
       continue;
