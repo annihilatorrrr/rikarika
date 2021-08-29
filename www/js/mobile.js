@@ -1,4 +1,4 @@
-const formatFileSize = function (bytes) {
+const formatFileSize = (bytes) => {
   let size = parseInt(bytes, 10);
   if (bytes > 1000000000) {
     size = `${parseFloat(size / 1024 / 1024 / 1024).toFixed(2)}GB`;
@@ -12,7 +12,7 @@ const formatFileSize = function (bytes) {
   return size;
 };
 
-const getDateTimeOpacity = function (timeStringUTC) {
+const getDateTimeOpacity = (timeStringUTC) => {
   const lastModified = new Date(timeStringUTC);
   const seconds = Math.floor((new Date() - lastModified) / 1000);
   let opacity = 0.3 + 0.7 * (1 - seconds / (86400 * 7));
@@ -25,7 +25,7 @@ const getDateTimeOpacity = function (timeStringUTC) {
   return opacity;
 };
 
-const formatDateTime = function (timeStringUTC) {
+const formatDateTime = (timeStringUTC) => {
   const lastModified = new Date(timeStringUTC);
   const formattedDate = `${lastModified.getFullYear()}-${(lastModified.getMonth() + 1)
     .toString()
@@ -83,8 +83,9 @@ const scrollTop = [];
 const appendChunk = (chunk) => {
   document.querySelector(".list").append(
     ...chunk.map(({ season, name, modified, size, anime_id }) => {
-      const div1 = document.createElement("div");
       const a1 = document.createElement("a");
+      a1.classList.add("item");
+      const div1 = document.createElement("div");
       const div2 = document.createElement("div");
       div2.className = "details";
       const div3 = document.createElement("div");
@@ -102,21 +103,26 @@ const appendChunk = (chunk) => {
         case ".txt":
         case ".ass":
           if (localStorage.getItem(`/${anime_id}/${name}`)) {
-            div1.classList.add("watched");
+            a1.classList.add("watched");
           }
-          div1.onmouseup = function (event) {
+          a1.onmouseup = (event) => {
             if (event && event.button !== 0) {
               return;
             }
-            const href = this.querySelector("a").pathname;
-            this.classList.add("watched");
+            const href =
+              event.target.parentNode.pathname ?? event.target.parentNode.parentNode.pathname;
+            if (event.target.parentNode.pathname) {
+              event.target.parentNode.classList.add("watched");
+            } else {
+              event.target.parentNode.parentNode.classList.add("watched");
+            }
             localStorage.setItem(decodeURIComponent(href), 1);
 
             if (href.slice(-4) === ".mp4") {
               if (localStorage.getItem("player") === "external") {
                 window.open(href, "_blank");
               } else if (localStorage.getItem("player")) {
-                const url = this.querySelector("a").href;
+                const url = event.target.parentNode.href ?? event.target.parentNode.parentNode.href;
                 const a = document.createElement("a");
                 a.href = `intent:${url}#Intent;package=${localStorage.getItem(
                   "player"
@@ -132,27 +138,31 @@ const appendChunk = (chunk) => {
             }
           };
           a1.href = `/${anime_id}/${encodeURIComponent(name)}`;
-          a1.innerText = name.slice(0, -4);
+          div1.innerText = name.slice(0, -4);
           a1.onclick = preventClick;
           break;
         default:
-          div1.onmouseup = function (event) {
+          a1.onmouseup = (event) => {
             if (event.button !== 0) {
               return;
             }
             scrollTop[window.location.pathname.split("/").length - 2] =
               document.querySelector(".list").scrollTop;
-            history.pushState(null, null, this.querySelector("a").pathname);
+            history.pushState(
+              null,
+              null,
+              event.target.parentNode.pathname ?? event.target.parentNode.parentNode.pathname
+            );
             render();
           };
           a1.href = season
             ? `/${season}/${encodeURIComponent(name)}/`
             : `${encodeURIComponent(name)}/`;
-          a1.innerText = `📁 ${name}`;
+          div1.innerText = `📁 ${name}`;
           a1.onclick = preventClick;
       }
-      div1.append(a1, div2);
-      return div1;
+      a1.append(div1, div2);
+      return a1;
     })
   );
 };
@@ -257,13 +267,14 @@ const renderRetryButton = async (error) => {
   document.querySelector(".list").appendChild(div15);
 };
 
-const renderSearchResult = async function (results) {
+const renderSearchResult = async (results) => {
   for (const { season, title } of results) {
     if (!localStorage.getItem("nsfw") && season === "Sukebei") {
       continue;
     }
-    const div1 = document.createElement("div");
     const a1 = document.createElement("a");
+    a1.classList.add("item");
+    const div1 = document.createElement("div");
     const div2 = document.createElement("div");
     div2.className = "details";
     const div3 = document.createElement("div");
@@ -272,34 +283,33 @@ const renderSearchResult = async function (results) {
     div4.className = "right";
 
     a1.href = `/${season}/${encodeURIComponent(title)}/`;
-    a1.innerText = `📁 ${title}`;
+    div1.innerText = `📁 ${title}`;
     div3.innerText = season;
     div4.innerText = season;
     div2.append(div3, div4);
-    div1.append(a1, div2);
+    a1.append(div1, div2);
 
-    document.querySelector(".list").appendChild(div1);
-  }
-  document.querySelectorAll(".list > div").forEach((each) => {
-    each.onmouseup = function (event) {
+    a1.onmouseup = (event) => {
       if (event.button !== 0) {
         return;
       }
-      history.pushState(null, null, this.querySelector("a").pathname);
+      history.pushState(
+        null,
+        null,
+        event.target.parentNode.pathname ?? event.target.parentNode.parentNode.pathname
+      );
       render();
     };
-  });
-  document.querySelectorAll(".list > div a").forEach((each) => {
-    each.onclick = (event) => {
-      if (event.button === 0) {
-        event.preventDefault();
-      }
-    };
-  });
+    a1.href = season ? `/${season}/${encodeURIComponent(title)}/` : `${encodeURIComponent(title)}/`;
+    a1.onclick = preventClick;
+
+    document.querySelector(".list").appendChild(a1);
+  }
 };
 
 const renderBackButton = async (season, title) => {
   const div1 = document.createElement("div");
+  div1.classList.add("item");
   const div2 = document.createElement("div");
   div2.className = "details";
   const div3 = document.createElement("div");
@@ -350,7 +360,7 @@ document.querySelector(".edge").onclick = openMenu;
 let startTouchX = 0;
 let startTouchY = 0;
 let touchStartTime = 0;
-document.addEventListener("touchstart", function (e) {
+document.addEventListener("touchstart", (e) => {
   startTouchX = e.touches[0].screenX;
   startTouchY = e.touches[0].screenY;
   touchStartTime = e.timeStamp;

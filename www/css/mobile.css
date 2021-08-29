@@ -158,28 +158,28 @@ a {
   align-items: center;
   justify-content: center;
 }
-.list > div {
+.list .item {
   display: flex;
   flex-direction: column;
   cursor: pointer;
   font-size: 0.875rem;
   color: var(--text-main-color);
 }
-.list > div:nth-child(odd) {
+.list .item:nth-child(odd) {
   background-color: var(--bg-sub-color);
 }
-.list > div:nth-child(even) {
+.list .item:nth-child(even) {
   background-color: var(--bg-main-color);
 }
-.list > div > *:first-child {
+.list .item > div:first-child {
   padding: 1.15rem 0.2rem 0 0.2rem;
   line-height: 1rem;
   word-break: break-all;
 }
-.list > div.watched > a {
+.list .item.watched {
   color: var(--text-weak-color);
 }
-.list > div .details {
+.list .item .details {
   font-size: 0.75rem;
   line-height: 0.75rem;
   height: 0.75rem;
@@ -187,11 +187,11 @@ a {
   justify-content: space-between;
   padding: 0.2rem;
 }
-.list > div .details .left {
+.list .item .details .left {
   color: var(--text-weak-color);
   visibility: hidden;
 }
-.list > div .details .right {
+.list .item .details .right {
   color: var(--text-main-color);
 }
 .icon {
