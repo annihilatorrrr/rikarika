@@ -242,11 +242,11 @@ app.get("/ls", async (req, res) => {
     return res.send(
       [{ name: "Latest", modified: latests[0].updated }].concat(
         rows
+          .sort((a, b) => (a.season > b.season ? -1 : 1))
           .map((row) => ({
             name: row.season,
             modified: row.updated,
           }))
-          .sort((a, b) => (a.name > b.name ? -1 : 1))
       )
     );
   }
@@ -294,24 +294,27 @@ app.get("/ls", async (req, res) => {
       return res.send([]);
     }
     const [{ id, anilist_id }] = rows;
-    const path_series = fs.readdirSync(path.join(ANIME_PATH, `${id}`)).map((file) => ({
-      anime_id: id,
-      anilist_id,
-      name: file,
-      modified: fs.lstatSync(path.join(ANIME_PATH, `${id}`, file)).mtime,
-      size: fs.lstatSync(path.join(ANIME_PATH, `${id}`, file)).size,
-      webp: fs.existsSync(
-        path.join(ANIME_WEBP_PATH, `${id}`, `${path.basename(file, ".mp4")}.webp`)
-      )
-        ? `${path.basename(file, ".mp4")}.webp`
-        : null,
-      avif: fs.existsSync(
-        path.join(ANIME_AVIF_PATH, `${id}`, `${path.basename(file, ".mp4")}.avif`)
-      )
-        ? `${path.basename(file, ".mp4")}.avif`
-        : null,
-    }));
-    return res.send(path_series.sort((a, b) => (a.name > b.name ? -1 : 1)));
+    const path_series = fs
+      .readdirSync(path.join(ANIME_PATH, `${id}`))
+      .sort((a, b) => (a > b ? 1 : -1))
+      .map((file) => ({
+        anime_id: id,
+        anilist_id,
+        name: file,
+        modified: fs.lstatSync(path.join(ANIME_PATH, `${id}`, file)).mtime,
+        size: fs.lstatSync(path.join(ANIME_PATH, `${id}`, file)).size,
+        webp: fs.existsSync(
+          path.join(ANIME_WEBP_PATH, `${id}`, `${path.basename(file, ".mp4")}.webp`)
+        )
+          ? `${path.basename(file, ".mp4")}.webp`
+          : null,
+        avif: fs.existsSync(
+          path.join(ANIME_AVIF_PATH, `${id}`, `${path.basename(file, ".mp4")}.avif`)
+        )
+          ? `${path.basename(file, ".mp4")}.avif`
+          : null,
+      }));
+    return res.send(path_series);
   }
   return res.send([]);
 });
