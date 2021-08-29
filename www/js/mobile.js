@@ -412,15 +412,21 @@ document.querySelector(".logout").onclick = () => {
   location.href = "/logout";
 };
 
-document.querySelector(".fullscreen").onclick = () => {
-  if (!document.fullscreenElement) {
-    document.body.requestFullscreen().catch((err) => {
-      document.querySelector(".fullscreen").innerText = "🔳 無法切換至全螢幕";
-    });
-  } else {
-    document.exitFullscreen();
-  }
-};
+if (document.body.requestFullscreen) {
+  document.querySelector(".fullscreen").classList.remove("hidden");
+  document.querySelector(".fullscreen").innerText = "🔳 切換至全螢幕";
+  document.querySelector(".fullscreen").onclick = async () => {
+    if (!document.fullscreenElement) {
+      await document.body.requestFullscreen().catch((err) => {
+        document.querySelector(".fullscreen").innerText = "🔳 無法切換至全螢幕";
+      });
+      document.querySelector(".fullscreen").innerText = "🔳 退出全螢幕";
+    } else {
+      document.exitFullscreen();
+      document.querySelector(".fullscreen").innerText = "🔳 切換至全螢幕";
+    }
+  };
+}
 
 let beforeInstallPromptEvent;
 window.addEventListener("beforeinstallprompt", (e) => {

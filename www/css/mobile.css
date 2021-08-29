@@ -115,7 +115,7 @@ a {
 .menu .item:last-child {
   border-bottom: none;
 }
-.menu .item.install.hidden {
+.menu .item.hidden {
   display: none;
 }
 .menu .defaultPlayer {
