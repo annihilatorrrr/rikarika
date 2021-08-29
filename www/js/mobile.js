@@ -471,6 +471,9 @@ document.querySelector(".history").onclick = (event) => {
     event.target.innerText = `🗑️ 清除播放紀錄 (${
       Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
     } 個)`;
+    document.querySelectorAll(".watched").forEach((each) => {
+      each.classList.remove("watched");
+    });
   }
 };
 
