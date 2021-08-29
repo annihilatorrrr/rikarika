@@ -4,7 +4,7 @@
   --theme-color: rgb(137, 146, 255);
   --blank-color: transparent;
   --bg-main-color: #fff;
-  --bg-sub-color: #f6f6f6;
+  --bg-sub-color: rgb(251, 251, 255);
   --overlay-color: rgba(137, 146, 255, 0.25);
   --overlay-color-hide: rgba(137, 146, 255, 0);
   scrollbar-color: var(--theme-color) transparent;
