@@ -407,6 +407,16 @@ document.querySelector(".logout").onclick = () => {
   location.href = "/logout";
 };
 
+document.querySelector(".fullscreen").onclick = () => {
+  if (!document.fullscreenElement) {
+    document.body.requestFullscreen().catch((err) => {
+      document.querySelector(".fullscreen").innerText = "🔳 無法切換至全螢幕";
+    });
+  } else {
+    document.exitFullscreen();
+  }
+};
+
 let beforeInstallPromptEvent;
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
