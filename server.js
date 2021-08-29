@@ -95,7 +95,7 @@ app.get(/.*\/$/, (req, res) => {
         "Set-Cookie",
         `view=${
           req.query.view
-        }; Path=/; Expires=${date.toGMTString()} Secure; HttpOnly; SameSite=Strict`
+        }; Path=/; Expires=${date.toGMTString()}; Secure; HttpOnly; SameSite=Strict`
       );
     }
     return res.redirect(302, req.path ?? "/");
@@ -141,12 +141,14 @@ app.get(/.*\/$/, (req, res) => {
 
 app.post("/login", (req, res) => {
   if (req.body.password === WEB_PASSWORD || req.ip === WEB_WHITELIST_IP) {
+    const date = new Date();
+    date.setTime(date.getTime() + 7 * 24 * 60 * 60 * 1000);
     res.setHeader(
       "Set-Cookie",
       `session=${crypto
         .createHmac("sha256", WEB_PASSWORD)
         .update(WEB_SECRET)
-        .digest("hex")}; Path=/; Secure; HttpOnly; SameSite=Strict`
+        .digest("hex")}; Path=/; Expires=${date.toGMTString()}; Secure; HttpOnly; SameSite=Strict`
     );
   }
   return res.redirect(302, req.body.redirect ?? "/");
