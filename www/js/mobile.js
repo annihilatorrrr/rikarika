@@ -328,7 +328,6 @@ const openMenu = async () => {
 };
 
 document.querySelector(".bar .icon").onclick = openMenu;
-document.querySelector(".edge").onclick = openMenu;
 
 let startTouchX = 0;
 let startTouchY = 0;
