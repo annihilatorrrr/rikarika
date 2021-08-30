@@ -171,7 +171,7 @@ const render = async (scrollTo) => {
   document.title = title || "カリ(仮)";
 
   const loadingTimer = setTimeout(
-    () => (document.querySelector(".progress").style.visibility = "visible"),
+    () => document.querySelector(".progress").classList.remove("hidden"),
     300
   );
   const dirEntries = await fetch(
@@ -183,7 +183,7 @@ const render = async (scrollTo) => {
 
   document.querySelector(".list").innerHTML = "";
   if (!Array.isArray(dirEntries)) {
-    document.querySelector(".progress").style.visibility = "hidden";
+    document.querySelector(".progress").classList.add("hidden");
     const div15 = document.createElement("div");
     div15.classList.add("error");
     div15.onclick = render;
@@ -229,7 +229,7 @@ const render = async (scrollTo) => {
   }
 
   lazyLoadHandleList = [];
-  document.querySelector(".progress").style.visibility = "visible";
+  document.querySelector(".progress").classList.remove("hidden");
   for (const chunk of chunkList.slice(1)) {
     await new Promise((resolve) =>
       lazyLoadHandleList.push(
@@ -243,7 +243,7 @@ const render = async (scrollTo) => {
       )
     );
   }
-  document.querySelector(".progress").style.visibility = "hidden";
+  document.querySelector(".progress").classList.add("hidden");
 };
 
 const renderSearchResult = async (results) => {
