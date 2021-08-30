@@ -168,19 +168,12 @@ const render = async (scrollTo) => {
     return;
   }
 
-  document.title = title || season || "カリ(仮)";
-  if (season === "search") {
-    document.querySelector(".search").value = title;
-  }
+  document.title = title || "カリ(仮)";
 
-  const loadingTimer = setTimeout(() => {
-    document.querySelector(".list").innerHTML = "";
-    const div3 = document.createElement("div");
-    div3.innerText = "Loading...";
-    document.querySelector(".progress").style.visibility = "visible";
-    document.querySelector(".list").appendChild(div3);
-  }, 300);
-
+  const loadingTimer = setTimeout(
+    () => (document.querySelector(".progress").style.visibility = "visible"),
+    300
+  );
   const dirEntries = await fetch(
     season === "search" ? `/search?q=${title}` : `/ls?path=${encodeURIComponent(location.pathname)}`
   )
@@ -190,7 +183,19 @@ const render = async (scrollTo) => {
 
   document.querySelector(".list").innerHTML = "";
   if (!Array.isArray(dirEntries)) {
-    await renderRetryButton(dirEntries);
+    document.querySelector(".progress").style.visibility = "hidden";
+    const div15 = document.createElement("div");
+    div15.classList.add("error");
+    div15.onclick = render;
+    div15.append(
+      document.createTextNode(`無法連線至伺服器 📶`),
+      document.createElement("br"),
+      document.createTextNode(`(${dirEntries})`),
+      document.createElement("br"),
+      document.createElement("br"),
+      document.createTextNode("按一下頁面重試")
+    );
+    document.querySelector(".list").appendChild(div15);
     return;
   }
 
@@ -198,7 +203,15 @@ const render = async (scrollTo) => {
     renderSearchResult(dirEntries);
     return;
   } else if (season) {
-    await renderBackButton(season, title);
+    const div1 = document.createElement("div");
+    div1.classList.add("item");
+    const div2 = document.createElement("div");
+    div2.className = "details";
+    const div3 = document.createElement("div");
+    div3.innerText = "🔙 上一頁";
+    div1.append(div3, div2);
+    div1.onclick = (event) => history.back();
+    document.querySelector(".list").appendChild(div1);
   }
 
   const filteredEntries = localStorage.getItem("nsfw")
@@ -233,21 +246,6 @@ const render = async (scrollTo) => {
   document.querySelector(".progress").style.visibility = "hidden";
 };
 
-const renderRetryButton = async (error) => {
-  const div15 = document.createElement("div");
-  div15.classList.add("error");
-  div15.onclick = render;
-  div15.append(
-    document.createTextNode(`無法連線至伺服器 📶`),
-    document.createElement("br"),
-    document.createTextNode(`(${error})`),
-    document.createElement("br"),
-    document.createElement("br"),
-    document.createTextNode("按這裡重試")
-  );
-  document.querySelector(".list").appendChild(div15);
-};
-
 const renderSearchResult = async (results) => {
   document.querySelector(".list").scrollTo(0, 0);
   for (const { season, title } of results) {
@@ -278,20 +276,6 @@ const renderSearchResult = async (results) => {
     div0.append(div1, div2);
     document.querySelector(".list").appendChild(div0);
   }
-};
-
-const renderBackButton = async (season, title) => {
-  const div1 = document.createElement("div");
-  div1.classList.add("item");
-  const div2 = document.createElement("div");
-  div2.className = "details";
-  const div3 = document.createElement("div");
-  div3.innerText = "🔙 上一頁";
-  div1.append(div3, div2);
-  div1.onclick = (event) => {
-    history.back();
-  };
-  document.querySelector(".list").appendChild(div1);
 };
 
 render();
@@ -349,32 +333,15 @@ document.querySelector(".overlay").onclick = async (e) => {
   document.querySelector(".menu").classList.add("hidden");
 };
 
-document.querySelector(".bar .icon").onclick = () => {
-  location.href = "/";
-};
-
-document.querySelector(".home").onclick = () => {
-  location.href = "/";
-};
-document.querySelector(".toDesktop").onclick = () => {
-  location.href = "/?view=desktop";
-};
-
-document.querySelector(".fullList").onclick = () => {
-  window.open("/list", "_blank");
-};
-
-document.querySelector(".telegram").onclick = () => {
+document.querySelector(".bar .icon").onclick = () => (location.href = "/");
+document.querySelector(".home").onclick = () => (location.href = "/");
+document.querySelector(".toDesktop").onclick = () => (location.href = "/?view=desktop");
+document.querySelector(".fullList").onclick = () => window.open("/list", "_blank");
+document.querySelector(".telegram").onclick = () =>
   window.open(document.querySelector("meta[name=telegram-url]").getAttribute("content"), "_blank");
-};
-
-document.querySelector(".donate").onclick = () => {
+document.querySelector(".donate").onclick = () =>
   window.open(document.querySelector("meta[name=donate-url]").getAttribute("content"), "_blank");
-};
-
-document.querySelector(".logout").onclick = () => {
-  location.href = "/logout";
-};
+document.querySelector(".logout").onclick = () => (location.href = "/logout");
 
 if (document.body.requestFullscreen) {
   let isOrientationLocked = false;
@@ -417,16 +384,11 @@ if (document.body.requestFullscreen) {
   };
 }
 
-let beforeInstallPromptEvent;
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
-  beforeInstallPromptEvent = e;
   document.querySelector(".install").classList.remove("hidden");
+  document.querySelector(".install").onclick = () => e.prompt();
 });
-
-document.querySelector(".install").onclick = () => {
-  beforeInstallPromptEvent.prompt();
-};
 
 document.querySelector(".history").innerText = `🗑️ 清除播放紀錄 (${
   Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
