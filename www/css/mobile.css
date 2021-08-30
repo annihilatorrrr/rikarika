@@ -1,7 +1,7 @@
 :root {
   --text-main-color: #000;
   --text-weak-color: #999;
-  --theme-color: rgb(137, 146, 255);
+  --theme-color: rgb(200, 170, 220);
   --bar-bg-color: rgba(255, 255, 255, 0.8);
   --bg-main-color: #fff;
   --bg-sub-color: rgb(248, 248, 255);
@@ -12,7 +12,7 @@
   :root {
     --text-main-color: #fff;
     --text-weak-color: #999;
-    --theme-color: rgb(137, 146, 255);
+    --theme-color: rgb(200, 170, 220);
     --bar-bg-color: rgba(0, 0, 0, 0.6);
     --bg-main-color: #111;
     --bg-sub-color: #222;
