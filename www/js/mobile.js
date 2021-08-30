@@ -319,16 +319,6 @@ document.querySelector(".search").onfocus = (e) => {
   }
 };
 
-const openMenu = async () => {
-  document.querySelector(".overlay").classList.remove("hidden");
-  document.querySelector(".menu").classList.remove("hidden");
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  document.querySelector(".bar").classList.add("blur");
-  document.querySelector(".list").classList.add("blur");
-};
-
-document.querySelector(".bar .icon").onclick = openMenu;
-
 let startTouchX = 0;
 let startTouchY = 0;
 let touchStartTime = 0;
@@ -343,7 +333,11 @@ document.addEventListener("touchend", async (e) => {
     Math.abs(e.changedTouches[0].screenY - startTouchY) < 50 &&
     e.timeStamp - touchStartTime < 300
   ) {
-    await openMenu();
+    document.querySelector(".overlay").classList.remove("hidden");
+    document.querySelector(".menu").classList.remove("hidden");
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    document.querySelector(".bar").classList.add("blur");
+    document.querySelector(".list").classList.add("blur");
   }
 });
 
@@ -353,6 +347,10 @@ document.querySelector(".overlay").onclick = async (e) => {
   document.querySelector(".list").classList.remove("blur");
   document.querySelector(".overlay").classList.add("hidden");
   document.querySelector(".menu").classList.add("hidden");
+};
+
+document.querySelector(".bar .icon").onclick = () => {
+  location.href = "/";
 };
 
 document.querySelector(".home").onclick = () => {
