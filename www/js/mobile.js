@@ -339,8 +339,8 @@ document.addEventListener("touchstart", (e) => {
 });
 document.addEventListener("touchend", async (e) => {
   if (
-    e.changedTouches[0].screenX - startTouchX > 100 &&
-    Math.abs(e.changedTouches[0].screenY - startTouchY) < 100 &&
+    e.changedTouches[0].screenX - startTouchX > 50 &&
+    Math.abs(e.changedTouches[0].screenY - startTouchY) < 50 &&
     e.timeStamp - touchStartTime < 300
   ) {
     await openMenu();
