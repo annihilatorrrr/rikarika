@@ -428,18 +428,25 @@ document.querySelector(".history").onclick = (event) => {
   }
 };
 
-document.querySelector(".sukebei").innerText = localStorage.getItem("nsfw")
-  ? "🛐 我有罪並且已懺悔"
-  : "🔞 我了解並且要繼續";
-
+const updateNSFW = () => {
+  if (localStorage.getItem("nsfw")) {
+    document.querySelector(".sukebei").innerText = "🛐 我有罪並且已懺悔";
+    document.querySelector(".logo .nsfw").classList.remove("hidden");
+    document.querySelector(".logo .sfw").classList.add("hidden");
+  } else {
+    document.querySelector(".sukebei").innerText = "🔞 我了解並且要繼續";
+    document.querySelector(".logo .nsfw").classList.add("hidden");
+    document.querySelector(".logo .sfw").classList.remove("hidden");
+  }
+};
+updateNSFW();
 document.querySelector(".sukebei").onclick = async (event) => {
   if (localStorage.getItem("nsfw")) {
     localStorage.removeItem("nsfw");
-    event.target.innerText = "🔞 我了解並且要繼續";
   } else {
     localStorage.setItem("nsfw", "nsfw");
-    event.target.innerText = "🛐 我有罪並且已懺悔";
   }
+  updateNSFW();
   await render();
 };
 
