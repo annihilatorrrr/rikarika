@@ -72,46 +72,23 @@ const urlBase64ToUint8Array = (base64String) => {
   return outputArray;
 };
 
-const preventClick = (event) => {
-  if (event.button === 0) {
-    event.preventDefault();
-  }
-};
-
 const scrollTop = [];
 
 const appendChunk = (chunk) => {
   document.querySelector(".list").append(
     ...chunk.map(({ season, name, modified, size, anime_id }) => {
-      const a1 = document.createElement("a");
-      a1.classList.add("item");
+      const div0 = document.createElement("div0");
+      div0.classList.add("item");
       const div1 = document.createElement("div");
-      const div2 = document.createElement("div");
-      div2.className = "details";
-      const div3 = document.createElement("div");
-      div3.className = "left";
-      const div4 = document.createElement("div");
-      div4.className = "right";
-
-      div3.innerText = size ? formatFileSize(size) : "";
-      div4.style.opacity = getDateTimeOpacity(modified);
-      div4.innerText = formatDateTime(modified);
-      div2.append(div3, div4);
-
-      switch (name.slice(-4)) {
-        case ".mp4":
-        case ".txt":
-        case ".ass":
-          if (localStorage.getItem(`/${anime_id}/${name}`)) {
-            a1.classList.add("watched");
-          }
-          a1.onmouseup = (event) => {
-            if (event && event.button !== 0) {
-              return;
-            }
-            const href =
-              event.target.parentNode.pathname ?? event.target.parentNode.parentNode.pathname;
-            if (event.target.parentNode.pathname) {
+      if ([".mp4", ".txt", ".ass"].includes(name.slice(-4))) {
+        if (localStorage.getItem(`/${anime_id}/${name}`)) {
+          div0.classList.add("watched");
+        }
+        div0.addEventListener(
+          "click",
+          async (event) => {
+            const href = `/${anime_id}/${encodeURIComponent(name)}`;
+            if (event.target.parentNode.classList.contains("item")) {
               event.target.parentNode.classList.add("watched");
             } else {
               event.target.parentNode.parentNode.classList.add("watched");
@@ -122,7 +99,7 @@ const appendChunk = (chunk) => {
               if (localStorage.getItem("player") === "external") {
                 window.open(href, "_blank");
               } else if (localStorage.getItem("player")) {
-                const url = event.target.parentNode.href ?? event.target.parentNode.parentNode.href;
+                const url = new URL(href, document.baseURI).href;
                 const a = document.createElement("a");
                 a.href = `intent:${url}#Intent;package=${localStorage.getItem(
                   "player"
@@ -136,33 +113,40 @@ const appendChunk = (chunk) => {
             } else {
               location.href = href;
             }
-          };
-          a1.href = `/${anime_id}/${encodeURIComponent(name)}`;
-          div1.innerText = name.slice(0, -4);
-          a1.onclick = preventClick;
-          break;
-        default:
-          a1.onmouseup = async (event) => {
-            if (event.button !== 0) {
-              return;
-            }
+          },
+          { once: true }
+        );
+        div0.href = `/${anime_id}/${encodeURIComponent(name)}`;
+        div1.innerText = name.slice(0, -4);
+      } else {
+        div0.addEventListener(
+          "click",
+          async (event) => {
             scrollTop[window.location.pathname.split("/").length - 2] =
               document.querySelector(".list").scrollTop;
             history.pushState(
               null,
               null,
-              event.target.parentNode.pathname ?? event.target.parentNode.parentNode.pathname
+              season ? `/${season}/${encodeURIComponent(name)}/` : `${encodeURIComponent(name)}/`
             );
             await render(scrollTop[window.location.pathname.split("/").length - 2] || 0);
-          };
-          a1.href = season
-            ? `/${season}/${encodeURIComponent(name)}/`
-            : `${encodeURIComponent(name)}/`;
-          div1.innerText = `📁 ${name}`;
-          a1.onclick = preventClick;
+          },
+          { once: true }
+        );
+        div1.innerText = `📁 ${name}`;
       }
-      a1.append(div1, div2);
-      return a1;
+      const div2 = document.createElement("div");
+      div2.className = "details";
+      const div3 = document.createElement("div");
+      div3.className = "left";
+      div3.innerText = size ? formatFileSize(size) : "";
+      const div4 = document.createElement("div");
+      div4.className = "right";
+      div4.style.opacity = getDateTimeOpacity(modified);
+      div4.innerText = formatDateTime(modified);
+      div2.append(div3, div4);
+      div0.append(div1, div2);
+      return div0;
     })
   );
 };
@@ -188,9 +172,6 @@ const render = async (scrollTo) => {
   if (season === "search") {
     document.querySelector(".search").value = title;
   }
-  document.querySelectorAll(".list > div").forEach((each) => {
-    each.onmouseup = null;
-  });
 
   const loadingTimer = setTimeout(() => {
     document.querySelector(".list").innerHTML = "";
@@ -273,38 +254,29 @@ const renderSearchResult = async (results) => {
     if (!localStorage.getItem("nsfw") && season === "Sukebei") {
       continue;
     }
-    const a1 = document.createElement("a");
-    a1.classList.add("item");
+    const div0 = document.createElement("div");
+    div0.classList.add("item");
+    div0.addEventListener(
+      "click",
+      async (event) => {
+        history.pushState(null, null, `/${season}/${encodeURIComponent(title)}/`);
+        await render();
+      },
+      { once: true }
+    );
     const div1 = document.createElement("div");
+    div1.innerText = `📁 ${title}`;
     const div2 = document.createElement("div");
     div2.className = "details";
     const div3 = document.createElement("div");
     div3.className = "left";
+    div3.innerText = season;
     const div4 = document.createElement("div");
     div4.className = "right";
-
-    a1.href = `/${season}/${encodeURIComponent(title)}/`;
-    div1.innerText = `📁 ${title}`;
-    div3.innerText = season;
     div4.innerText = season;
     div2.append(div3, div4);
-    a1.append(div1, div2);
-
-    a1.onmouseup = (event) => {
-      if (event.button !== 0) {
-        return;
-      }
-      history.pushState(
-        null,
-        null,
-        event.target.parentNode.pathname ?? event.target.parentNode.parentNode.pathname
-      );
-      render();
-    };
-    a1.href = season ? `/${season}/${encodeURIComponent(title)}/` : `${encodeURIComponent(title)}/`;
-    a1.onclick = preventClick;
-
-    document.querySelector(".list").appendChild(a1);
+    div0.append(div1, div2);
+    document.querySelector(".list").appendChild(div0);
   }
 };
 
