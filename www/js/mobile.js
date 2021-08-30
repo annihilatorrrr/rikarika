@@ -363,7 +363,9 @@ document.querySelector(".logout").onclick = () => (location.href = "/logout");
 if (document.body.requestFullscreen) {
   let isOrientationLocked = false;
   document.querySelector(".fullscreen").classList.remove("hidden");
-  document.querySelector(".orientation").classList.remove("hidden");
+  if (window.matchMedia("(display-mode: standalone)").matches) {
+    document.querySelector(".orientation").classList.remove("hidden");
+  }
   document.querySelector(".fullscreen").innerText = "⬜ 全螢幕";
   document.querySelector(".orientation").innerText = "🔓 固定此螢幕方向";
   document.addEventListener("fullscreenchange", (event) => {
