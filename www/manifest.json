@@ -18,6 +18,6 @@
   "start_url": "/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#f1e9f6",
-  "theme_color": "#f1e9f6"
+  "background_color": "#efe0ff",
+  "theme_color": "#efe0ff"
 }

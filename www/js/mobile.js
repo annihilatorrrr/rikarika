@@ -331,16 +331,23 @@ document.addEventListener("touchend", async (e) => {
     Math.abs(e.changedTouches[0].screenY - startTouchY) < 50 &&
     e.timeStamp - touchStartTime < 300
   ) {
-    document.querySelector(".overlay").classList.remove("hidden");
     document.querySelector(".menu").classList.remove("hidden");
+    document.querySelector(".overlay").classList.remove("hidden");
     await new Promise((resolve) => setTimeout(resolve, 300));
+    document.querySelector(".list").classList.add("blur");
+    document.querySelector(".bar").classList.add("blur");
   }
 });
 
 document.querySelector(".overlay").onclick = async (e) => {
   if (e.target !== document.querySelector(".overlay")) return;
-  document.querySelector(".overlay").classList.add("hidden");
   document.querySelector(".menu").classList.add("hidden");
+  document.querySelector(".list").classList.remove("blur");
+  document.querySelector(".bar").classList.remove("blur");
+  document.querySelector(".overlay").classList.add("hide");
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  document.querySelector(".overlay").classList.remove("hide");
+  document.querySelector(".overlay").classList.add("hidden");
 };
 
 document.querySelector(".bar .icon").onclick = () => (location.href = "/");

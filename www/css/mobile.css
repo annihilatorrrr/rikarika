@@ -1,22 +1,32 @@
 :root {
-  --theme-color: rgba(200, 170, 220, 1);
-  --text-main-color: rgba(127, 68, 167, 1);
-  --text-weak-color: rgba(208, 200, 213, 1);
-  --glass-bg-color: rgba(200, 170, 220, 0.2);
-  --bg-main-color: rgba(253, 251, 254, 1);
-  --bg-sub-color: rgba(250, 248, 252, 1);
-  scrollbar-color: var(--theme-color) transparent;
+  --hair-bright-color: rgb(255, 211, 233);
+  --hair-mid-color: rgb(200, 170, 220);
+  --hair-dark-color: rgb(108, 121, 178);
+  --eye-bright-color: rgb(253, 208, 247);
+  --eye-mid-color: rgb(234, 106, 223);
+  --eye-dark-color: rgb(58, 30, 109);
+  --theme-color: rgb(225, 207, 255);
+
+  --bg-main-color: rgb(255, 252, 254);
+  --bg-sub-color: rgb(255, 247, 252);
+  --theme-color-glass: rgba(225, 207, 255, 0.5);
+  --text-high-color: var(--eye-mid-color);
+  --text-main-color: var(--eye-dark-color);
+  --text-weak-color: var(--hair-mid-color);
+  --line-main-color: var(--hair-mid-color);
+  scrollbar-color: var(--hair-mid-color) transparent;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --theme-color: rgba(200, 170, 220, 1);
-    --text-main-color: rgba(200, 170, 220, 1);
-    --text-weak-color: rgba(110, 79, 130, 1);
-    --glass-bg-color: rgba(200, 170, 220, 0.2);
-    --bg-main-color: rgba(17, 9, 22, 1);
-    --bg-sub-color: rgba(28, 15, 36, 1);
-    scrollbar-color: var(--theme-color) transparent;
+    --bg-main-color: rgb(32, 32, 35);
+    --bg-sub-color: rgb(30, 30, 35);
+    --theme-color-glass: rgba(0, 0, 0, 0.5);
+    --text-high-color: var(--eye-bright-color);
+    --text-main-color: var(--theme-color);
+    --text-weak-color: var(--hair-dark-color);
+    --line-main-color: var(--hair-mid-color);
+    scrollbar-color: var(--line-main-color) transparent;
   }
 }
 ::-webkit-scrollbar {
@@ -24,10 +34,7 @@
   width: 0.2rem;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--theme-color);
-}
-::placeholder {
-  color: var(--text-main-color);
+  background: var(--line-main-color);
 }
 html {
   -webkit-text-size-adjust: 100%;
@@ -40,10 +47,6 @@ body {
   background: var(--bg-main-color);
   overscroll-behavior: contain;
 }
-a {
-  text-decoration: none;
-  color: var(--text-main-color);
-}
 .overlay {
   visibility: visible;
   position: fixed;
@@ -52,10 +55,13 @@ a {
   left: 0;
   right: 0;
   opacity: 1;
-  background-color: var(--glass-bg-color);
+  background-color: var(--theme-color-glass);
   transition: opacity 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
   z-index: 1;
   pointer-events: auto;
+}
+.overlay.hide {
+  opacity: 0;
 }
 .overlay.hidden {
   visibility: hidden;
@@ -72,10 +78,10 @@ a {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   background-color: var(--bg-main-color);
-  box-shadow: 0 0 0.2rem 0.2rem var(--glass-bg-color);
+  box-shadow: 0 0 0.2rem 0.2rem var(--theme-color-glass);
   transition: left 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
   z-index: 2;
-  color: var(--text-main-color);
+  color: var(--text-high-color);
 }
 .menu.hidden {
   left: -14rem;
@@ -93,7 +99,7 @@ a {
   margin: 0 0.5rem;
   line-height: 2rem;
   font-size: 0.875rem;
-  border-bottom: 1px dashed var(--theme-color);
+  border-bottom: 1px dashed var(--line-main-color);
 }
 .menu .item:last-child {
   border-bottom: none;
@@ -167,7 +173,7 @@ a {
   padding: 0.2rem;
 }
 .list .item .details .left {
-  color: var(--text-weak-color);
+  color: var(--text-main-color);
   visibility: hidden;
 }
 .list .item .details .right {
@@ -184,7 +190,7 @@ a {
 .icon img {
   width: 3rem;
   height: 3rem;
-  border: 3px double var(--theme-color);
+  border: 3px double var(--line-main-color);
   box-sizing: border-box;
   border-radius: 6px;
 }
@@ -207,17 +213,20 @@ a {
   border: none;
   background: transparent;
   border-radius: 0;
-  border-bottom: 1px dashed var(--theme-color);
+  border-bottom: 1px dashed var(--line-main-color);
   font-size: 1rem;
   height: 3rem;
   flex-grow: 1;
   color: var(--text-main-color);
 }
+::placeholder {
+  color: var(--text-weak-color);
+}
 button {
   width: 4rem;
   height: 4rem;
   font-size: 0.75rem;
-  color: var(--text-main-color);
+  color: var(--text-weak-color);
   border: 0;
   background-color: transparent;
   border-radius: 0.2rem;
@@ -239,7 +248,7 @@ button:disabled {
 }
 .progress > div {
   position: absolute;
-  background-color: var(--theme-color);
+  background-color: var(--line-main-color);
   height: 2px;
 }
 .progress > div:first-child {
@@ -248,22 +257,19 @@ button:disabled {
 .progress > div:last-child {
   animation: decrease 2s 0.5s infinite;
 }
+.list.blur,
+.bar.blur {
+  filter: blur(0.1rem);
+}
 @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
-  .bar,
-  .menu {
-    backdrop-filter: blur(0.5rem);
-    -webkit-backdrop-filter: blur(0.5rem);
-    background-color: var(--glass-bg-color);
-    box-shadow: 0 0 0.2rem 0.2rem var(--glass-bg-color);
+  .bar {
+    backdrop-filter: blur(0.25rem);
+    -webkit-backdrop-filter: blur(0.25rem);
+    background-color: var(--theme-color-glass);
+    box-shadow: 0 0 0.2rem 0.2rem var(--theme-color-glass);
   }
   .bar {
-    border-bottom: 1px solid var(--bg-sub-color);
-  }
-  .menu {
-    border-right: 1px solid var(--bg-sub-color);
-  }
-  .overlay {
-    background-color: transparent;
+    border-bottom: 1px solid var(--bg-main-color);
   }
 }
 @keyframes increase {
