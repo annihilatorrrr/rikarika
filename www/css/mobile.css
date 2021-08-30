@@ -38,6 +38,7 @@ body {
   padding: 0;
   font-family: system-ui, Meiryo, sans-serif, Arial;
   background: var(--bg-main-color);
+  overscroll-behavior: contain;
 }
 a {
   text-decoration: none;
