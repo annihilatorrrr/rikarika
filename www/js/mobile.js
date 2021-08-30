@@ -244,7 +244,7 @@ const render = async (scrollTo) => {
             document.querySelector(".list").scrollTo(0, scrollTo);
           }
           resolve();
-        }, 0)
+        }, 50)
       )
     );
   }
