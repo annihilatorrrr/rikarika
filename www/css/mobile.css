@@ -1,21 +1,21 @@
 :root {
-  --text-main-color: #000;
-  --text-weak-color: #999;
-  --theme-color: rgb(200, 170, 220);
-  --bar-bg-color: rgba(255, 255, 255, 0.8);
-  --bg-main-color: #fff;
-  --bg-sub-color: rgb(248, 248, 255);
+  --theme-color: rgba(200, 170, 220, 1);
+  --text-main-color: rgba(127, 68, 167, 1);
+  --text-weak-color: rgba(208, 200, 213, 1);
+  --glass-bg-color: rgba(200, 170, 220, 0.2);
+  --bg-main-color: rgba(253, 251, 254, 1);
+  --bg-sub-color: rgba(250, 248, 252, 1);
   scrollbar-color: var(--theme-color) transparent;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text-main-color: #fff;
-    --text-weak-color: #999;
-    --theme-color: rgb(200, 170, 220);
-    --bar-bg-color: rgba(0, 0, 0, 0.6);
-    --bg-main-color: #111;
-    --bg-sub-color: #222;
+    --theme-color: rgba(200, 170, 220, 1);
+    --text-main-color: rgba(200, 170, 220, 1);
+    --text-weak-color: rgba(110, 79, 130, 1);
+    --glass-bg-color: rgba(200, 170, 220, 0.2);
+    --bg-main-color: rgba(17, 9, 22, 1);
+    --bg-sub-color: rgba(28, 15, 36, 1);
     scrollbar-color: var(--theme-color) transparent;
   }
 }
@@ -23,13 +23,11 @@
   -webkit-appearance: none;
   width: 0.2rem;
 }
-@media (pointer: fine) {
-  ::-webkit-scrollbar {
-    width: 0.5rem;
-  }
-}
 ::-webkit-scrollbar-thumb {
   background: var(--theme-color);
+}
+::placeholder {
+  color: var(--text-main-color);
 }
 html {
   -webkit-text-size-adjust: 100%;
@@ -52,9 +50,9 @@ a {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: var(--theme-color);
+  opacity: 1;
+  background-color: var(--glass-bg-color);
   transition: opacity 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
-  opacity: 0.25;
   z-index: 1;
   pointer-events: auto;
 }
@@ -73,10 +71,10 @@ a {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   background-color: var(--bg-main-color);
+  box-shadow: 0 0 0.2rem 0.2rem var(--glass-bg-color);
   transition: left 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
   z-index: 2;
   color: var(--text-main-color);
-  box-shadow: 0 0 1rem var(--theme-color);
 }
 .menu.hidden {
   left: -14rem;
@@ -95,7 +93,6 @@ a {
   line-height: 2rem;
   font-size: 0.875rem;
   border-bottom: 1px dashed var(--theme-color);
-  cursor: pointer;
 }
 .menu .item:last-child {
   border-bottom: none;
@@ -111,16 +108,12 @@ a {
   flex-grow: 1;
   border: none;
   outline: 0;
-  font-family: system-ui, Meiryo, sans-serif, Arial;
-  color: var(--text-main-color);
-  background-color: var(--bg-main-color);
-  height: 2rem;
-  font-size: 0.875rem;
+  font-family: inherit;
+  color: inherit;
+  background-color: inherit;
+  height: inherit;
+  font-size: inherit;
   margin-left: 1rem;
-}
-.bar.blur,
-.list.blur {
-  filter: blur(2px);
 }
 .list {
   display: flex;
@@ -147,7 +140,6 @@ a {
 .list .item {
   display: flex;
   flex-direction: column;
-  cursor: pointer;
   font-size: 0.875rem;
   color: var(--text-main-color);
 }
@@ -183,7 +175,6 @@ a {
 .icon {
   width: 4rem;
   height: 4rem;
-  cursor: pointer;
   display: flex;
   align-content: center;
   align-items: center;
@@ -203,15 +194,9 @@ a {
   right: 0;
   display: flex;
   align-items: center;
-  background-color: var(--bar-bg-color);
-  backdrop-filter: blur(0.25rem);
-  -webkit-backdrop-filter: blur(0.25rem);
+  background-color: var(--bg-main-color);
+  box-shadow: 0 0 0.2rem 0.2rem var(--bg-main-color);
   margin-right: 0.2rem;
-}
-@media (pointer: fine) {
-  .bar {
-    margin-right: 0.5rem;
-  }
 }
 .bar input {
   padding: 0;
@@ -248,6 +233,24 @@ a {
 }
 .progress > div:last-child {
   animation: decrease 2s 0.5s infinite;
+}
+@supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+  .bar,
+  .menu {
+    backdrop-filter: blur(0.5rem);
+    -webkit-backdrop-filter: blur(0.5rem);
+    background-color: var(--glass-bg-color);
+    box-shadow: 0 0 0.2rem 0.2rem var(--glass-bg-color);
+  }
+  .bar {
+    border-bottom: 1px solid var(--bg-sub-color);
+  }
+  .menu {
+    border-right: 1px solid var(--bg-sub-color);
+  }
+  .overlay {
+    background-color: transparent;
+  }
 }
 @keyframes increase {
   from {

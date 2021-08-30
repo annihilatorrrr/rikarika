@@ -320,15 +320,11 @@ document.addEventListener("touchend", async (e) => {
     document.querySelector(".overlay").classList.remove("hidden");
     document.querySelector(".menu").classList.remove("hidden");
     await new Promise((resolve) => setTimeout(resolve, 300));
-    document.querySelector(".bar").classList.add("blur");
-    document.querySelector(".list").classList.add("blur");
   }
 });
 
 document.querySelector(".overlay").onclick = async (e) => {
   if (e.target !== document.querySelector(".overlay")) return;
-  document.querySelector(".bar").classList.remove("blur");
-  document.querySelector(".list").classList.remove("blur");
   document.querySelector(".overlay").classList.add("hidden");
   document.querySelector(".menu").classList.add("hidden");
 };
