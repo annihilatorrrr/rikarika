@@ -200,7 +200,7 @@ a {
 }
 .bar input {
   padding: 0;
-  margin: 0.5rem 0.5rem 0.5rem 0;
+  margin: 0;
   -webkit-appearance: none;
   outline: 0;
   border: none;
@@ -211,6 +211,20 @@ a {
   height: 3rem;
   flex-grow: 1;
   color: var(--text-main-color);
+}
+button {
+  width: 4rem;
+  height: 4rem;
+  font-size: 0.75rem;
+  color: var(--text-main-color);
+  border: 0;
+  background-color: transparent;
+  border-radius: 0.2rem;
+  margin: 0;
+  padding: 0;
+}
+button:disabled {
+  color: transparent;
 }
 .progress {
   position: fixed;

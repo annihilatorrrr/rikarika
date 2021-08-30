@@ -162,10 +162,15 @@ const render = async (scrollTo) => {
     .filter((e) => e)
     .map((e) => decodeURIComponent(e));
 
-  if (season === "search" && !title) {
-    history.replaceState(null, null, "/");
-    render();
-    return;
+  if (season === "search") {
+    if (title) {
+      document.querySelector("input").value = title;
+      document.querySelector("button").disabled = false;
+    } else {
+      history.replaceState(null, null, "/");
+      render();
+      return;
+    }
   }
 
   document.title = title || "カリ(仮)";
@@ -287,6 +292,7 @@ window.onpopstate = async () => {
 let typing = null;
 document.querySelector(".search").oninput = (e) => {
   clearTimeout(typing);
+  document.querySelector("button").disabled = !e.target.value;
   if (!e.target.value) {
     history.pushState(null, null, "/");
     render();
@@ -294,6 +300,14 @@ document.querySelector(".search").oninput = (e) => {
   }
   history.replaceState(null, null, `/search/${encodeURIComponent(e.target.value)}/`);
   typing = setTimeout(render, 300);
+};
+document.querySelector("button").onclick = () => {
+  clearTimeout(typing);
+  document.querySelector("button").disabled = true;
+  document.querySelector(".search").value = "";
+  history.pushState(null, null, "/");
+  render();
+  return;
 };
 
 document.querySelector(".search").onfocus = (e) => {
