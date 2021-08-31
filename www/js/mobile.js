@@ -162,31 +162,35 @@ const render = async (scrollTo) => {
     .filter((e) => e)
     .map((e) => decodeURIComponent(e));
 
+  document.title = title || season || "カリ(仮)";
+  document.querySelector(".title").innerText = title || season || "カリ(仮)";
+
   document.querySelector(".title").classList.remove("hidden");
   document.querySelector(".search").classList.add("hidden");
   document.querySelector("button").innerText = "搜尋";
   if (season === "search") {
+    document.querySelector(".title").classList.add("hidden");
+    document.querySelector(".search").classList.remove("hidden");
     if (title) {
-      document.querySelector(".title").classList.add("hidden");
-      document.querySelector(".search").classList.remove("hidden");
       document.querySelector("input").value = title;
       document.querySelector("button").innerText = "清除";
     } else {
-      history.replaceState(null, null, "/");
-      render();
-      return;
+      document.querySelector("input").value = "";
+      document.querySelector("button").innerText = "取消";
     }
   }
 
-  document.title = title || season || "カリ(仮)";
-  document.querySelector(".title").innerText = title || season || "カリ(仮)";
-
   document.querySelector(".progress").classList.remove("hidden");
-  const dirEntries = await fetch(
-    season === "search" ? `/search?q=${title}` : `/ls?path=${encodeURIComponent(location.pathname)}`
-  )
-    .then((res) => res.json())
-    .catch((e) => e);
+  const dirEntries =
+    season === "search" && !title
+      ? []
+      : await fetch(
+          season === "search"
+            ? `/search?q=${title}`
+            : `/ls?path=${encodeURIComponent(location.pathname)}`
+        )
+          .then((res) => res.json())
+          .catch((e) => e);
 
   document.querySelector(".list").innerHTML = "";
   if (!Array.isArray(dirEntries)) {
@@ -294,21 +298,22 @@ document.querySelector(".search").oninput = (e) => {
   typing = setTimeout(render, 300);
 };
 document.querySelector("button").onclick = () => {
-  clearTimeout(typing);
-  if (document.querySelector(".search").value) {
-    document.querySelector(".search").value = "";
-    history.pushState(null, null, "/");
-    render();
-    return;
-  } else if (document.querySelector(".search").classList.contains("hidden")) {
-    document.querySelector("button").innerText = "取消";
-    document.querySelector(".title").classList.add("hidden");
-    document.querySelector(".search").classList.remove("hidden");
+  const keyword = document.querySelector(".search").value;
+  if (location.pathname.split("/").filter((e) => e)[0] === "search") {
+    if (keyword) {
+      history.pushState(null, null, "/search/");
+    } else {
+      history.pushState(null, null, "/");
+    }
   } else {
-    document.querySelector("button").innerText = "搜尋";
-    document.querySelector(".title").classList.remove("hidden");
-    document.querySelector(".search").classList.add("hidden");
+    if (keyword) {
+      history.pushState(null, null, `/search/${encodeURIComponent(keyword)}/`);
+    } else {
+      history.pushState(null, null, "/search/");
+    }
   }
+  render();
+  return;
 };
 
 document.querySelector(".search").onfocus = (e) => {

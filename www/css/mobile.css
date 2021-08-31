@@ -173,6 +173,8 @@ body {
 .list .item > div:first-child {
   padding: 1.15rem 0.2rem 0 0.2rem;
   line-height: 1rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 .list .item.watched {
   color: var(--text-weak-color);
