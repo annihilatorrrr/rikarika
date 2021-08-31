@@ -209,6 +209,25 @@ body {
   box-sizing: border-box;
   border-radius: 6px;
 }
+.reload {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  visibility: visible;
+  width: 100%;
+  height: 2px;
+}
+.reload div {
+  background-color: var(--line-main-color);
+  width: 0%;
+  height: 100%;
+}
+.reload.active div {
+  background-color: var(--eye-mid-color);
+}
+.reload.hidden {
+  visibility: hidden;
+}
 .bar {
   position: fixed;
   top: 0;

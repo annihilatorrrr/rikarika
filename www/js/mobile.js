@@ -339,8 +339,16 @@ document.addEventListener(
 document.addEventListener(
   "touchmove",
   (e) => {
-    if (startTouchAtTop && e.touches[0].clientY > startTouchY) {
-      // TODO: show pull to refresh indicator
+    const threshold = 50 * window.devicePixelRatio;
+    if (startTouchAtTop) {
+      document.querySelector(".reload").classList.remove("hidden");
+      document.querySelector(".reload").classList.remove("active");
+      let percent = (e.changedTouches[0].clientY - startTouchY) / (2 * threshold);
+      percent = percent < 0.1 ? 0 : percent;
+      document.querySelector(".reload div").style.width = `${percent * 100}%`;
+      if (e.changedTouches[0].clientY - startTouchY > 2 * threshold) {
+        document.querySelector(".reload").classList.add("active");
+      }
     }
   },
   { passive: true }
@@ -369,7 +377,9 @@ document.addEventListener("touchend", async (e) => {
   }
 
   if (startTouchAtTop) {
-    // TODO: hide pull to refresh indicator
+    document.querySelector(".reload").classList.add("hidden");
+    document.querySelector(".reload").classList.remove("active");
+    document.querySelector(".reload div").style.width = "0%";
     if (e.changedTouches[0].clientY - startTouchY > 2 * threshold) {
       await render();
     }
