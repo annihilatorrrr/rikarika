@@ -175,16 +175,12 @@ const render = async (scrollTo) => {
 
   document.title = title || "カリ(仮)";
 
-  const loadingTimer = setTimeout(
-    () => document.querySelector(".progress").classList.remove("hidden"),
-    300
-  );
+  document.querySelector(".progress").classList.remove("hidden");
   const dirEntries = await fetch(
     season === "search" ? `/search?q=${title}` : `/ls?path=${encodeURIComponent(location.pathname)}`
   )
     .then((res) => res.json())
     .catch((e) => e);
-  clearTimeout(loadingTimer);
 
   document.querySelector(".list").innerHTML = "";
   if (!Array.isArray(dirEntries)) {

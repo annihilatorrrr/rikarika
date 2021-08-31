@@ -265,11 +265,15 @@ button:disabled {
   background-color: var(--line-main-color);
   height: 2px;
 }
+.progress.hidden > div:first-child,
+.progress.hidden > div:last-child {
+  animation: none;
+}
 .progress > div:first-child {
-  animation: increase 2s infinite;
+  animation: increase 2s 0.1s infinite;
 }
 .progress > div:last-child {
-  animation: decrease 2s 0.5s infinite;
+  animation: decrease 2s 1s infinite;
 }
 .list.blur,
 .bar.blur {
@@ -288,8 +292,8 @@ button:disabled {
 }
 @keyframes increase {
   from {
-    left: -5%;
-    width: 5%;
+    left: -25%;
+    width: 25%;
   }
   to {
     left: 130%;
@@ -298,8 +302,8 @@ button:disabled {
 }
 @keyframes decrease {
   from {
-    left: -80%;
-    width: 80%;
+    left: -50%;
+    width: 50%;
   }
   to {
     left: 110%;
