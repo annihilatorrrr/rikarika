@@ -315,12 +315,23 @@ document.querySelector(".search").onfocus = (e) => {
 
 let startTouchX = 0;
 let startTouchY = 0;
+let startTouchAtTop = false;
 let touchStartTime = 0;
 document.addEventListener("touchstart", (e) => {
   startTouchX = e.touches[0].screenX;
   startTouchY = e.touches[0].screenY;
+  startTouchAtTop = !document.querySelector(".list").scrollTop;
   touchStartTime = e.timeStamp;
 });
+document.addEventListener(
+  "touchmove",
+  (e) => {
+    if (startTouchAtTop && y > startTouchY) {
+      // TODO: show pull to refresh indicator
+    }
+  },
+  { passive: true }
+);
 document.addEventListener("touchend", async (e) => {
   if (
     e.changedTouches[0].screenX - startTouchX > 50 &&
@@ -332,6 +343,13 @@ document.addEventListener("touchend", async (e) => {
     await new Promise((resolve) => setTimeout(resolve, 300));
     document.querySelector(".list").classList.add("blur");
     document.querySelector(".bar").classList.add("blur");
+    return;
+  }
+  if (startTouchAtTop) {
+    // TODO: hide pull to refresh indicator
+    if (e.changedTouches[0].screenY - startTouchY > 150) {
+      window.location.reload();
+    }
   }
 });
 
