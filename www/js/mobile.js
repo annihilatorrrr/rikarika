@@ -84,38 +84,34 @@ const appendChunk = (chunk) => {
         if (localStorage.getItem(`/${anime_id}/${name}`)) {
           div0.classList.add("watched");
         }
-        div0.addEventListener(
-          "click",
-          async (event) => {
-            const href = `/${anime_id}/${encodeURIComponent(name)}`;
-            if (event.target.parentNode.classList.contains("item")) {
-              event.target.parentNode.classList.add("watched");
-            } else {
-              event.target.parentNode.parentNode.classList.add("watched");
-            }
-            localStorage.setItem(decodeURIComponent(href), 1);
+        div0.addEventListener("click", async (event) => {
+          const href = `/${anime_id}/${encodeURIComponent(name)}`;
+          if (event.target.parentNode.classList.contains("item")) {
+            event.target.parentNode.classList.add("watched");
+          } else {
+            event.target.parentNode.parentNode.classList.add("watched");
+          }
+          localStorage.setItem(decodeURIComponent(href), 1);
 
-            if (href.slice(-4) === ".mp4") {
-              if (localStorage.getItem("player") === "external") {
-                window.open(href, "_blank");
-              } else if (localStorage.getItem("player")) {
-                const url = new URL(href, document.baseURI).href;
-                const a = document.createElement("a");
-                a.href = `intent:${url}#Intent;package=${localStorage.getItem(
-                  "player"
-                )};S.browser_fallback_url=${url};end`;
-                a.click();
-              } else {
-                location.href = href;
-              }
-            } else if (localStorage.getItem("player") === "external") {
+          if (href.slice(-4) === ".mp4") {
+            if (localStorage.getItem("player") === "external") {
               window.open(href, "_blank");
+            } else if (localStorage.getItem("player")) {
+              const url = new URL(href, document.baseURI).href;
+              const a = document.createElement("a");
+              a.href = `intent:${url}#Intent;package=${localStorage.getItem(
+                "player"
+              )};S.browser_fallback_url=${url};end`;
+              a.click();
             } else {
               location.href = href;
             }
-          },
-          { once: true }
-        );
+          } else if (localStorage.getItem("player") === "external") {
+            window.open(href, "_blank");
+          } else {
+            location.href = href;
+          }
+        });
         div0.href = `/${anime_id}/${encodeURIComponent(name)}`;
         div1.innerText = name.slice(0, -4);
       } else {
