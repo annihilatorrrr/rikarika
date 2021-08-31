@@ -333,21 +333,30 @@ document.addEventListener(
   { passive: true }
 );
 document.addEventListener("touchend", async (e) => {
-  if (
-    e.changedTouches[0].screenX - startTouchX > 50 &&
-    Math.abs(e.changedTouches[0].screenY - startTouchY) < 50 &&
-    e.timeStamp - touchStartTime < 300
-  ) {
-    document.querySelector(".menu").classList.remove("hidden");
-    document.querySelector(".overlay").classList.remove("hidden");
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    document.querySelector(".list").classList.add("blur");
-    document.querySelector(".bar").classList.add("blur");
-    return;
+  const quickGesture = e.timeStamp - touchStartTime < 300;
+  const threshold = 50 * window.devicePixelRatio;
+  const startFromLeftEdge = startTouchX < 16 * window.devicePixelRatio;
+  const noVerticalMotion = Math.abs(e.changedTouches[0].screenY - startTouchY) < threshold;
+  const fromLeftToRight = e.changedTouches[0].screenX - startTouchX > threshold;
+  const fromRightToLeft = e.changedTouches[0].screenX - startTouchX < -threshold;
+
+  if (startFromLeftEdge) {
+    if (fromLeftToRight && noVerticalMotion && quickGesture) {
+      document.querySelector(".menu").classList.remove("hidden");
+      document.querySelector(".overlay").classList.remove("hidden");
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      document.querySelector(".list").classList.add("blur");
+      document.querySelector(".bar").classList.add("blur");
+    }
+  } else if (fromLeftToRight && noVerticalMotion && quickGesture) {
+    history.back();
+  } else if (fromRightToLeft && noVerticalMotion && quickGesture) {
+    history.forward();
   }
+
   if (startTouchAtTop) {
     // TODO: hide pull to refresh indicator
-    if (e.changedTouches[0].screenY - startTouchY > 150) {
+    if (e.changedTouches[0].screenY - startTouchY > 2 * threshold) {
       window.location.reload();
     }
   }
