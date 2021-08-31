@@ -319,23 +319,25 @@ document.querySelector(".search").onfocus = (e) => {
   }
 };
 
-let startTouchX = 0;
-let startTouchY = 0;
-let startTouchAtTop = false;
 const activation = 50;
 const pullThreshold = activation + 200;
 const swipeThreshold = activation + 50;
-const edgeThreshold = 224 / 2;
+let startTouchX = 0;
+let startTouchY = 0;
+let startTouchAtTop = false;
+let startTouchAtLeftEdge = false;
+let startTouchOnMenu = false;
 let activatedGesture = "";
 document.addEventListener(
   "touchstart",
   (e) => {
-    if (!document.querySelector(".overlay").classList.contains("hidden")) return;
     activatedGesture = "";
     startTouchX = e.touches[0].clientX;
     startTouchY = e.touches[0].clientY;
     startTouchAtTop = !document.querySelector(".list").scrollTop;
     startTouchAtLeftEdge = startTouchX < 50 && startTouchY > 65;
+    startTouchOnMenu =
+      startTouchX < 250 && !document.querySelector(".overlay").classList.contains("hidden");
     if (startTouchAtLeftEdge) {
       e.preventDefault();
     }
@@ -345,13 +347,17 @@ document.addEventListener(
 document.addEventListener(
   "touchmove",
   (e) => {
-    if (!document.querySelector(".overlay").classList.contains("hidden")) return;
     const diffX = e.changedTouches[0].clientX - startTouchX;
     const diffY = e.changedTouches[0].clientY - startTouchY;
     const isVertical = Math.abs(diffY) > Math.abs(diffX);
     if (!activatedGesture) {
-      if (startTouchAtLeftEdge) {
-        activatedGesture = "edge";
+      if (!document.querySelector(".overlay").classList.contains("hidden")) {
+        if (startTouchOnMenu) {
+          activatedGesture = "close";
+          document.querySelector(".menu").classList.add("dragging");
+        }
+      } else if (startTouchAtLeftEdge) {
+        activatedGesture = "open";
         document.querySelector(".menu").classList.remove("hidden");
         document.querySelector(".menu").classList.add("dragging");
       } else if (Math.abs(diffX) > activation || Math.abs(diffY) > activation) {
@@ -366,8 +372,11 @@ document.addEventListener(
         }
       }
     }
-    if (activatedGesture === "edge") {
+    if (activatedGesture === "open") {
       const translate = diffX - 224 > 0 ? 0 : diffX - 224;
+      document.querySelector(".menu").style.transform = `translate(${translate}px, 0)`;
+    } else if (activatedGesture === "close") {
+      const translate = diffX > 0 ? 0 : diffX;
       document.querySelector(".menu").style.transform = `translate(${translate}px, 0)`;
     } else if (activatedGesture === "pull") {
       document.querySelector(".reload div").style.width = `${
@@ -392,7 +401,6 @@ document.addEventListener(
   { passive: true }
 );
 document.addEventListener("touchend", async (e) => {
-  if (!document.querySelector(".overlay").classList.contains("hidden")) return;
   const diffX = e.changedTouches[0].clientX - startTouchX;
   const diffY = e.changedTouches[0].clientY - startTouchY;
   if (activatedGesture === "pull") {
@@ -412,14 +420,21 @@ document.addEventListener("touchend", async (e) => {
     if (diffX < -swipeThreshold) {
       history.forward();
     }
-  } else if (activatedGesture === "edge") {
+  } else if (activatedGesture === "open") {
     document.querySelector(".menu").style.removeProperty("transform");
     document.querySelector(".menu").classList.remove("dragging");
-    if (diffX > edgeThreshold) {
+    if (diffX > 224 * 0.25) {
       document.querySelector(".menu").classList.remove("hidden");
       document.querySelector(".overlay").classList.remove("hidden");
     } else {
       document.querySelector(".menu").classList.add("hidden");
+    }
+  } else if (activatedGesture === "close") {
+    document.querySelector(".menu").style.removeProperty("transform");
+    document.querySelector(".menu").classList.remove("dragging");
+    if (-diffX > 224 * 0.25) {
+      document.querySelector(".menu").classList.add("hidden");
+      document.querySelector(".overlay").classList.add("hidden");
     }
   }
   activatedGesture = "";
