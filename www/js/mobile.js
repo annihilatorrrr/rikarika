@@ -201,6 +201,7 @@ const render = async (scrollTo) => {
   }
 
   if (season === "search") {
+    document.querySelector(".progress").classList.add("hidden");
     renderSearchResult(dirEntries);
     return;
   }
@@ -338,16 +339,16 @@ document.addEventListener("touchend", async (e) => {
       document.querySelector(".list").classList.add("blur");
       document.querySelector(".bar").classList.add("blur");
     }
-  } else if (fromRightToLeft && noVerticalMotion && quickGesture) {
-    history.back();
   } else if (fromLeftToRight && noVerticalMotion && quickGesture) {
+    history.back();
+  } else if (fromRightToLeft && noVerticalMotion && quickGesture) {
     history.forward();
   }
 
   if (startTouchAtTop) {
     // TODO: hide pull to refresh indicator
     if (e.changedTouches[0].screenY - startTouchY > 2 * threshold) {
-      window.location.reload();
+      await render();
     }
   }
 });
