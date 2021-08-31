@@ -203,16 +203,6 @@ const render = async (scrollTo) => {
   if (season === "search") {
     renderSearchResult(dirEntries);
     return;
-  } else if (season) {
-    const div1 = document.createElement("div");
-    div1.classList.add("item");
-    const div2 = document.createElement("div");
-    div2.className = "details";
-    const div3 = document.createElement("div");
-    div3.innerText = "🔙 上一頁";
-    div1.append(div3, div2);
-    div1.onclick = (event) => history.back();
-    document.querySelector(".list").appendChild(div1);
   }
 
   const filteredEntries = localStorage.getItem("nsfw")
