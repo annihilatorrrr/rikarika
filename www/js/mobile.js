@@ -162,10 +162,15 @@ const render = async (scrollTo) => {
     .filter((e) => e)
     .map((e) => decodeURIComponent(e));
 
+  document.querySelector(".title").classList.remove("hidden");
+  document.querySelector(".search").classList.add("hidden");
+  document.querySelector("button").innerText = "搜尋";
   if (season === "search") {
     if (title) {
+      document.querySelector(".title").classList.add("hidden");
+      document.querySelector(".search").classList.remove("hidden");
       document.querySelector("input").value = title;
-      document.querySelector("button").disabled = false;
+      document.querySelector("button").innerText = "清除";
     } else {
       history.replaceState(null, null, "/");
       render();
@@ -173,7 +178,8 @@ const render = async (scrollTo) => {
     }
   }
 
-  document.title = title || "カリ(仮)";
+  document.title = title || season || "カリ(仮)";
+  document.querySelector(".title").innerText = title || season || "カリ(仮)";
 
   document.querySelector(".progress").classList.remove("hidden");
   const dirEntries = await fetch(
@@ -279,7 +285,6 @@ window.onpopstate = async () => {
 let typing = null;
 document.querySelector(".search").oninput = (e) => {
   clearTimeout(typing);
-  document.querySelector("button").disabled = !e.target.value;
   if (!e.target.value) {
     history.pushState(null, null, "/");
     render();
@@ -290,11 +295,20 @@ document.querySelector(".search").oninput = (e) => {
 };
 document.querySelector("button").onclick = () => {
   clearTimeout(typing);
-  document.querySelector("button").disabled = true;
-  document.querySelector(".search").value = "";
-  history.pushState(null, null, "/");
-  render();
-  return;
+  if (document.querySelector(".search").value) {
+    document.querySelector(".search").value = "";
+    history.pushState(null, null, "/");
+    render();
+    return;
+  } else if (document.querySelector(".search").classList.contains("hidden")) {
+    document.querySelector("button").innerText = "取消";
+    document.querySelector(".title").classList.add("hidden");
+    document.querySelector(".search").classList.remove("hidden");
+  } else {
+    document.querySelector("button").innerText = "搜尋";
+    document.querySelector(".title").classList.remove("hidden");
+    document.querySelector(".search").classList.add("hidden");
+  }
 };
 
 document.querySelector(".search").onfocus = (e) => {

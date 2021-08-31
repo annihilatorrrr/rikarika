@@ -173,7 +173,6 @@ body {
 .list .item > div:first-child {
   padding: 1.15rem 0.2rem 0 0.2rem;
   line-height: 1rem;
-  word-break: break-all;
 }
 .list .item.watched {
   color: var(--text-weak-color);
@@ -215,11 +214,30 @@ body {
   right: 0;
   display: flex;
   align-items: center;
+  align-content: center;
   background-color: var(--bg-main-color);
   box-shadow: 0 0 0.2rem 0.2rem var(--bg-main-color);
   margin-right: 0.2rem;
 }
-.bar input {
+.bar .title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  padding: 0;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  height: 3rem;
+  width: 10rem;
+  flex-grow: 1;
+  color: var(--text-main-color);
+}
+.bar .title.hidden,
+.bar .search.hidden {
+  display: none;
+}
+.bar .search {
   padding: 0;
   margin: 0;
   -webkit-appearance: none;
@@ -230,11 +248,14 @@ body {
   border-bottom: 1px dashed var(--line-main-color);
   font-size: 1rem;
   height: 3rem;
+  width: 10rem;
   flex-grow: 1;
   color: var(--text-main-color);
 }
+
 ::placeholder {
   color: var(--text-weak-color);
+  font-family: system-ui, Meiryo, sans-serif, Arial;
 }
 button {
   width: 4rem;
@@ -242,6 +263,7 @@ button {
   font-size: 0.75rem;
   color: var(--text-weak-color);
   border: 0;
+  outline: 0;
   background-color: transparent;
   border-radius: 0.2rem;
   margin: 0;
