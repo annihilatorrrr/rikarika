@@ -309,15 +309,15 @@ let startTouchY = 0;
 let startTouchAtTop = false;
 let touchStartTime = 0;
 document.addEventListener("touchstart", (e) => {
-  startTouchX = e.touches[0].screenX;
-  startTouchY = e.touches[0].screenY;
+  startTouchX = e.touches[0].clientX;
+  startTouchY = e.touches[0].clientY;
   startTouchAtTop = !document.querySelector(".list").scrollTop;
   touchStartTime = e.timeStamp;
 });
 document.addEventListener(
   "touchmove",
   (e) => {
-    if (startTouchAtTop && e.touches[0].screenY > startTouchY) {
+    if (startTouchAtTop && e.touches[0].clientY > startTouchY) {
       // TODO: show pull to refresh indicator
     }
   },
@@ -327,9 +327,9 @@ document.addEventListener("touchend", async (e) => {
   const quickGesture = e.timeStamp - touchStartTime < 300;
   const threshold = 50 * window.devicePixelRatio;
   const startFromLeftEdge = startTouchX < 16 * window.devicePixelRatio;
-  const noVerticalMotion = Math.abs(e.changedTouches[0].screenY - startTouchY) < threshold;
-  const fromLeftToRight = e.changedTouches[0].screenX - startTouchX > threshold;
-  const fromRightToLeft = e.changedTouches[0].screenX - startTouchX < -threshold;
+  const noVerticalMotion = Math.abs(e.changedTouches[0].clientY - startTouchY) < threshold;
+  const fromLeftToRight = e.changedTouches[0].clientX - startTouchX > threshold;
+  const fromRightToLeft = e.changedTouches[0].clientX - startTouchX < -threshold;
 
   if (startFromLeftEdge) {
     if (fromLeftToRight && noVerticalMotion && quickGesture) {
@@ -347,7 +347,7 @@ document.addEventListener("touchend", async (e) => {
 
   if (startTouchAtTop) {
     // TODO: hide pull to refresh indicator
-    if (e.changedTouches[0].screenY - startTouchY > 2 * threshold) {
+    if (e.changedTouches[0].clientY - startTouchY > 2 * threshold) {
       await render();
     }
   }
