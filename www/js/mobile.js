@@ -564,6 +564,7 @@ const unsubscribe = async (event) => {
 };
 
 (async () => {
+  if (!navigator.serviceWorker) return;
   const registration = await navigator.serviceWorker.ready;
   if (registration) {
     const subscription = await registration?.pushManager?.getSubscription();
@@ -576,12 +577,14 @@ const unsubscribe = async (event) => {
       if (res.status === 200) {
         document.querySelector(".notification").onclick = unsubscribe;
         document.querySelector(".notification").innerText = "🔕 停用推送通知";
+        document.querySelector(".notification").classList.remove("hidden");
         return;
       }
     }
   }
   document.querySelector(".notification").onclick = subscribe;
   document.querySelector(".notification").innerText = "🔔 啟用推送通知";
+  document.querySelector(".notification").classList.remove("hidden");
 })();
 
-navigator.serviceWorker.register("/sw.js");
+navigator.serviceWorker?.register("/sw.js");
