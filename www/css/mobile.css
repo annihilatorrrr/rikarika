@@ -70,7 +70,7 @@ body {
 }
 .menu {
   position: fixed;
-  width: 14rem;
+  width: 224px;
   left: 0;
   top: 0;
   bottom: 0;
@@ -79,12 +79,17 @@ body {
   scrollbar-width: thin;
   background-color: var(--bg-main-color);
   box-shadow: 0 0 0.2rem 0.2rem var(--theme-color-glass);
-  transition: left 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition: all 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
   z-index: 2;
   color: var(--text-high-color);
+  transform: translate(0, 0);
+}
+.menu.dragging {
+  transition: none;
 }
 .menu.hidden {
-  left: -14rem;
+  transform: translate(-224px, 0);
+  transition: all 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
   box-shadow: none;
 }
 .menu .logo {
@@ -238,7 +243,6 @@ body {
   align-content: center;
   background-color: var(--bg-main-color);
   box-shadow: 0 0 0.2rem 0.2rem var(--bg-main-color);
-  margin-right: 0.2rem;
 }
 .bar .title {
   overflow: hidden;
@@ -317,10 +321,6 @@ button:disabled {
 }
 .progress > div:last-child {
   animation: decrease 2s 1s infinite;
-}
-.list.blur,
-.bar.blur {
-  filter: blur(0.1rem);
 }
 @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
   .bar {

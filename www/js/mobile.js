@@ -322,15 +322,21 @@ document.querySelector(".search").onfocus = (e) => {
 let startTouchX = 0;
 let startTouchY = 0;
 let startTouchAtTop = false;
-let touchStartTime = 0;
+const activation = 50;
+const pullThreshold = activation + 200;
+const swipeThreshold = activation + 50;
+const edgeThreshold = 224 / 2;
+let activatedGesture = "";
 document.addEventListener(
   "touchstart",
   (e) => {
+    if (!document.querySelector(".overlay").classList.contains("hidden")) return;
+    activatedGesture = "";
     startTouchX = e.touches[0].clientX;
     startTouchY = e.touches[0].clientY;
     startTouchAtTop = !document.querySelector(".list").scrollTop;
-    touchStartTime = e.timeStamp;
-    if (startTouchX < 16 * window.devicePixelRatio) {
+    startTouchAtLeftEdge = startTouchX < 50 && startTouchY > 65;
+    if (startTouchAtLeftEdge) {
       e.preventDefault();
     }
   },
@@ -339,51 +345,84 @@ document.addEventListener(
 document.addEventListener(
   "touchmove",
   (e) => {
-    const threshold = 50 * window.devicePixelRatio;
-    if (startTouchAtTop) {
-      document.querySelector(".reload").classList.remove("hidden");
-      document.querySelector(".reload").classList.remove("active");
-      let percent = (e.changedTouches[0].clientY - startTouchY) / (2 * threshold);
-      percent = percent < 0.1 ? 0 : percent;
-      document.querySelector(".reload div").style.width = `${percent * 100}%`;
-      if (e.changedTouches[0].clientY - startTouchY > 2 * threshold) {
+    if (!document.querySelector(".overlay").classList.contains("hidden")) return;
+    const diffX = e.changedTouches[0].clientX - startTouchX;
+    const diffY = e.changedTouches[0].clientY - startTouchY;
+    const isVertical = Math.abs(diffY) > Math.abs(diffX);
+    if (!activatedGesture) {
+      if (startTouchAtLeftEdge) {
+        activatedGesture = "edge";
+        document.querySelector(".menu").classList.remove("hidden");
+        document.querySelector(".menu").classList.add("dragging");
+      } else if (Math.abs(diffX) > activation || Math.abs(diffY) > activation) {
+        if (isVertical && diffY > 0 && startTouchAtTop) {
+          activatedGesture = "pull";
+          document.querySelector(".reload").classList.remove("hidden");
+          document.querySelector(".reload").classList.remove("active");
+        } else if (!isVertical && diffX > 0) {
+          activatedGesture = "LTR";
+        } else if (!isVertical && diffX < 0) {
+          activatedGesture = "RTL";
+        }
+      }
+    }
+    if (activatedGesture === "edge") {
+      const translate = diffX - 224 > 0 ? 0 : diffX - 224;
+      document.querySelector(".menu").style.transform = `translate(${translate}px, 0)`;
+    } else if (activatedGesture === "pull") {
+      document.querySelector(".reload div").style.width = `${
+        ((diffY - activation) / (pullThreshold - activation)) * 100
+      }%`;
+      if (diffY > pullThreshold) {
         document.querySelector(".reload").classList.add("active");
       }
+    } else if (activatedGesture === "LTR") {
+      let translate = diffX - activation;
+      translate = translate < 0 ? 0 : translate;
+      translate = translate > swipeThreshold - activation ? swipeThreshold - activation : translate;
+      document.querySelector(".list").style.transform = `translate(${translate}px, 0)`;
+    } else if (activatedGesture === "RTL") {
+      let translate = diffX + activation;
+      translate = translate > 0 ? 0 : translate;
+      translate =
+        translate < -(swipeThreshold - activation) ? -(swipeThreshold - activation) : translate;
+      document.querySelector(".list").style.transform = `translate(${translate}px, 0)`;
     }
   },
   { passive: true }
 );
 document.addEventListener("touchend", async (e) => {
-  const quickGesture = e.timeStamp - touchStartTime < 300;
-  const slowGesture = e.timeStamp - touchStartTime > 1000;
-  const threshold = 50 * window.devicePixelRatio;
-  const startFromLeftEdge = startTouchX < 16 * window.devicePixelRatio;
-  const noVerticalMotion = Math.abs(e.changedTouches[0].clientY - startTouchY) < threshold;
-  const fromLeftToRight = e.changedTouches[0].clientX - startTouchX > threshold;
-  const fromRightToLeft = e.changedTouches[0].clientX - startTouchX < -threshold;
-
-  if (startFromLeftEdge) {
-    if (fromLeftToRight && noVerticalMotion && quickGesture) {
-      document.querySelector(".menu").classList.remove("hidden");
-      document.querySelector(".overlay").classList.remove("hidden");
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      document.querySelector(".list").classList.add("blur");
-      document.querySelector(".bar").classList.add("blur");
-    }
-  } else if (fromLeftToRight && noVerticalMotion && !slowGesture) {
-    history.back();
-  } else if (fromRightToLeft && noVerticalMotion && !slowGesture) {
-    history.forward();
-  }
-
-  if (startTouchAtTop) {
+  if (!document.querySelector(".overlay").classList.contains("hidden")) return;
+  const diffX = e.changedTouches[0].clientX - startTouchX;
+  const diffY = e.changedTouches[0].clientY - startTouchY;
+  if (activatedGesture === "pull") {
     document.querySelector(".reload").classList.add("hidden");
     document.querySelector(".reload").classList.remove("active");
     document.querySelector(".reload div").style.width = "0%";
-    if (e.changedTouches[0].clientY - startTouchY > 2 * threshold) {
+    if (diffY > pullThreshold) {
       await render();
     }
+  } else if (activatedGesture === "LTR") {
+    document.querySelector(".list").style.transform = `translate(${0}px, 0)`;
+    if (diffX > swipeThreshold) {
+      history.back();
+    }
+  } else if (activatedGesture === "RTL") {
+    document.querySelector(".list").style.transform = `translate(${0}px, 0)`;
+    if (diffX < -swipeThreshold) {
+      history.forward();
+    }
+  } else if (activatedGesture === "edge") {
+    document.querySelector(".menu").style.removeProperty("transform");
+    document.querySelector(".menu").classList.remove("dragging");
+    if (diffX > edgeThreshold) {
+      document.querySelector(".menu").classList.remove("hidden");
+      document.querySelector(".overlay").classList.remove("hidden");
+    } else {
+      document.querySelector(".menu").classList.add("hidden");
+    }
   }
+  activatedGesture = "";
 });
 
 document.querySelector(".overlay").onclick = async (e) => {
@@ -498,7 +537,7 @@ document.querySelector(".sukebei").onclick = async (event) => {
 };
 
 const supportedPlayers = [["external", "外部應用程式"]];
-if (/(Android)/g.test(navigator.userAgent)) {
+if (navigator.userAgent.includes("Android")) {
   supportedPlayers.push(["com.mxtech.videoplayer.ad", "MXPlayer"]);
   supportedPlayers.push(["com.mxtech.videoplayer.pro", "MXPlayer Pro"]);
 }
