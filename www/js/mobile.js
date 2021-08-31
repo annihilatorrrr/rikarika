@@ -316,7 +316,7 @@ document.addEventListener("touchstart", (e) => {
 document.addEventListener(
   "touchmove",
   (e) => {
-    if (startTouchAtTop && y > startTouchY) {
+    if (startTouchAtTop && e.touches[0].screenY > startTouchY) {
       // TODO: show pull to refresh indicator
     }
   },
@@ -338,9 +338,9 @@ document.addEventListener("touchend", async (e) => {
       document.querySelector(".list").classList.add("blur");
       document.querySelector(".bar").classList.add("blur");
     }
-  } else if (fromLeftToRight && noVerticalMotion && quickGesture) {
-    history.back();
   } else if (fromRightToLeft && noVerticalMotion && quickGesture) {
+    history.back();
+  } else if (fromLeftToRight && noVerticalMotion && quickGesture) {
     history.forward();
   }
 
