@@ -335,7 +335,7 @@ document.addEventListener(
     startTouchX = e.touches[0].clientX;
     startTouchY = e.touches[0].clientY;
     startTouchAtTop = !document.querySelector(".list").scrollTop;
-    startTouchAtLeftEdge = startTouchX < 50 && startTouchY > 65;
+    startTouchAtLeftEdge = startTouchX < 30 && startTouchY > 65;
     startTouchOnMenu =
       startTouchX < 250 && !document.querySelector(".overlay").classList.contains("hidden");
     if (startTouchAtLeftEdge) {
@@ -389,13 +389,15 @@ document.addEventListener(
       let translate = diffX - activation;
       translate = translate < 0 ? 0 : translate;
       translate = translate > swipeThreshold - activation ? swipeThreshold - activation : translate;
-      document.querySelector(".list").style.transform = `translate(${translate}px, 0)`;
+      document.querySelector(".bar").style.transform = `translate(${translate / 4}px, 0)`;
+      document.querySelector(".list").style.transform = `translate(${translate / 4}px, 0)`;
     } else if (activatedGesture === "RTL") {
       let translate = diffX + activation;
       translate = translate > 0 ? 0 : translate;
       translate =
         translate < -(swipeThreshold - activation) ? -(swipeThreshold - activation) : translate;
-      document.querySelector(".list").style.transform = `translate(${translate}px, 0)`;
+      document.querySelector(".bar").style.transform = `translate(${translate / 4}px, 0)`;
+      document.querySelector(".list").style.transform = `translate(${translate / 4}px, 0)`;
     }
   },
   { passive: true }
@@ -411,11 +413,13 @@ document.addEventListener("touchend", async (e) => {
       await render();
     }
   } else if (activatedGesture === "LTR") {
+    document.querySelector(".bar").style.transform = `translate(${0}px, 0)`;
     document.querySelector(".list").style.transform = `translate(${0}px, 0)`;
     if (diffX > swipeThreshold) {
       history.back();
     }
   } else if (activatedGesture === "RTL") {
+    document.querySelector(".bar").style.transform = `translate(${0}px, 0)`;
     document.querySelector(".list").style.transform = `translate(${0}px, 0)`;
     if (diffX < -swipeThreshold) {
       history.forward();
