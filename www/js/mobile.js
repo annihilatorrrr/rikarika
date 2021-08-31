@@ -323,12 +323,19 @@ let startTouchX = 0;
 let startTouchY = 0;
 let startTouchAtTop = false;
 let touchStartTime = 0;
-document.addEventListener("touchstart", (e) => {
-  startTouchX = e.touches[0].clientX;
-  startTouchY = e.touches[0].clientY;
-  startTouchAtTop = !document.querySelector(".list").scrollTop;
-  touchStartTime = e.timeStamp;
-});
+document.addEventListener(
+  "touchstart",
+  (e) => {
+    startTouchX = e.touches[0].clientX;
+    startTouchY = e.touches[0].clientY;
+    startTouchAtTop = !document.querySelector(".list").scrollTop;
+    touchStartTime = e.timeStamp;
+    if (startTouchX < 16 * window.devicePixelRatio) {
+      e.preventDefault();
+    }
+  },
+  { passive: false }
+);
 document.addEventListener(
   "touchmove",
   (e) => {
@@ -340,6 +347,7 @@ document.addEventListener(
 );
 document.addEventListener("touchend", async (e) => {
   const quickGesture = e.timeStamp - touchStartTime < 300;
+  const slowGesture = e.timeStamp - touchStartTime > 1000;
   const threshold = 50 * window.devicePixelRatio;
   const startFromLeftEdge = startTouchX < 16 * window.devicePixelRatio;
   const noVerticalMotion = Math.abs(e.changedTouches[0].clientY - startTouchY) < threshold;
@@ -354,9 +362,9 @@ document.addEventListener("touchend", async (e) => {
       document.querySelector(".list").classList.add("blur");
       document.querySelector(".bar").classList.add("blur");
     }
-  } else if (fromLeftToRight && noVerticalMotion && quickGesture) {
+  } else if (fromLeftToRight && noVerticalMotion && !slowGesture) {
     history.back();
-  } else if (fromRightToLeft && noVerticalMotion && quickGesture) {
+  } else if (fromRightToLeft && noVerticalMotion && !slowGesture) {
     history.forward();
   }
 
