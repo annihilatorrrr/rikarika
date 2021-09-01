@@ -14,7 +14,6 @@
   --text-main-color: var(--eye-dark-color);
   --text-weak-color: var(--hair-mid-color);
   --line-main-color: var(--hair-mid-color);
-  scrollbar-color: var(--hair-mid-color) transparent;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -26,16 +25,9 @@
     --text-main-color: var(--theme-color);
     --text-weak-color: var(--hair-dark-color);
     --line-main-color: var(--hair-mid-color);
-    scrollbar-color: var(--line-main-color) transparent;
   }
 }
-::-webkit-scrollbar {
-  -webkit-appearance: none;
-  width: 0.2rem;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--line-main-color);
-}
+
 html {
   -webkit-text-size-adjust: 100%;
 }
@@ -45,7 +37,7 @@ body {
   padding: 0;
   font-family: system-ui, Meiryo, sans-serif, Arial;
   background: var(--bg-main-color);
-  overscroll-behavior: contain;
+  overscroll-behavior: none;
   overflow: hidden;
 }
 .overlay {
@@ -77,7 +69,6 @@ body {
   bottom: 0;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
   background-color: var(--bg-main-color);
   box-shadow: 0 0 0.2rem 0.2rem var(--theme-color-glass);
   transition: all 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -154,7 +145,6 @@ body {
   right: 0;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
 }
 .list > .error {
   text-align: center;
