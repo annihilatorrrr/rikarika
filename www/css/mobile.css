@@ -179,8 +179,6 @@ body {
   justify-content: center;
 }
 .list .item {
-  display: flex;
-  flex-direction: column;
   font-size: 0.875rem;
   color: var(--text-main-color);
 }
@@ -261,9 +259,6 @@ body {
 }
 .bar .title {
   overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
   padding: 0;
   margin: 0;
   font-size: 1rem;
@@ -297,8 +292,8 @@ body {
   color: var(--text-weak-color);
   font-family: system-ui, Meiryo, sans-serif, Arial;
 }
-button {
-  width: 4rem;
+.bar button {
+  width: 3rem;
   height: 4rem;
   font-size: 0.75rem;
   color: var(--text-weak-color);
@@ -309,7 +304,7 @@ button {
   margin: 0;
   padding: 0;
 }
-button:disabled {
+.bar button:disabled {
   color: transparent;
 }
 .progress {
