@@ -167,12 +167,16 @@ const render = async (scrollTo) => {
   if (season === "search") {
     document.querySelector(".title").classList.add("hidden");
     document.querySelector(".search").classList.remove("hidden");
+    if (!document.querySelector(".search").value) {
+      document.querySelector(".search").focus();
+    }
     if (title) {
       document.querySelector("input").value = title;
       document.querySelector("button").innerText = "清除";
     } else {
       document.querySelector("input").value = "";
       document.querySelector("button").innerText = "取消";
+      document.querySelector(".search").focus();
     }
   }
 
