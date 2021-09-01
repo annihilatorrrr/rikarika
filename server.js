@@ -144,7 +144,11 @@ app.get(/.*\/$/, (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  if (req.body.password === WEB_PASSWORD || req.ip === WEB_WHITELIST_IP) {
+  if (
+    req.body.password === WEB_PASSWORD ||
+    req.body.passwd === WEB_PASSWORD ||
+    req.ip === WEB_WHITELIST_IP
+  ) {
     const date = new Date();
     date.setTime(date.getTime() + 7 * 24 * 60 * 60 * 1000);
     res.setHeader(

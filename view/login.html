@@ -15,81 +15,96 @@
     :root {
       --hair-mid-color: rgb(200, 170, 220);
       --hair-dark-color: rgb(108, 121, 178);
-      --bg-main-color: rgb(255, 252, 254);
     }
-    *:not(input) {
+    * {
       user-select: none;
     }
+    html,
     body {
       margin: 0;
       padding: 0;
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      overflow: hidden;
+      background: linear-gradient(45deg, rgb(239, 224, 255), rgb(255, 247, 252));
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
       font-size: 1rem;
       font-family: system-ui, Meiryo, sans-serif, Arial;
       text-align: center;
-      background-color: #efe0ff;
+      color: var(--hair-mid-color);
     }
     form {
-      margin: 0;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
     }
     #title {
       font-size: 3rem;
       line-height: 3rem;
+      margin: 0.5rem 0;
       color: var(--hair-dark-color);
-      text-shadow: 0 0 0.5rem var(--bg-main-color);
+      text-shadow: -1px -1px 2px #fff, 1px -1px 2px #fff, -1px 1px 2px #fff, 1px 1px 2px #fff;
       white-space: nowrap;
     }
-    #password {
+    #user,
+    #passwd {
+      color: var(--hair-dark-color);
+      text-shadow: -1px -1px 2px #fff, 1px -1px 2px #fff, -1px 1px 2px #fff, 1px 1px 2px #fff;
       -webkit-appearance: none;
       outline: 0;
       background: transparent;
       border: 0;
       border-radius: 0;
       border-bottom: 1px dashed var(--hair-mid-color);
-      color: var(--hair-mid-color);
       text-align: center;
-      margin: 1rem;
-      padding: 0.5rem;
+      line-height: 1.5rem;
+      margin: 0.5rem 0;
+    }
+    #user {
+      display: none;
     }
     ::placeholder {
       color: var(--hair-mid-color);
+      text-shadow: none;
       font-family: system-ui, Meiryo, sans-serif, Arial;
+    }
+    input:-webkit-autofill {
+      -webkit-box-shadow: 200px 200px 100px rgb(247, 236, 254) inset;
+      box-shadow: 200px 200px 100px rgb(247, 236, 254) inset;
     }
     #enter {
       color: var(--hair-dark-color);
-      text-shadow: 0 0 0.5rem var(--bg-main-color);
       background: transparent;
-      border: 0;
       border-radius: 0.2rem;
       font-size: 0.8rem;
-      padding: 0.6rem 1rem;
+      line-height: 2rem;
+      margin: 0.5rem 0;
       cursor: pointer;
-      box-shadow: 0 0 0.2rem 0 var(--bg-main-color);
+      border: 1px dashed var(--hair-mid-color);
     }
   </style>
   <form action="/login" method="POST">
     <div id="title">カリ(仮)</div>
     <input id="redirect" name="redirect" type="hidden" autocomplete="off" value="REDIRECT" />
     <input
-      id="username"
-      name="username"
+      id="user"
+      name="user"
       type="text"
-      placeholder="Username"
+      placeholder="名前"
       autocomplete="on"
-      value="public"
-      style="display: none"
+      value="結月ゆかり"
     />
     <input
-      id="password"
-      name="password"
+      id="passwd"
+      name="passwd"
       type="password"
-      placeholder="Password"
-      autocomplete="on"
-      autofocus
+      placeholder="パスワード"
+      autocomplete="current-password"
     />
-    <button id="enter">ENTER</button>
+    <button id="enter">ログイン</button>
   </form>
 </html>
