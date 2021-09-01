@@ -25,7 +25,7 @@ require("dotenv").config();
 const os = require("os");
 const path = require("path");
 const chokidar = require("chokidar");
-const fetch = require("node-fetch");
+const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const { URLSearchParams } = require("url");
 const aniep = require("aniep");
 
