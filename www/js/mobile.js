@@ -480,7 +480,11 @@ document.querySelector(".overlay").onclick = async (e) => {
   await closeMenu();
 };
 
-document.querySelector(".bar .icon").onclick = () => (location.href = "/");
+document.querySelector(".bar .icon").onclick = async () => {
+  document.querySelector(".menu").classList.remove("dragging");
+  document.querySelector(".menu").classList.remove("hidden");
+  document.querySelector(".overlay").classList.remove("hidden");
+};
 document.querySelector(".home").onclick = () => (location.href = "/");
 document.querySelector(".toDesktop").onclick = () => (location.href = "/?view=desktop");
 document.querySelector(".fullList").onclick = async () => {
