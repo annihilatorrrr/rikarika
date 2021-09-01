@@ -27,7 +27,9 @@
     --line-main-color: var(--hair-mid-color);
   }
 }
-
+*:not(input) {
+  user-select: none;
+}
 html {
   -webkit-text-size-adjust: 100%;
   height: 100vh;
