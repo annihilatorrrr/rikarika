@@ -569,7 +569,7 @@ const updateNSFW = () => {
     document.querySelector(".logo .nsfw").classList.remove("hidden");
     document.querySelector(".logo .sfw").classList.add("hidden");
   } else {
-    document.querySelector(".sukebei").innerText = "🔞 我了解並且要繼續";
+    document.querySelector(".sukebei").innerText = "🔞 我同意並且要繼續";
     document.querySelector(".logo .nsfw").classList.add("hidden");
     document.querySelector(".logo .sfw").classList.remove("hidden");
   }
