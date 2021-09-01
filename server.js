@@ -1,13 +1,17 @@
-require("dotenv").config();
-const fs = require("fs-extra");
-const path = require("path");
-const express = require("express");
-const rateLimit = require("express-rate-limit");
-const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
-const crypto = require("crypto");
-const child_process = require("child_process");
-const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
+import "dotenv/config.js";
+import fs from "fs-extra";
+import path from "path";
+import express from "express";
+import rateLimit from "express-rate-limit";
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import crypto from "crypto";
+import child_process from "child_process";
+import fetch from "node-fetch";
+import Knex from "knex";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const {
   DB_NAME,
@@ -31,7 +35,7 @@ const {
   TELEGRAM_JOIN_URL,
 } = process.env;
 
-const knex = require("knex")({
+const knex = Knex({
   client: "mysql",
   connection: {
     host: DB_HOST,

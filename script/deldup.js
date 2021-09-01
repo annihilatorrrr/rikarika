@@ -1,9 +1,10 @@
-require("dotenv").config();
+import "dotenv/config.js";
 
-const fs = require("fs-extra");
-const path = require("path");
-const child_process = require("child_process");
-const OpenCC = require("opencc");
+import fs from "fs-extra";
+import path from "path";
+import child_process from "child_process";
+import OpenCC from "opencc";
+
 const opencc = new OpenCC("t2s.json");
 
 const { ANIME_PATH, ANIME_PNG_PATH, ANIME_WEBP_PATH, ANIME_AVIF_PATH } = process.env;

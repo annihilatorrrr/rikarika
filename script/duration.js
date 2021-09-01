@@ -1,5 +1,9 @@
-const path = require("path");
-const fs = require("fs-extra");
+import path from "path";
+import fs from "fs-extra";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, "db.json")));
 // .filter(e => parseInt(e.format.filename.split("/")[4]) > 4000);
 

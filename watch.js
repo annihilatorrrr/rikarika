@@ -1,33 +1,36 @@
-const v8 = require("v8");
+import "dotenv/config.js";
+import v8 from "v8";
+import cluster from "cluster";
+import fs from "fs-extra";
+import os from "os";
+import path from "path";
+import { URLSearchParams } from "url";
+import chokidar from "chokidar";
+import fetch from "node-fetch";
+import Knex from "knex";
+import aniep from "aniep";
+import webpush from "web-push";
+import gentile from "./gentile.js";
+import addAnime from "./add-anime.js";
+
 console.log(
   `${(v8.getHeapStatistics().total_available_size / 1024 / 1024).toFixed(0)} MB Available Memory`
 );
-
-const cluster = require("cluster");
-const fs = require("fs-extra");
 
 if (!cluster.isMaster) {
   process.on("message", (message) => {
     const [task, input, output, arg3, arg4, arg5] = JSON.parse(message);
     if (fs.existsSync(input)) {
       console.log(`Building ${output}`);
-      require(task)(input, output, arg3, arg4, arg5);
+      if (task === "gentile") gentile(input, output, arg3, arg4, arg5);
+      if (task === "addAnime") addAnime(input, output, arg3, arg4, arg5);
     } else {
       console.log(`Gone     ${output}`);
     }
     process.send(output);
   });
-  return;
+  process.exit();
 }
-
-require("dotenv").config();
-
-const os = require("os");
-const path = require("path");
-const chokidar = require("chokidar");
-const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
-const { URLSearchParams } = require("url");
-const aniep = require("aniep");
 
 const {
   DB_NAME,
@@ -49,7 +52,7 @@ const {
   WEB_HOST,
 } = process.env;
 
-const knex = require("knex")({
+const knex = Knex({
   client: "mysql",
   connection: {
     host: DB_HOST,
@@ -62,7 +65,6 @@ const knex = require("knex")({
   },
 });
 
-const webpush = require("web-push");
 webpush.setGCMAPIKey(WEBPUSH_GCM_API_KEY);
 webpush.setVapidDetails(WEBPUSH_SUBJECT, WEBPUSH_PUBLIC_KEY, WEBPUSH_PRIVATE_KEY);
 
@@ -167,10 +169,10 @@ chokidar
     if (!fs.existsSync(pngPath) || !fs.existsSync(webpPath) || !fs.existsSync(avifPath)) {
       if (workerList.length > 0) {
         const worker = workerList.pop();
-        worker.send(JSON.stringify(["./gentile.js", filePath, pngPath, webpPath, avifPath]));
+        worker.send(JSON.stringify(["gentile", filePath, pngPath, webpPath, avifPath]));
       } else {
         console.log(`Queued   ${pngPath}`);
-        taskList.push(JSON.stringify(["./gentile.js", filePath, pngPath, webpPath, avifPath]));
+        taskList.push(JSON.stringify(["gentile", filePath, pngPath, webpPath, avifPath]));
         taskList.sort();
       }
     }
@@ -326,10 +328,10 @@ if (!process.argv.includes("--rescan")) {
       }
       if (workerList.length > 0) {
         const worker = workerList.pop();
-        worker.send(JSON.stringify(["./add-anime.js", filePath, newFilePath]));
+        worker.send(JSON.stringify(["addAnime", filePath, newFilePath]));
       } else {
         console.log(`Queued   ${newFilePath}`);
-        taskList.push(JSON.stringify(["./add-anime.js", filePath, newFilePath]));
+        taskList.push(JSON.stringify(["addAnime", filePath, newFilePath]));
         taskList.sort();
       }
     })

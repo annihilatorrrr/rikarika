@@ -1,10 +1,10 @@
-const path = require("path");
-const fs = require("fs-extra");
-const os = require("os");
-const child_process = require("child_process");
-const OpenCC = require("opencc");
+import path from "path";
+import fs from "fs-extra";
+import os from "os";
+import child_process from "child_process";
+import OpenCC from "opencc";
 
-module.exports = (input, output) => {
+export default (input, output) => {
   const mediaInfo = JSON.parse(
     child_process
       .execSync(

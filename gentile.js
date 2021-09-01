@@ -1,8 +1,11 @@
-const child_process = require("child_process");
-const path = require("path");
-const fs = require("fs-extra");
+import child_process from "child_process";
+import path from "path";
+import fs from "fs-extra";
+import { fileURLToPath } from "url";
 
-module.exports = (mp4Path, pngPath, webpPath, avifPath) => {
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+export default (mp4Path, pngPath, webpPath, avifPath) => {
   if (!fs.existsSync(pngPath)) {
     const nb_frames = JSON.parse(
       child_process
