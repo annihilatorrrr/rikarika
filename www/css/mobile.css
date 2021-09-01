@@ -29,6 +29,7 @@
 }
 *:not(input) {
   user-select: none;
+  -webkit-user-select: none;
 }
 html {
   -webkit-text-size-adjust: 100%;
@@ -164,6 +165,7 @@ body {
   white-space: pre-wrap;
   font-family: monospace;
   user-select: text;
+  -webkit-user-select: text;
 }
 .list > .error {
   text-align: center;
