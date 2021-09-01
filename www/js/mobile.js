@@ -204,23 +204,16 @@ const render = async (scrollTo) => {
   if (!Array.isArray(dirEntries)) {
     document.querySelector(".progress").classList.add("hidden");
     const div15 = document.createElement("div");
-    div15.classList.add("error");
+    div15.classList.add("placeholder");
     div15.onclick = render;
-    div15.append(
-      document.createTextNode(`無法連線至伺服器 📶`),
-      document.createElement("br"),
-      document.createTextNode(`(${dirEntries})`),
-      document.createElement("br"),
-      document.createElement("br"),
-      document.createTextNode("按一下頁面重試")
-    );
+    div15.innerText = `似乎出現了一點問題\n(${dirEntries})\n\n點擊頁面重試`;
     document.querySelector(".list").appendChild(div15);
     return;
   }
 
   if (season === "search") {
     document.querySelector(".progress").classList.add("hidden");
-    renderSearchResult(dirEntries);
+    renderSearchResult(dirEntries, title);
     return;
   }
 
@@ -256,8 +249,16 @@ const render = async (scrollTo) => {
   document.querySelector(".progress").classList.add("hidden");
 };
 
-const renderSearchResult = async (results) => {
+const renderSearchResult = async (results, keyword) => {
   document.querySelector(".list").scrollTo(0, 0);
+  if (!results.length) {
+    const div15 = document.createElement("div");
+    div15.classList.add("placeholder");
+    div15.innerText = keyword
+      ? `找不到 ${keyword} 的搜尋結果`
+      : "可輸入 中文 / 日文 / 羅馬拼音 關鍵字";
+    document.querySelector(".list").appendChild(div15);
+  }
   for (const { season, title } of results) {
     if (!localStorage.getItem("nsfw") && season === "Sukebei") {
       continue;
@@ -297,7 +298,7 @@ window.onpopstate = async () => {
 let typing = null;
 document.querySelector(".search").oninput = (e) => {
   clearTimeout(typing);
-  if (e.target.value) {
+  if (e.target.value.trim()) {
     history.replaceState(null, null, `/search/${encodeURIComponent(e.target.value)}/`);
   } else {
     history.replaceState(null, null, "/search/");
@@ -307,13 +308,13 @@ document.querySelector(".search").oninput = (e) => {
 document.querySelector("button").onclick = () => {
   const keyword = document.querySelector(".search").value;
   if (location.pathname.split("/").filter((e) => e)[0] === "search") {
-    if (keyword) {
+    if (keyword.trim()) {
       history.pushState(null, null, "/search/");
     } else {
       history.pushState(null, null, "/");
     }
   } else {
-    if (keyword) {
+    if (keyword.trim()) {
       history.pushState(null, null, `/search/${encodeURIComponent(keyword)}/`);
     } else {
       history.pushState(null, null, "/search/");
@@ -324,7 +325,7 @@ document.querySelector("button").onclick = () => {
 };
 
 document.querySelector(".search").onfocus = (e) => {
-  if (e.target.value) {
+  if (e.target.value.trim()) {
     history.pushState(null, null, `/search/${encodeURIComponent(e.target.value)}/`);
     render();
   }

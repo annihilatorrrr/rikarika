@@ -370,7 +370,8 @@ app.get("/info", async (req, res) => {
 
 app.get("/search", async (req, res) => {
   if (!req.query || !req.query.q) {
-    return res.send("invalid query");
+    res.status(400);
+    return res.json([]);
   }
   const result = await fetch(`http://${ES_HOST}:${ES_PORT}/anilist/anime/_search`, {
     method: "POST",
