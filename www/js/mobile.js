@@ -158,7 +158,7 @@ const render = async (scrollTo) => {
     .filter((e) => e)
     .map((e) => decodeURIComponent(e));
 
-  document.title = title || season || "カリ(仮)";
+  document.title = title || (season !== "search" ? season : "") || "カリ(仮)";
   document.querySelector(".title").innerText = title || season || "カリ(仮)";
 
   document.querySelector(".title").classList.remove("hidden");
@@ -297,12 +297,11 @@ window.onpopstate = async () => {
 let typing = null;
 document.querySelector(".search").oninput = (e) => {
   clearTimeout(typing);
-  if (!e.target.value) {
-    history.pushState(null, null, "/");
-    render();
-    return;
+  if (e.target.value) {
+    history.replaceState(null, null, `/search/${encodeURIComponent(e.target.value)}/`);
+  } else {
+    history.replaceState(null, null, "/search/");
   }
-  history.replaceState(null, null, `/search/${encodeURIComponent(e.target.value)}/`);
   typing = setTimeout(render, 300);
 };
 document.querySelector("button").onclick = () => {
