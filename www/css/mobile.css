@@ -159,6 +159,12 @@ body {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
+.list > .pre {
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  font-family: monospace;
+  user-select: text;
+}
 .list > .error {
   text-align: center;
   height: 100%;

@@ -181,6 +181,14 @@ const render = async (scrollTo) => {
   }
 
   document.querySelector(".progress").classList.remove("hidden");
+  if (season === "list") {
+    document.title = "カリ(仮)";
+    document.querySelector(".title").innerText = "カリ(仮)";
+    const txt = await fetch("/list").then((e) => e.text());
+    document.querySelector(".progress").classList.add("hidden");
+    document.querySelector(".list").innerHTML = `<div class="pre">${txt}</div>`;
+    return;
+  }
   const dirEntries =
     season === "search" && !title
       ? []
@@ -457,8 +465,7 @@ document.addEventListener("touchend", async (e) => {
   activatedGesture = "";
 });
 
-document.querySelector(".overlay").onclick = async (e) => {
-  if (e.target !== document.querySelector(".overlay")) return;
+const closeMenu = async () => {
   document.querySelector(".menu").classList.add("hidden");
   document.querySelector(".list").classList.remove("blur");
   document.querySelector(".bar").classList.remove("blur");
@@ -468,10 +475,20 @@ document.querySelector(".overlay").onclick = async (e) => {
   document.querySelector(".overlay").classList.add("hidden");
 };
 
+document.querySelector(".overlay").onclick = async (e) => {
+  if (e.target !== document.querySelector(".overlay")) return;
+  await closeMenu();
+};
+
 document.querySelector(".bar .icon").onclick = () => (location.href = "/");
 document.querySelector(".home").onclick = () => (location.href = "/");
 document.querySelector(".toDesktop").onclick = () => (location.href = "/?view=desktop");
-document.querySelector(".fullList").onclick = () => window.open("/list", "_blank");
+document.querySelector(".fullList").onclick = async () => {
+  document.querySelector(".list").innerHTML = "";
+  closeMenu();
+  history.pushState(null, null, "/list/");
+  await render();
+};
 document.querySelector(".telegram").onclick = () =>
   window.open(document.querySelector("meta[name=telegram-url]").getAttribute("content"), "_blank");
 document.querySelector(".donate").onclick = () =>
