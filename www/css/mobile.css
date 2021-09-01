@@ -163,6 +163,10 @@ body {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
+.list.dragging {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
 .list > .pre {
   font-size: 0.75rem;
   white-space: pre-wrap;

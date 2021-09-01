@@ -384,11 +384,12 @@ document.addEventListener(
           activatedGesture = "pull";
           document.querySelector(".reload").classList.remove("hidden");
           document.querySelector(".reload").classList.remove("active");
-        } else if (!isVertical && diffX > 0) {
+        } else if (!isVertical && Math.abs(diffY) < activation && diffX > 0) {
           activatedGesture = "LTR";
-        } else if (!isVertical && diffX < 0) {
+        } else if (!isVertical && Math.abs(diffY) < activation && diffX < 0) {
           activatedGesture = "RTL";
         }
+        if (activatedGesture) document.querySelector(".list").classList.add("dragging");
       }
     }
     if (activatedGesture === "open") {
@@ -425,6 +426,7 @@ document.addEventListener("touchend", async (e) => {
   isMenuScrolling = false;
   const diffX = e.changedTouches[0].clientX - startTouchX;
   const diffY = e.changedTouches[0].clientY - startTouchY;
+  document.querySelector(".list").classList.remove("dragging");
   if (activatedGesture === "pull") {
     document.querySelector(".reload").classList.add("hidden");
     document.querySelector(".reload").classList.remove("active");
