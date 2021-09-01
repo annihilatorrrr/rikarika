@@ -328,6 +328,14 @@ let startTouchAtTop = false;
 let startTouchAtLeftEdge = false;
 let startTouchOnMenu = false;
 let activatedGesture = "";
+let isMenuScrolling = false;
+document.querySelector(".menu").addEventListener(
+  "scroll",
+  () => {
+    isMenuScrolling = true;
+  },
+  { passive: true }
+);
 document.addEventListener(
   "touchstart",
   (e) => {
@@ -352,7 +360,7 @@ document.addEventListener(
     const isVertical = Math.abs(diffY) > Math.abs(diffX);
     if (!activatedGesture) {
       if (!document.querySelector(".overlay").classList.contains("hidden")) {
-        if (startTouchOnMenu) {
+        if (startTouchOnMenu && !isMenuScrolling && diffX < -10) {
           activatedGesture = "close";
           document.querySelector(".menu").classList.add("dragging");
         }
@@ -403,6 +411,7 @@ document.addEventListener(
   { passive: true }
 );
 document.addEventListener("touchend", async (e) => {
+  isMenuScrolling = false;
   const diffX = e.changedTouches[0].clientX - startTouchX;
   const diffY = e.changedTouches[0].clientY - startTouchY;
   if (activatedGesture === "pull") {
