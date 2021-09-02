@@ -506,44 +506,35 @@ document.querySelector(".donate").onclick = () =>
 document.querySelector(".logout").onclick = () => (location.href = "/logout");
 
 if (document.body.requestFullscreen) {
-  let isOrientationLocked = false;
   document.querySelector(".fullscreen").classList.remove("hidden");
   if (window.matchMedia("(display-mode: standalone)").matches) {
     document.querySelector(".orientation").classList.remove("hidden");
   }
-  document.querySelector(".fullscreen").innerText = "⬜ 全螢幕";
-  document.querySelector(".orientation").innerText = "🔓 固定此螢幕方向";
+  document.querySelector(".fullscreen input").checked = false;
+  document.querySelector(".orientation input").checked = false;
   document.addEventListener("fullscreenchange", (event) => {
     if (document.fullscreenElement) {
-      document.querySelector(".fullscreen").innerText = "✅ 全螢幕";
-      document.querySelector(".orientation").innerText = isOrientationLocked
-        ? "🔒 螢幕方向已固定"
-        : "🔓 固定此螢幕方向";
+      document.querySelector(".fullscreen input").checked = true;
     } else {
-      document.querySelector(".fullscreen").innerText = "⬜ 全螢幕";
-      document.querySelector(".orientation").innerText = "🔓 固定此螢幕方向";
-      isOrientationLocked = false;
+      document.querySelector(".fullscreen input").checked = false;
+      document.querySelector(".orientation input").checked = false;
     }
   });
-  document.querySelector(".fullscreen").onclick = async () => {
+  document.querySelector(".fullscreen input").onchange = async () => {
     if (!document.fullscreenElement) {
       await document.body.requestFullscreen();
     } else {
       document.exitFullscreen();
     }
   };
-  document.querySelector(".orientation").onclick = async () => {
-    if (isOrientationLocked) {
-      screen.orientation.unlock();
-      isOrientationLocked = false;
-      document.querySelector(".orientation").innerText = "🔓 固定此螢幕方向";
-    } else {
+  document.querySelector(".orientation input").onchange = async () => {
+    if (document.querySelector(".orientation input").checked) {
       if (!document.fullscreenElement) {
         await document.body.requestFullscreen();
       }
       screen.orientation.lock(screen.orientation.type);
-      isOrientationLocked = true;
-      document.querySelector(".orientation").innerText = "🔒 螢幕方向已固定";
+    } else {
+      screen.orientation.unlock();
     }
   };
 }
@@ -575,17 +566,17 @@ document.querySelector(".history").onclick = (event) => {
 
 const updateNSFW = () => {
   if (localStorage.getItem("nsfw")) {
-    document.querySelector(".sukebei").innerText = "🛐 我有罪並且已懺悔";
+    document.querySelector(".sukebei input").checked = true;
     document.querySelector(".logo .nsfw").classList.remove("hidden");
     document.querySelector(".logo .sfw").classList.add("hidden");
   } else {
-    document.querySelector(".sukebei").innerText = "🔞 我同意並且要繼續";
+    document.querySelector(".sukebei input").checked = false;
     document.querySelector(".logo .nsfw").classList.add("hidden");
     document.querySelector(".logo .sfw").classList.remove("hidden");
   }
 };
 updateNSFW();
-document.querySelector(".sukebei").onclick = async (event) => {
+document.querySelector(".sukebei input").onchange = async (event) => {
   if (localStorage.getItem("nsfw")) {
     localStorage.removeItem("nsfw");
   } else {
