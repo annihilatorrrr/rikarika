@@ -13,12 +13,22 @@
   <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon.png" />
   <style>
     :root {
-      --hair-mid-color: rgb(200, 170, 220);
-      --hair-dark-color: rgb(108, 121, 178);
+      --light-color: rgb(200, 170, 220);
+      --heavy-color: rgb(108, 121, 178);
       --text-shadow: rgb(255, 255, 255);
       --autofill-color: rgb(247, 236, 254);
       --background-dark: rgb(239, 224, 255);
       --background-light: rgb(255, 247, 252);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --light-color: rgb(108, 121, 178);
+        --heavy-color: rgb(225, 207, 255);
+        --text-shadow: rgb(128, 128, 128);
+        --autofill-color: rgb(16, 16, 16);
+        --background-dark: rgb(26, 22, 38);
+        --background-light: rgb(36, 36, 40);
+      }
     }
     * {
       user-select: none;
@@ -40,7 +50,7 @@
       font-size: 1rem;
       font-family: system-ui, Meiryo, sans-serif, Arial;
       text-align: center;
-      color: var(--hair-mid-color);
+      color: var(--light-color);
     }
     form {
       display: flex;
@@ -50,14 +60,14 @@
       font-size: 3rem;
       line-height: 3rem;
       margin: 0.5rem 0;
-      color: var(--hair-dark-color);
+      color: var(--heavy-color);
       text-shadow: -1px -1px 2px var(--text-shadow), 1px -1px 2px var(--text-shadow),
         -1px 1px 2px var(--text-shadow), 1px 1px 2px var(--text-shadow);
       white-space: nowrap;
     }
     .user,
     .passwd {
-      color: var(--hair-dark-color);
+      color: var(--heavy-color);
       text-shadow: -1px -1px 2px var(--text-shadow), 1px -1px 2px var(--text-shadow),
         -1px 1px 2px var(--text-shadow), 1px 1px 2px var(--text-shadow);
       -webkit-appearance: none;
@@ -65,20 +75,20 @@
       background: transparent;
       border: 0;
       border-radius: 0;
-      border-bottom: 1px dashed var(--hair-mid-color);
+      border-bottom: 1px dashed var(--light-color);
       text-align: center;
       line-height: 1.5rem;
       margin: 0.5rem 0;
     }
     .user:hover,
     .passwd:hover {
-      border-bottom: 1px solid var(--hair-mid-color);
+      border-bottom: 1px solid var(--light-color);
     }
     .user {
       display: none;
     }
     ::placeholder {
-      color: var(--hair-mid-color);
+      color: var(--light-color);
       text-shadow: none;
       font-family: system-ui, Meiryo, sans-serif, Arial;
     }
@@ -87,17 +97,17 @@
       box-shadow: 200px 200px 100px var(--autofill-color) inset;
     }
     .enter {
-      color: var(--hair-dark-color);
+      color: var(--heavy-color);
       background: transparent;
       border-radius: 0.2rem;
       font-size: 0.8rem;
       line-height: 2rem;
       margin: 0.5rem 0;
       cursor: pointer;
-      border: 1px dashed var(--hair-mid-color);
+      border: 1px dashed var(--light-color);
     }
     .enter:hover {
-      border: 1px solid var(--hair-mid-color);
+      border: 1px solid var(--light-color);
     }
   </style>
   <form action="/login" method="POST">
