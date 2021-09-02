@@ -42,7 +42,7 @@
       display: flex;
       flex-direction: column;
     }
-    #title {
+    .title {
       font-size: 3rem;
       line-height: 3rem;
       margin: 0.5rem 0;
@@ -50,8 +50,8 @@
       text-shadow: -1px -1px 2px #fff, 1px -1px 2px #fff, -1px 1px 2px #fff, 1px 1px 2px #fff;
       white-space: nowrap;
     }
-    #user,
-    #passwd {
+    .user,
+    .passwd {
       color: var(--hair-dark-color);
       text-shadow: -1px -1px 2px #fff, 1px -1px 2px #fff, -1px 1px 2px #fff, 1px 1px 2px #fff;
       -webkit-appearance: none;
@@ -64,7 +64,11 @@
       line-height: 1.5rem;
       margin: 0.5rem 0;
     }
-    #user {
+    .user:hover,
+    .passwd:hover {
+      border-bottom: 1px solid var(--hair-mid-color);
+    }
+    .user {
       display: none;
     }
     ::placeholder {
@@ -76,7 +80,7 @@
       -webkit-box-shadow: 200px 200px 100px rgb(247, 236, 254) inset;
       box-shadow: 200px 200px 100px rgb(247, 236, 254) inset;
     }
-    #enter {
+    .enter {
       color: var(--hair-dark-color);
       background: transparent;
       border-radius: 0.2rem;
@@ -86,12 +90,15 @@
       cursor: pointer;
       border: 1px dashed var(--hair-mid-color);
     }
+    .enter:hover {
+      border: 1px solid var(--hair-mid-color);
+    }
   </style>
   <form action="/login" method="POST">
-    <div id="title">カリ(仮)</div>
-    <input id="redirect" name="redirect" type="hidden" autocomplete="off" value="REDIRECT" />
+    <div class="title">カリ(仮)</div>
+    <input name="redirect" type="hidden" autocomplete="off" value="REDIRECT" />
     <input
-      id="user"
+      class="user"
       name="user"
       type="text"
       placeholder="名前"
@@ -99,12 +106,12 @@
       value="結月ゆかり"
     />
     <input
-      id="passwd"
+      class="passwd"
       name="passwd"
       type="password"
       placeholder="パスワード"
       autocomplete="current-password"
     />
-    <button id="enter">ログイン</button>
+    <button class="enter">ログイン</button>
   </form>
 </html>
