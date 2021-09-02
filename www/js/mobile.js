@@ -100,11 +100,10 @@ const appendChunk = (chunk) => {
             if (localStorage.getItem("player") === "external") {
               window.open(href, "_blank");
             } else if (localStorage.getItem("player")) {
-              const url = new URL(href, document.baseURI).href;
               const a = document.createElement("a");
-              a.href = `intent:${url}#Intent;package=${localStorage.getItem(
-                "player"
-              )};S.browser_fallback_url=${url};end`;
+              a.href = `intent:${
+                new URL(href, document.baseURI).href
+              }#Intent;package=${localStorage.getItem("player")};end`;
               a.click();
             } else {
               location.href = href;
