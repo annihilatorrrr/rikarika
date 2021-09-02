@@ -213,8 +213,7 @@ body {
   padding: 0.2rem;
 }
 .list .item .details .left {
-  color: var(--text-main-color);
-  visibility: hidden;
+  color: var(--text-weak-color);
 }
 .list .item .details .right {
   color: var(--text-main-color);

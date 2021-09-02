@@ -135,7 +135,7 @@ const appendChunk = (chunk) => {
       div2.className = "details";
       const div3 = document.createElement("div");
       div3.className = "left";
-      div3.innerText = size ? formatFileSize(size) : "";
+      div3.innerText = ""; // formatFileSize(size)
       const div4 = document.createElement("div");
       div4.className = "right";
       div4.style.opacity = getDateTimeOpacity(modified);
@@ -259,7 +259,7 @@ const renderSearchResult = async (results, keyword) => {
       : "可輸入 中文 / 日文 / 羅馬拼音 關鍵字";
     document.querySelector(".list").appendChild(div15);
   }
-  for (const { season, title } of results) {
+  for (const { season, title, updated } of results) {
     if (!localStorage.getItem("nsfw") && season === "Sukebei") {
       continue;
     }
@@ -282,7 +282,8 @@ const renderSearchResult = async (results, keyword) => {
     div3.innerText = season;
     const div4 = document.createElement("div");
     div4.className = "right";
-    div4.innerText = season;
+    div4.style.opacity = getDateTimeOpacity(updated);
+    div4.innerText = formatDateTime(updated);
     div2.append(div3, div4);
     div0.append(div1, div2);
     document.querySelector(".list").appendChild(div0);

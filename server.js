@@ -398,7 +398,7 @@ app.get("/search", async (req, res) => {
   }).then((response) => response.json());
 
   const rows = await knex("anime")
-    .select("id", "anilist_id", "season", "title")
+    .select("id", "anilist_id", "season", "title", "updated")
     .whereIn(
       "anilist_id",
       result.hits.hits.map((e) => Number(e._source.id))
@@ -410,6 +410,7 @@ app.get("/search", async (req, res) => {
       anilist_id: row.anilist_id,
       season: row.season,
       title: row.title,
+      updated: row.updated,
     }))
   );
 });
