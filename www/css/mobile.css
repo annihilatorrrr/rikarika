@@ -239,8 +239,43 @@ body {
   align-items: center;
   justify-content: center;
   white-space: pre-wrap;
-  color: var(--hair-mid-color);
+  color: var(--text-weak-color);
   background-color: var(--bg-main-color);
+}
+.list > .placeholder > .loading,
+.list > .placeholder > .loading:before,
+.list > .placeholder > .loading:after {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 0.5rem;
+  background-color: var(--bg-main-color);
+  animation: dotFlashing 1200ms infinite linear alternate;
+}
+.list > .placeholder > .loading {
+  animation-delay: 600ms;
+  position: relative;
+}
+.list > .placeholder > .loading:before,
+.list > .placeholder > .loading:after {
+  content: "";
+  position: absolute;
+}
+.list > .placeholder > .loading:before {
+  animation-delay: 300ms;
+  right: 1.5rem;
+}
+.list > .placeholder > .loading:after {
+  animation-delay: 900ms;
+  left: 1.5rem;
+}
+@keyframes dotFlashing {
+  0%,
+  50% {
+    background-color: var(--bg-main-color);
+  }
+  100% {
+    background-color: var(--theme-color);
+  }
 }
 .list .item {
   font-size: 0.875rem;
