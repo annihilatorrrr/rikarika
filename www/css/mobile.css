@@ -207,21 +207,6 @@ body {
 .menu .item.switch input:checked ~ .slider:before {
   transform: translate(2rem, 0);
 }
-.menu .item.switch .label:before {
-  animation: none;
-}
-.menu .item.sukebei.switch input ~ .label:before {
-  content: "🔞 顯示裡番動畫";
-}
-.menu .item.fullscreen.switch input ~ .label:before {
-  content: "👀 全螢幕";
-}
-.menu .item.orientation.switch input ~ .label:before {
-  content: "🔓 固定螢幕方向";
-}
-.menu .item.notification.switch input ~ .label:before {
-  content: "🔔 推送通知";
-}
 .list {
   display: flex;
   flex-direction: column;
