@@ -179,8 +179,20 @@ body {
   background-color: var(--bg-main-color);
   transition: 300ms;
 }
+.menu .item.switch input:disabled:checked ~ .slider {
+  background-color: var(--hair-bright-color);
+}
+.menu .item.switch input:disabled ~ .slider {
+  background-color: var(--text-high-color);
+}
 .menu .item.switch input:checked ~ .slider {
   background-color: var(--text-high-color);
+}
+.menu .item.switch input:disabled:checked ~ .slider:before {
+  transform: translate(1rem, 0);
+}
+.menu .item.switch input:disabled ~ .slider:before {
+  transform: translate(1rem, 0);
 }
 .menu .item.switch input:checked ~ .slider:before {
   transform: translate(2rem, 0);
@@ -199,6 +211,9 @@ body {
 }
 .menu .item.orientation.switch input ~ .label:before {
   content: "🔓 固定螢幕方向";
+}
+.menu .item.notification.switch input ~ .label:before {
+  content: "🔔 推送通知";
 }
 .list {
   display: flex;

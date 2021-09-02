@@ -609,12 +609,8 @@ document.querySelector(".defaultPlayer select").onchange = (e) => {
 };
 
 const subscribe = async (event) => {
-  event.target.innerText = "🔔 正在嘗試啟用推送通知...";
   const registration = await navigator.serviceWorker.ready;
-  if (!registration) {
-    event.target.innerText = "🔔 無法啟用推送通知";
-    return;
-  }
+  if (!registration) return;
   const subscription =
     (await registration?.pushManager?.getSubscription()) ??
     (await registration?.pushManager
@@ -628,48 +624,44 @@ const subscribe = async (event) => {
         await registration.unregister();
         alert(e);
       }));
-  if (!subscription) {
-    event.target.innerText = "🔔 無法啟用推送通知";
-    return;
-  }
+  if (!subscription) return;
   const res = await fetch("/subscribe/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(subscription),
   });
-  if (res.status >= 400) {
-    event.target.innerText = "🔔 無法啟用推送通知";
-  } else {
-    document.querySelector(".notification").onclick = unsubscribe;
-    event.target.innerText = "🔕 停用推送通知";
+
+  if (res.status < 400) {
+    document.querySelector(".notification input").checked = true;
   }
 };
 
 const unsubscribe = async (event) => {
-  event.target.innerText = "🔕 正在停用推送通知...";
   const registration = await navigator.serviceWorker.ready;
   if (!registration) {
-    event.target.innerText = "🔕 無法停用推送通知";
     return;
   }
   const subscription = await registration?.pushManager?.getSubscription();
-  if (!subscription) {
-    event.target.innerText = "🔕 無法停用推送通知";
-    return;
-  }
+  if (!subscription) return;
   const res = await fetch("/unsubscribe/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(subscription),
   });
-  if (res.status >= 400) {
-    event.target.innerText = "🔕 無法停用推送通知";
-  } else {
-    document.querySelector(".notification").onclick = subscribe;
-    event.target.innerText = "🔔 啟用推送通知";
+  if (res.status < 400) {
+    document.querySelector(".notification input").checked = false;
   }
 };
 
+document.querySelector(".notification input").onchange = async () => {
+  document.querySelector(".notification input").disabled = true;
+  if (document.querySelector(".notification input").checked) {
+    await subscribe();
+  } else {
+    await unsubscribe();
+  }
+  document.querySelector(".notification input").disabled = false;
+};
 (async () => {
   if (!navigator.serviceWorker) return;
   const registration = await navigator.serviceWorker.ready;
@@ -682,15 +674,13 @@ const unsubscribe = async (event) => {
         body: JSON.stringify(subscription),
       });
       if (res.status === 200) {
-        document.querySelector(".notification").onclick = unsubscribe;
-        document.querySelector(".notification").innerText = "🔕 停用推送通知";
+        document.querySelector(".notification input").checked = true;
         document.querySelector(".notification").classList.remove("hidden");
         return;
       }
     }
   }
-  document.querySelector(".notification").onclick = subscribe;
-  document.querySelector(".notification").innerText = "🔔 啟用推送通知";
+  document.querySelector(".notification input").checked = false;
   document.querySelector(".notification").classList.remove("hidden");
 })();
 
