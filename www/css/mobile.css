@@ -14,6 +14,9 @@
   --text-main-color: var(--eye-dark-color);
   --text-weak-color: var(--hair-mid-color);
   --line-main-color: var(--hair-mid-color);
+  --switch-color: var(--bg-main-color);
+  --switch-on-color: var(--theme-color);
+  --switch-off-color: rgb(240, 240, 240);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -25,6 +28,8 @@
     --text-main-color: var(--theme-color);
     --text-weak-color: var(--hair-dark-color);
     --line-main-color: var(--hair-mid-color);
+    --switch-on-color: var(--theme-color);
+    --switch-off-color: rgb(64, 64, 64);
   }
   .menu .logo .sfw,
   .menu .logo .nsfw {
@@ -165,7 +170,7 @@ body {
 }
 .menu .item.switch .slider {
   border-radius: 2.5rem;
-  background-color: var(--hair-bright-color);
+  background-color: var(--switch-off-color);
   transition: 300ms;
   width: 4.5rem;
   height: 2.5rem;
@@ -181,17 +186,17 @@ body {
   left: 0.25rem;
   right: 2.25rem;
   border-radius: 2rem;
-  background-color: var(--bg-main-color);
+  background-color: var(--switch-color);
   transition: 300ms;
 }
 .menu .item.switch input:disabled:checked ~ .slider {
-  background-color: var(--hair-bright-color);
+  background-color: var(--switch-off-color);
 }
 .menu .item.switch input:disabled ~ .slider {
-  background-color: var(--text-high-color);
+  background-color: var(--switch-on-color);
 }
 .menu .item.switch input:checked ~ .slider {
-  background-color: var(--text-high-color);
+  background-color: var(--switch-on-color);
 }
 .menu .item.switch input:disabled:checked ~ .slider:before {
   transform: translate(1rem, 0);
