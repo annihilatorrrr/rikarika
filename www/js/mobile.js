@@ -406,9 +406,7 @@ document.addEventListener(
       const translate = diffX > 0 ? 0 : diffX;
       Ø(".menu").style.transform = `translate(${translate}px, 0)`;
     } else if (activatedGesture === "pull") {
-      Ø(".reload div").style.width = `${
-        ((diffY - activation) / (pullThreshold - activation)) * 100
-      }%`;
+      Ø(".reload").style.width = `${((diffY - activation) / (pullThreshold - activation)) * 100}%`;
       if (diffY > pullThreshold) {
         Ø(".reload").classList.add("active");
       } else {
@@ -440,7 +438,7 @@ document.addEventListener("touchend", async (e) => {
   if (activatedGesture === "pull") {
     Ø(".reload").classList.add("hidden");
     Ø(".reload").classList.remove("active");
-    Ø(".reload div").style.width = "0%";
+    Ø(".reload").style.width = "0%";
     if (diffY > pullThreshold) {
       await render();
     }

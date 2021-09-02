@@ -331,19 +331,14 @@ body {
   border-radius: 6px;
 }
 .reload {
-  position: fixed;
-  display: flex;
-  justify-content: center;
+  position: relative;
+  margin: auto;
   visibility: visible;
-  width: 100%;
-  height: 0.125rem;
-}
-.reload div {
-  background-color: var(--text-disabled-color);
   width: 0%;
-  height: 100%;
+  height: 0.125rem;
+  background-color: var(--text-disabled-color);
 }
-.reload.active div {
+.reload.active {
   background-color: var(--highlight-color);
 }
 .reload.hidden {
