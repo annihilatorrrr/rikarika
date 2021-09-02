@@ -610,7 +610,7 @@ document.querySelector(".defaultPlayer select").onchange = (e) => {
 
 const subscribe = async (event) => {
   const registration = await navigator.serviceWorker.ready;
-  if (!registration) return;
+  if (!registration) return false;
   const subscription =
     (await registration?.pushManager?.getSubscription()) ??
     (await registration?.pushManager
@@ -624,41 +624,34 @@ const subscribe = async (event) => {
         await registration.unregister();
         alert(e);
       }));
-  if (!subscription) return;
+  if (!subscription) return false;
   const res = await fetch("/subscribe/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(subscription),
   });
-
-  if (res.status < 400) {
-    document.querySelector(".notification input").checked = true;
-  }
+  return res.status < 400;
 };
 
 const unsubscribe = async (event) => {
   const registration = await navigator.serviceWorker.ready;
-  if (!registration) {
-    return;
-  }
+  if (!registration) return false;
   const subscription = await registration?.pushManager?.getSubscription();
-  if (!subscription) return;
+  if (!subscription) return false;
   const res = await fetch("/unsubscribe/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(subscription),
   });
-  if (res.status < 400) {
-    document.querySelector(".notification input").checked = false;
-  }
+  return res.status < 400;
 };
 
 document.querySelector(".notification input").onchange = async () => {
   document.querySelector(".notification input").disabled = true;
   if (document.querySelector(".notification input").checked) {
-    await subscribe();
+    document.querySelector(".notification input").checked = await subscribe();
   } else {
-    await unsubscribe();
+    document.querySelector(".notification input").checked = !(await unsubscribe());
   }
   document.querySelector(".notification input").disabled = false;
 };
