@@ -568,12 +568,8 @@ window.addEventListener("beforeinstallprompt", (e) => {
 const updateNSFW = () => {
   if (localStorage.getItem("nsfw")) {
     Ø(".sukebei input").checked = true;
-    Ø(".logo .nsfw").classList.remove("hidden");
-    Ø(".logo .sfw").classList.add("hidden");
   } else {
     Ø(".sukebei input").checked = false;
-    Ø(".logo .nsfw").classList.add("hidden");
-    Ø(".logo .sfw").classList.remove("hidden");
   }
 };
 updateNSFW();
