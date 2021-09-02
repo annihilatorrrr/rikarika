@@ -381,11 +381,14 @@ document.addEventListener(
         if (startTouchOnMenu && !isMenuScrolling && diffX < -10) {
           activatedGesture = "close";
           Ø(".menu").classList.add("dragging");
+          Ø(".overlay").classList.add("dragging");
         }
       } else if (startTouchAtLeftEdge) {
         activatedGesture = "open";
         Ø(".menu").classList.remove("hidden");
         Ø(".menu").classList.add("dragging");
+        Ø(".overlay").classList.remove("hidden");
+        Ø(".overlay").classList.add("dragging");
       } else if (Math.abs(diffX) > activation || Math.abs(diffY) > activation) {
         if (isVertical && diffY > 0 && startTouchAtTop) {
           activatedGesture = "pull";
@@ -402,9 +405,11 @@ document.addEventListener(
     if (activatedGesture === "open") {
       const translate = diffX - 224 > 0 ? 0 : diffX - 224;
       Ø(".menu").style.transform = `translate(${translate}px, 0)`;
+      Ø(".overlay").style.opacity = (translate + 224) / 224;
     } else if (activatedGesture === "close") {
       const translate = diffX > 0 ? 0 : diffX;
       Ø(".menu").style.transform = `translate(${translate}px, 0)`;
+      Ø(".overlay").style.opacity = (translate + 224) / 224;
     } else if (activatedGesture === "pull") {
       Ø(".reload").style.width = `${((diffY - activation) / (pullThreshold - activation)) * 100}%`;
       if (diffY > pullThreshold) {
@@ -457,15 +462,20 @@ document.addEventListener("touchend", async (e) => {
   } else if (activatedGesture === "open") {
     Ø(".menu").style.removeProperty("transform");
     Ø(".menu").classList.remove("dragging");
+    Ø(".overlay").style.removeProperty("opacity");
+    Ø(".overlay").classList.remove("dragging");
     if (diffX > 224 * 0.25) {
       Ø(".menu").classList.remove("hidden");
       Ø(".overlay").classList.remove("hidden");
     } else {
       Ø(".menu").classList.add("hidden");
+      Ø(".overlay").classList.add("hidden");
     }
   } else if (activatedGesture === "close") {
     Ø(".menu").style.removeProperty("transform");
     Ø(".menu").classList.remove("dragging");
+    Ø(".overlay").style.removeProperty("opacity");
+    Ø(".overlay").classList.remove("dragging");
     if (-diffX > 224 * 0.25) {
       Ø(".menu").classList.add("hidden");
       Ø(".overlay").classList.add("hidden");
