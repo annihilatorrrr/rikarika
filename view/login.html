@@ -15,6 +15,10 @@
     :root {
       --hair-mid-color: rgb(200, 170, 220);
       --hair-dark-color: rgb(108, 121, 178);
+      --text-shadow: rgb(255, 255, 255);
+      --autofill-color: rgb(247, 236, 254);
+      --background-dark: rgb(239, 224, 255);
+      --background-light: rgb(255, 247, 252);
     }
     * {
       user-select: none;
@@ -27,7 +31,7 @@
       height: 100%;
       position: fixed;
       overflow: hidden;
-      background: linear-gradient(45deg, rgb(239, 224, 255), rgb(255, 247, 252));
+      background: linear-gradient(45deg, var(--background-dark), var(--background-light));
     }
     body {
       display: flex;
@@ -47,13 +51,15 @@
       line-height: 3rem;
       margin: 0.5rem 0;
       color: var(--hair-dark-color);
-      text-shadow: -1px -1px 2px #fff, 1px -1px 2px #fff, -1px 1px 2px #fff, 1px 1px 2px #fff;
+      text-shadow: -1px -1px 2px var(--text-shadow), 1px -1px 2px var(--text-shadow),
+        -1px 1px 2px var(--text-shadow), 1px 1px 2px var(--text-shadow);
       white-space: nowrap;
     }
     .user,
     .passwd {
       color: var(--hair-dark-color);
-      text-shadow: -1px -1px 2px #fff, 1px -1px 2px #fff, -1px 1px 2px #fff, 1px 1px 2px #fff;
+      text-shadow: -1px -1px 2px var(--text-shadow), 1px -1px 2px var(--text-shadow),
+        -1px 1px 2px var(--text-shadow), 1px 1px 2px var(--text-shadow);
       -webkit-appearance: none;
       outline: 0;
       background: transparent;
@@ -77,8 +83,8 @@
       font-family: system-ui, Meiryo, sans-serif, Arial;
     }
     input:-webkit-autofill {
-      -webkit-box-shadow: 200px 200px 100px rgb(247, 236, 254) inset;
-      box-shadow: 200px 200px 100px rgb(247, 236, 254) inset;
+      -webkit-box-shadow: 200px 200px 100px var(--autofill-color) inset;
+      box-shadow: 200px 200px 100px var(--autofill-color) inset;
     }
     .enter {
       color: var(--hair-dark-color);
