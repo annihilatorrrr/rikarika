@@ -508,17 +508,12 @@ const closeMenu = async () => {
 
 if (document.body.requestFullscreen) {
   Ø(".fullscreen").classList.remove("hidden");
-  if (window.matchMedia("(display-mode: standalone)").matches) {
-    Ø(".orientation").classList.remove("hidden");
-  }
   Ø(".fullscreen input").checked = false;
-  Ø(".orientation input").checked = false;
   document.addEventListener("fullscreenchange", (event) => {
     if (document.fullscreenElement) {
       Ø(".fullscreen input").checked = true;
     } else {
       Ø(".fullscreen input").checked = false;
-      Ø(".orientation input").checked = false;
     }
   });
   Ø(".fullscreen input").onchange = async () => {
@@ -526,16 +521,6 @@ if (document.body.requestFullscreen) {
       await document.body.requestFullscreen();
     } else {
       document.exitFullscreen();
-    }
-  };
-  Ø(".orientation input").onchange = async () => {
-    if (Ø(".orientation input").checked) {
-      if (!document.fullscreenElement) {
-        await document.body.requestFullscreen();
-      }
-      screen.orientation.lock(screen.orientation.type);
-    } else {
-      screen.orientation.unlock();
     }
   };
 }
