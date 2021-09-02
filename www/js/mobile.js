@@ -582,8 +582,9 @@ updateNSFW();
 
 const supportedPlayers = [["external", "外部應用程式"]];
 if (navigator.userAgent.includes("Android")) {
-  supportedPlayers.push(["com.mxtech.videoplayer.ad", "MXPlayer"]);
-  supportedPlayers.push(["com.mxtech.videoplayer.pro", "MXPlayer Pro"]);
+  supportedPlayers.push(["com.mxtech.videoplayer.ad", "MX Player"]);
+  supportedPlayers.push(["com.mxtech.videoplayer.pro", "MX Player Pro"]);
+  supportedPlayers.push(["org.videolan.vlc", "VLC Player"]);
 }
 for (const supportedPlayer of supportedPlayers) {
   const option = document.createElement("option");
