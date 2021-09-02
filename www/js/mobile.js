@@ -214,6 +214,7 @@ const render = async (scrollTo) => {
 
   if (season === "search") {
     Ø(".progress").classList.add("hidden");
+    if (title && !Ø(".search").value) Ø(".search").value = title;
     renderSearchResult(dirEntries, title);
     return;
   }
@@ -300,12 +301,14 @@ window.onpopstate = async () => {
 let typing = null;
 Ø(".search").oninput = (e) => {
   clearTimeout(typing);
-  if (e.target.value.trim()) {
-    history.replaceState(null, null, `/search/${encodeURIComponent(e.target.value)}/`);
-  } else {
-    history.replaceState(null, null, "/search/");
-  }
-  typing = setTimeout(render, 300);
+  typing = setTimeout(() => {
+    if (e.target.value.trim()) {
+      history.replaceState(null, null, `/search/${encodeURIComponent(e.target.value)}/`);
+    } else {
+      history.replaceState(null, null, "/search/");
+    }
+    render();
+  }, 500);
 };
 Ø("button").onclick = () => {
   const keyword = Ø(".search").value;
