@@ -201,10 +201,7 @@ body {
   animation: none;
 }
 .menu .item.sukebei.switch input ~ .label:before {
-  content: "🛐 已懺悔並潔淨心靈";
-}
-.menu .item.sukebei.switch input:checked ~ .label:before {
-  content: "🔞 已同意並且要繼續";
+  content: "🔞 顯示裡番動畫";
 }
 .menu .item.fullscreen.switch input ~ .label:before {
   content: "👀 全螢幕";
