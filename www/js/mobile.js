@@ -351,6 +351,7 @@ document.querySelector(".menu").addEventListener(
 document.addEventListener(
   "touchstart",
   (e) => {
+    if (e.touches.length > 1) return;
     activatedGesture = "";
     startTouchX = e.touches[0].clientX;
     startTouchY = e.touches[0].clientY;
@@ -367,6 +368,7 @@ document.addEventListener(
 document.addEventListener(
   "touchmove",
   (e) => {
+    if (e.touches.length > 1) return;
     const diffX = e.changedTouches[0].clientX - startTouchX;
     const diffY = e.changedTouches[0].clientY - startTouchY;
     const isVertical = Math.abs(diffY) > Math.abs(diffX);
@@ -424,6 +426,7 @@ document.addEventListener(
   { passive: true }
 );
 document.addEventListener("touchend", async (e) => {
+  if (e.touches.length > 1) return;
   isMenuScrolling = false;
   const diffX = e.changedTouches[0].clientX - startTouchX;
   const diffY = e.changedTouches[0].clientY - startTouchY;
