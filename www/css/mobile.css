@@ -26,6 +26,10 @@
     --text-weak-color: var(--hair-dark-color);
     --line-main-color: var(--hair-mid-color);
   }
+  .menu .logo .sfw,
+  .menu .logo .nsfw {
+    filter: brightness(0.5) contrast(1.5);
+  }
 }
 *:not(input) {
   user-select: none;
@@ -113,6 +117,7 @@ body {
 }
 .menu .logo .nsfw {
   background-image: url(/ico.jpg);
+  filter: contrast(1.5);
 }
 .menu .category {
   padding: 0 0.5rem;
