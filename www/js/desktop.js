@@ -1180,7 +1180,7 @@ window.getListing = async (scroll) => {
     );
     window.search();
   } else {
-    const dirEntries =
+    let dirEntries =
       window.location.pathname === "/setting/"
         ? []
         : await fetch(`/ls?path=${encodeURIComponent(window.location.pathname)}`).then((res) =>
@@ -1202,6 +1202,7 @@ window.getListing = async (scroll) => {
       document.querySelector("#list .search").style.display = "none";
     }
     if (window.location.pathname === "/") {
+      dirEntries = dirEntries.filter((e) => e.name !== "Latest");
       dirEntries.reverse();
       document.querySelector("#list .search").style.display = "";
 
