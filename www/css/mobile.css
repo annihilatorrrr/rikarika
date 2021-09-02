@@ -229,7 +229,8 @@ body {
 .icon img {
   width: 3rem;
   height: 3rem;
-  border: 3px double var(--line-main-color);
+  box-shadow: 0 0 0px 1px var(--line-main-color), 0 0 0 2px var(--bg-main-color),
+    0 0 0 3px var(--line-main-color);
   box-sizing: border-box;
   border-radius: 6px;
 }
