@@ -408,6 +408,8 @@ document.addEventListener(
       }%`;
       if (diffY > pullThreshold) {
         Ø(".reload").classList.add("active");
+      } else {
+        Ø(".reload").classList.remove("active");
       }
     } else if (activatedGesture === "LTR") {
       let translate = diffX - activation;

@@ -335,12 +335,12 @@ body {
   height: 0.125rem;
 }
 .reload div {
-  background-color: var(--line-main-color);
+  background-color: var(--text-weak-color);
   width: 0%;
   height: 100%;
 }
 .reload.active div {
-  background-color: var(--eye-mid-color);
+  background-color: var(--text-high-color);
 }
 .reload.hidden {
   visibility: hidden;
