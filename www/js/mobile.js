@@ -1,3 +1,6 @@
+const Ø = document.querySelector.bind(document);
+const ØØ = document.querySelectorAll.bind(document);
+
 const formatFileSize = (bytes) => {
   let size = parseInt(bytes, 10);
   if (bytes > 1000000000) {
@@ -75,7 +78,7 @@ const urlBase64ToUint8Array = (base64String) => {
 const scrollTop = [];
 
 const appendChunk = (chunk) => {
-  document.querySelector(".list").append(
+  Ø(".list").append(
     ...chunk.map(({ season, name, modified, size, anime_id }) => {
       const div0 = document.createElement("div0");
       div0.classList.add("item");
@@ -118,8 +121,7 @@ const appendChunk = (chunk) => {
         div0.addEventListener(
           "click",
           async (event) => {
-            scrollTop[window.location.pathname.split("/").length - 2] =
-              document.querySelector(".list").scrollTop;
+            scrollTop[window.location.pathname.split("/").length - 2] = Ø(".list").scrollTop;
             history.pushState(
               null,
               null,
@@ -159,34 +161,34 @@ const render = async (scrollTo) => {
     .map((e) => decodeURIComponent(e));
 
   document.title = title || (season !== "search" ? season : "") || "カリ(仮)";
-  document.querySelector(".title").innerText = title || season || "カリ(仮)";
+  Ø(".title").innerText = title || season || "カリ(仮)";
 
-  document.querySelector(".title").classList.remove("hidden");
-  document.querySelector(".search").classList.add("hidden");
-  document.querySelector("button").innerText = "搜尋";
+  Ø(".title").classList.remove("hidden");
+  Ø(".search").classList.add("hidden");
+  Ø("button").innerText = "搜尋";
   if (season === "search") {
-    document.querySelector(".title").classList.add("hidden");
-    document.querySelector(".search").classList.remove("hidden");
-    if (!document.querySelector(".search").value) {
-      document.querySelector(".search").focus();
+    Ø(".title").classList.add("hidden");
+    Ø(".search").classList.remove("hidden");
+    if (!Ø(".search").value) {
+      Ø(".search").focus();
     }
     if (title) {
-      document.querySelector("input").value = title;
-      document.querySelector("button").innerText = "清除";
+      Ø("input").value = title;
+      Ø("button").innerText = "清除";
     } else {
-      document.querySelector("input").value = "";
-      document.querySelector("button").innerText = "取消";
-      document.querySelector(".search").focus();
+      Ø("input").value = "";
+      Ø("button").innerText = "取消";
+      Ø(".search").focus();
     }
   }
 
-  document.querySelector(".progress").classList.remove("hidden");
+  Ø(".progress").classList.remove("hidden");
   if (season === "list") {
     document.title = "カリ(仮)";
-    document.querySelector(".title").innerText = "カリ(仮)";
+    Ø(".title").innerText = "カリ(仮)";
     const txt = await fetch("/list").then((e) => e.text());
-    document.querySelector(".progress").classList.add("hidden");
-    document.querySelector(".list").innerHTML = `<div class="pre">${txt}</div>`;
+    Ø(".progress").classList.add("hidden");
+    Ø(".list").innerHTML = `<div class="pre">${txt}</div>`;
     return;
   }
   const dirEntries =
@@ -200,19 +202,19 @@ const render = async (scrollTo) => {
           .then((res) => res.json())
           .catch((e) => e);
 
-  document.querySelector(".list").innerHTML = "";
+  Ø(".list").innerHTML = "";
   if (!Array.isArray(dirEntries)) {
-    document.querySelector(".progress").classList.add("hidden");
+    Ø(".progress").classList.add("hidden");
     const div15 = document.createElement("div");
     div15.classList.add("placeholder");
     div15.onclick = render;
     div15.innerText = `似乎出現了一點問題\n(${dirEntries})\n\n點擊頁面重試`;
-    document.querySelector(".list").appendChild(div15);
+    Ø(".list").appendChild(div15);
     return;
   }
 
   if (season === "search") {
-    document.querySelector(".progress").classList.add("hidden");
+    Ø(".progress").classList.add("hidden");
     renderSearchResult(dirEntries, title);
     return;
   }
@@ -225,39 +227,39 @@ const render = async (scrollTo) => {
     []
   );
   appendChunk(chunkList[0]);
-  if (scrollTo && document.querySelector(".list").scrollHeight >= scrollTo) {
-    document.querySelector(".list").scrollTo(0, scrollTo);
+  if (scrollTo && Ø(".list").scrollHeight >= scrollTo) {
+    Ø(".list").scrollTo(0, scrollTo);
   } else {
-    document.querySelector(".list").scrollTo(0, 0);
+    Ø(".list").scrollTo(0, 0);
   }
 
   lazyLoadHandleList = [];
-  document.querySelector(".progress").classList.remove("hidden");
+  Ø(".progress").classList.remove("hidden");
   for (const chunk of chunkList.slice(1)) {
     await new Promise((resolve) =>
       lazyLoadHandleList.push(
         setTimeout(() => {
           appendChunk(chunk);
-          if (scrollTo && document.querySelector(".list").scrollHeight >= scrollTo) {
-            document.querySelector(".list").scrollTo(0, scrollTo);
+          if (scrollTo && Ø(".list").scrollHeight >= scrollTo) {
+            Ø(".list").scrollTo(0, scrollTo);
           }
           resolve();
         }, 50)
       )
     );
   }
-  document.querySelector(".progress").classList.add("hidden");
+  Ø(".progress").classList.add("hidden");
 };
 
 const renderSearchResult = async (results, keyword) => {
-  document.querySelector(".list").scrollTo(0, 0);
+  Ø(".list").scrollTo(0, 0);
   if (!results.length) {
     const div15 = document.createElement("div");
     div15.classList.add("placeholder");
     div15.innerText = keyword
       ? `找不到 ${keyword} 的搜尋結果`
       : "可輸入 中文 / 日文 / 羅馬拼音 關鍵字";
-    document.querySelector(".list").appendChild(div15);
+    Ø(".list").appendChild(div15);
   }
   for (const { season, title, updated } of results) {
     if (!localStorage.getItem("nsfw") && season === "Sukebei") {
@@ -286,7 +288,7 @@ const renderSearchResult = async (results, keyword) => {
     div4.innerText = formatDateTime(updated);
     div2.append(div3, div4);
     div0.append(div1, div2);
-    document.querySelector(".list").appendChild(div0);
+    Ø(".list").appendChild(div0);
   }
 };
 
@@ -297,7 +299,7 @@ window.onpopstate = async () => {
 };
 
 let typing = null;
-document.querySelector(".search").oninput = (e) => {
+Ø(".search").oninput = (e) => {
   clearTimeout(typing);
   if (e.target.value.trim()) {
     history.replaceState(null, null, `/search/${encodeURIComponent(e.target.value)}/`);
@@ -306,8 +308,8 @@ document.querySelector(".search").oninput = (e) => {
   }
   typing = setTimeout(render, 300);
 };
-document.querySelector("button").onclick = () => {
-  const keyword = document.querySelector(".search").value;
+Ø("button").onclick = () => {
+  const keyword = Ø(".search").value;
   if (location.pathname.split("/").filter((e) => e)[0] === "search") {
     if (keyword.trim()) {
       history.pushState(null, null, "/search/");
@@ -325,7 +327,7 @@ document.querySelector("button").onclick = () => {
   return;
 };
 
-document.querySelector(".search").onfocus = (e) => {
+Ø(".search").onfocus = (e) => {
   if (e.target.value.trim()) {
     history.pushState(null, null, `/search/${encodeURIComponent(e.target.value)}/`);
     render();
@@ -342,7 +344,7 @@ let startTouchAtLeftEdge = false;
 let startTouchOnMenu = false;
 let activatedGesture = "";
 let isMenuScrolling = false;
-document.querySelector(".menu").addEventListener(
+Ø(".menu").addEventListener(
   "scroll",
   () => {
     isMenuScrolling = true;
@@ -356,10 +358,9 @@ document.addEventListener(
     activatedGesture = "";
     startTouchX = e.touches[0].clientX;
     startTouchY = e.touches[0].clientY;
-    startTouchAtTop = !document.querySelector(".list").scrollTop;
+    startTouchAtTop = !Ø(".list").scrollTop;
     startTouchAtLeftEdge = startTouchX < 30 && startTouchY > 65;
-    startTouchOnMenu =
-      startTouchX < 250 && !document.querySelector(".overlay").classList.contains("hidden");
+    startTouchOnMenu = startTouchX < 250 && !Ø(".overlay").classList.contains("hidden");
     if (startTouchAtLeftEdge) {
       e.preventDefault();
     }
@@ -374,54 +375,54 @@ document.addEventListener(
     const diffY = e.changedTouches[0].clientY - startTouchY;
     const isVertical = Math.abs(diffY) > Math.abs(diffX);
     if (!activatedGesture) {
-      if (!document.querySelector(".overlay").classList.contains("hidden")) {
+      if (!Ø(".overlay").classList.contains("hidden")) {
         if (startTouchOnMenu && !isMenuScrolling && diffX < -10) {
           activatedGesture = "close";
-          document.querySelector(".menu").classList.add("dragging");
+          Ø(".menu").classList.add("dragging");
         }
       } else if (startTouchAtLeftEdge) {
         activatedGesture = "open";
-        document.querySelector(".menu").classList.remove("hidden");
-        document.querySelector(".menu").classList.add("dragging");
+        Ø(".menu").classList.remove("hidden");
+        Ø(".menu").classList.add("dragging");
       } else if (Math.abs(diffX) > activation || Math.abs(diffY) > activation) {
         if (isVertical && diffY > 0 && startTouchAtTop) {
           activatedGesture = "pull";
-          document.querySelector(".reload").classList.remove("hidden");
-          document.querySelector(".reload").classList.remove("active");
+          Ø(".reload").classList.remove("hidden");
+          Ø(".reload").classList.remove("active");
         } else if (!isVertical && Math.abs(diffY) < activation && diffX > 0) {
           activatedGesture = "LTR";
         } else if (!isVertical && Math.abs(diffY) < activation && diffX < 0) {
           activatedGesture = "RTL";
         }
-        if (activatedGesture) document.querySelector(".list").classList.add("dragging");
+        if (activatedGesture) Ø(".list").classList.add("dragging");
       }
     }
     if (activatedGesture === "open") {
       const translate = diffX - 224 > 0 ? 0 : diffX - 224;
-      document.querySelector(".menu").style.transform = `translate(${translate}px, 0)`;
+      Ø(".menu").style.transform = `translate(${translate}px, 0)`;
     } else if (activatedGesture === "close") {
       const translate = diffX > 0 ? 0 : diffX;
-      document.querySelector(".menu").style.transform = `translate(${translate}px, 0)`;
+      Ø(".menu").style.transform = `translate(${translate}px, 0)`;
     } else if (activatedGesture === "pull") {
-      document.querySelector(".reload div").style.width = `${
+      Ø(".reload div").style.width = `${
         ((diffY - activation) / (pullThreshold - activation)) * 100
       }%`;
       if (diffY > pullThreshold) {
-        document.querySelector(".reload").classList.add("active");
+        Ø(".reload").classList.add("active");
       }
     } else if (activatedGesture === "LTR") {
       let translate = diffX - activation;
       translate = translate < 0 ? 0 : translate;
       translate = translate > swipeThreshold - activation ? swipeThreshold - activation : translate;
-      document.querySelector(".bar").style.transform = `translate(${translate / 4}px, 0)`;
-      document.querySelector(".list").style.transform = `translate(${translate / 4}px, 0)`;
+      Ø(".bar").style.transform = `translate(${translate / 4}px, 0)`;
+      Ø(".list").style.transform = `translate(${translate / 4}px, 0)`;
     } else if (activatedGesture === "RTL") {
       let translate = diffX + activation;
       translate = translate > 0 ? 0 : translate;
       translate =
         translate < -(swipeThreshold - activation) ? -(swipeThreshold - activation) : translate;
-      document.querySelector(".bar").style.transform = `translate(${translate / 4}px, 0)`;
-      document.querySelector(".list").style.transform = `translate(${translate / 4}px, 0)`;
+      Ø(".bar").style.transform = `translate(${translate / 4}px, 0)`;
+      Ø(".list").style.transform = `translate(${translate / 4}px, 0)`;
     }
   },
   { passive: true }
@@ -431,104 +432,104 @@ document.addEventListener("touchend", async (e) => {
   isMenuScrolling = false;
   const diffX = e.changedTouches[0].clientX - startTouchX;
   const diffY = e.changedTouches[0].clientY - startTouchY;
-  document.querySelector(".list").classList.remove("dragging");
+  Ø(".list").classList.remove("dragging");
   if (activatedGesture === "pull") {
-    document.querySelector(".reload").classList.add("hidden");
-    document.querySelector(".reload").classList.remove("active");
-    document.querySelector(".reload div").style.width = "0%";
+    Ø(".reload").classList.add("hidden");
+    Ø(".reload").classList.remove("active");
+    Ø(".reload div").style.width = "0%";
     if (diffY > pullThreshold) {
       await render();
     }
   } else if (activatedGesture === "LTR") {
-    document.querySelector(".bar").style.transform = `translate(${0}px, 0)`;
-    document.querySelector(".list").style.transform = `translate(${0}px, 0)`;
+    Ø(".bar").style.transform = `translate(${0}px, 0)`;
+    Ø(".list").style.transform = `translate(${0}px, 0)`;
     if (diffX > swipeThreshold) {
       history.back();
     }
   } else if (activatedGesture === "RTL") {
-    document.querySelector(".bar").style.transform = `translate(${0}px, 0)`;
-    document.querySelector(".list").style.transform = `translate(${0}px, 0)`;
+    Ø(".bar").style.transform = `translate(${0}px, 0)`;
+    Ø(".list").style.transform = `translate(${0}px, 0)`;
     if (diffX < -swipeThreshold) {
       history.forward();
     }
   } else if (activatedGesture === "open") {
-    document.querySelector(".menu").style.removeProperty("transform");
-    document.querySelector(".menu").classList.remove("dragging");
+    Ø(".menu").style.removeProperty("transform");
+    Ø(".menu").classList.remove("dragging");
     if (diffX > 224 * 0.25) {
-      document.querySelector(".menu").classList.remove("hidden");
-      document.querySelector(".overlay").classList.remove("hidden");
+      Ø(".menu").classList.remove("hidden");
+      Ø(".overlay").classList.remove("hidden");
     } else {
-      document.querySelector(".menu").classList.add("hidden");
+      Ø(".menu").classList.add("hidden");
     }
   } else if (activatedGesture === "close") {
-    document.querySelector(".menu").style.removeProperty("transform");
-    document.querySelector(".menu").classList.remove("dragging");
+    Ø(".menu").style.removeProperty("transform");
+    Ø(".menu").classList.remove("dragging");
     if (-diffX > 224 * 0.25) {
-      document.querySelector(".menu").classList.add("hidden");
-      document.querySelector(".overlay").classList.add("hidden");
+      Ø(".menu").classList.add("hidden");
+      Ø(".overlay").classList.add("hidden");
     }
   }
   activatedGesture = "";
 });
 
 const closeMenu = async () => {
-  document.querySelector(".menu").classList.add("hidden");
-  document.querySelector(".list").classList.remove("blur");
-  document.querySelector(".bar").classList.remove("blur");
-  document.querySelector(".overlay").classList.add("hide");
+  Ø(".menu").classList.add("hidden");
+  Ø(".list").classList.remove("blur");
+  Ø(".bar").classList.remove("blur");
+  Ø(".overlay").classList.add("hide");
   await new Promise((resolve) => setTimeout(resolve, 300));
-  document.querySelector(".overlay").classList.remove("hide");
-  document.querySelector(".overlay").classList.add("hidden");
+  Ø(".overlay").classList.remove("hide");
+  Ø(".overlay").classList.add("hidden");
 };
 
-document.querySelector(".overlay").onclick = async (e) => {
-  if (e.target !== document.querySelector(".overlay")) return;
+Ø(".overlay").onclick = async (e) => {
+  if (e.target !== Ø(".overlay")) return;
   await closeMenu();
 };
 
-document.querySelector(".bar .icon").onclick = async () => {
-  document.querySelector(".menu").classList.remove("dragging");
-  document.querySelector(".menu").classList.remove("hidden");
-  document.querySelector(".overlay").classList.remove("hidden");
+Ø(".bar .icon").onclick = async () => {
+  Ø(".menu").classList.remove("dragging");
+  Ø(".menu").classList.remove("hidden");
+  Ø(".overlay").classList.remove("hidden");
 };
-document.querySelector(".home").onclick = () => (location.href = "/");
-document.querySelector(".toDesktop").onclick = () => (location.href = "/?view=desktop");
-document.querySelector(".fullList").onclick = async () => {
-  document.querySelector(".list").innerHTML = "";
+Ø(".home").onclick = () => (location.href = "/");
+Ø(".toDesktop").onclick = () => (location.href = "/?view=desktop");
+Ø(".fullList").onclick = async () => {
+  Ø(".list").innerHTML = "";
   closeMenu();
   history.pushState(null, null, "/list/");
   await render();
 };
-document.querySelector(".telegram").onclick = () =>
-  window.open(document.querySelector("meta[name=telegram-url]").getAttribute("content"), "_blank");
-document.querySelector(".donate").onclick = () =>
-  window.open(document.querySelector("meta[name=donate-url]").getAttribute("content"), "_blank");
-document.querySelector(".logout").onclick = () => (location.href = "/logout");
+Ø(".telegram").onclick = () =>
+  window.open(Ø("meta[name=telegram-url]").getAttribute("content"), "_blank");
+Ø(".donate").onclick = () =>
+  window.open(Ø("meta[name=donate-url]").getAttribute("content"), "_blank");
+Ø(".logout").onclick = () => (location.href = "/logout");
 
 if (document.body.requestFullscreen) {
-  document.querySelector(".fullscreen").classList.remove("hidden");
+  Ø(".fullscreen").classList.remove("hidden");
   if (window.matchMedia("(display-mode: standalone)").matches) {
-    document.querySelector(".orientation").classList.remove("hidden");
+    Ø(".orientation").classList.remove("hidden");
   }
-  document.querySelector(".fullscreen input").checked = false;
-  document.querySelector(".orientation input").checked = false;
+  Ø(".fullscreen input").checked = false;
+  Ø(".orientation input").checked = false;
   document.addEventListener("fullscreenchange", (event) => {
     if (document.fullscreenElement) {
-      document.querySelector(".fullscreen input").checked = true;
+      Ø(".fullscreen input").checked = true;
     } else {
-      document.querySelector(".fullscreen input").checked = false;
-      document.querySelector(".orientation input").checked = false;
+      Ø(".fullscreen input").checked = false;
+      Ø(".orientation input").checked = false;
     }
   });
-  document.querySelector(".fullscreen input").onchange = async () => {
+  Ø(".fullscreen input").onchange = async () => {
     if (!document.fullscreenElement) {
       await document.body.requestFullscreen();
     } else {
       document.exitFullscreen();
     }
   };
-  document.querySelector(".orientation input").onchange = async () => {
-    if (document.querySelector(".orientation input").checked) {
+  Ø(".orientation input").onchange = async () => {
+    if (Ø(".orientation input").checked) {
       if (!document.fullscreenElement) {
         await document.body.requestFullscreen();
       }
@@ -541,14 +542,14 @@ if (document.body.requestFullscreen) {
 
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
-  document.querySelector(".install").classList.remove("hidden");
-  document.querySelector(".install").onclick = () => e.prompt();
+  Ø(".install").classList.remove("hidden");
+  Ø(".install").onclick = () => e.prompt();
 });
 
-document.querySelector(".history").innerText = `🗑️ 清除播放紀錄 (${
+Ø(".history").innerText = `🗑️ 清除播放紀錄 (${
   Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
 } 個)`;
-document.querySelector(".history").onclick = (event) => {
+Ø(".history").onclick = (event) => {
   if (confirm("你確定要刪除所有播放紀錄嗎？")) {
     for (const key in localStorage) {
       if (key.startsWith("/")) {
@@ -558,7 +559,7 @@ document.querySelector(".history").onclick = (event) => {
     event.target.innerText = `🗑️ 清除播放紀錄 (${
       Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
     } 個)`;
-    document.querySelectorAll(".watched").forEach((each) => {
+    ØØ(".watched").forEach((each) => {
       each.classList.remove("watched");
     });
   }
@@ -566,17 +567,17 @@ document.querySelector(".history").onclick = (event) => {
 
 const updateNSFW = () => {
   if (localStorage.getItem("nsfw")) {
-    document.querySelector(".sukebei input").checked = true;
-    document.querySelector(".logo .nsfw").classList.remove("hidden");
-    document.querySelector(".logo .sfw").classList.add("hidden");
+    Ø(".sukebei input").checked = true;
+    Ø(".logo .nsfw").classList.remove("hidden");
+    Ø(".logo .sfw").classList.add("hidden");
   } else {
-    document.querySelector(".sukebei input").checked = false;
-    document.querySelector(".logo .nsfw").classList.add("hidden");
-    document.querySelector(".logo .sfw").classList.remove("hidden");
+    Ø(".sukebei input").checked = false;
+    Ø(".logo .nsfw").classList.add("hidden");
+    Ø(".logo .sfw").classList.remove("hidden");
   }
 };
 updateNSFW();
-document.querySelector(".sukebei input").onchange = async (event) => {
+Ø(".sukebei input").onchange = async (event) => {
   if (localStorage.getItem("nsfw")) {
     localStorage.removeItem("nsfw");
   } else {
@@ -596,10 +597,10 @@ for (const supportedPlayer of supportedPlayers) {
   option.value = supportedPlayer[0];
   option.innerText = supportedPlayer[1];
   option.selected = localStorage.getItem("player") === supportedPlayer[0];
-  document.querySelector(".defaultPlayer select").appendChild(option);
+  Ø(".defaultPlayer select").appendChild(option);
 }
 
-document.querySelector(".defaultPlayer select").onchange = (e) => {
+Ø(".defaultPlayer select").onchange = (e) => {
   const selectedPlayer = e.target.options[e.target.selectedIndex].value;
   if (selectedPlayer) {
     localStorage.setItem("player", selectedPlayer);
@@ -617,7 +618,7 @@ const subscribe = async (event) => {
       ?.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(
-          document.querySelector("meta[name=webpush-public-key]").getAttribute("content")
+          Ø("meta[name=webpush-public-key]").getAttribute("content")
         ),
       })
       .catch(async (e) => {
@@ -646,14 +647,14 @@ const unsubscribe = async (event) => {
   return res.status < 400;
 };
 
-document.querySelector(".notification input").onchange = async () => {
-  document.querySelector(".notification input").disabled = true;
-  if (document.querySelector(".notification input").checked) {
-    document.querySelector(".notification input").checked = await subscribe();
+Ø(".notification input").onchange = async () => {
+  Ø(".notification input").disabled = true;
+  if (Ø(".notification input").checked) {
+    Ø(".notification input").checked = await subscribe();
   } else {
-    document.querySelector(".notification input").checked = !(await unsubscribe());
+    Ø(".notification input").checked = !(await unsubscribe());
   }
-  document.querySelector(".notification input").disabled = false;
+  Ø(".notification input").disabled = false;
 };
 (async () => {
   if (!navigator.serviceWorker) return;
@@ -667,14 +668,14 @@ document.querySelector(".notification input").onchange = async () => {
         body: JSON.stringify(subscription),
       });
       if (res.status === 200) {
-        document.querySelector(".notification input").checked = true;
-        document.querySelector(".notification").classList.remove("hidden");
+        Ø(".notification input").checked = true;
+        Ø(".notification").classList.remove("hidden");
         return;
       }
     }
   }
-  document.querySelector(".notification input").checked = false;
-  document.querySelector(".notification").classList.remove("hidden");
+  Ø(".notification input").checked = false;
+  Ø(".notification").classList.remove("hidden");
 })();
 
 navigator.serviceWorker?.register("/sw.js");
