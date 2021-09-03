@@ -502,6 +502,7 @@ const closeMenu = async () => {
 Ø(".bar .icon").onclick = async () => {
   Ø(".menu").classList.remove("dragging");
   Ø(".menu").classList.remove("hidden");
+  Ø(".overlay").classList.remove("dragging");
   Ø(".overlay").classList.remove("hidden");
 };
 Ø(".home").onclick = () => (location.href = "/");
