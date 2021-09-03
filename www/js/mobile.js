@@ -179,10 +179,10 @@ const render = async (scrollTo) => {
   }
 
   Ø(".progress").classList.remove("hidden");
-  if (season === "list") {
+  if (season === "list" || season === "msg") {
     document.title = "カリ(仮)";
     Ø(".title").innerText = "カリ(仮)";
-    const txt = await fetch("/list").then((e) => e.text());
+    const txt = await fetch(`/${season}`).then((e) => e.text());
     Ø(".progress").classList.add("hidden");
     Ø(".list").innerHTML = `<div class="pre">${txt}</div>`;
     return;
@@ -502,6 +502,13 @@ const closeMenu = async () => {
 };
 Ø(".home").onclick = () => (location.href = "/");
 Ø(".toDesktop").onclick = () => (location.href = "/?view=desktop");
+Ø(".msg").onclick = async () => {
+  ØØ(".list .item").forEach((e) => (e.onclick = null));
+  Ø(".list").innerHTML = "";
+  closeMenu();
+  history.pushState(null, null, "/msg/");
+  await render();
+};
 Ø(".fullList").onclick = async () => {
   ØØ(".list .item").forEach((e) => (e.onclick = null));
   Ø(".list").innerHTML = "";

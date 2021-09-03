@@ -191,7 +191,7 @@ app.get("/motd", async (req, res) => {
   return res.send(fs.readFileSync(path.join(__dirname, "www", "message.txt"), "utf8"));
 });
 
-app.get("/list", async (req, res) => {
+app.get("/msg", async (req, res) => {
   res.type("text/plain");
   return res.send(
     [
@@ -199,14 +199,6 @@ app.get("/list", async (req, res) => {
       "",
       `Number of mp4 files: ${child_process
         .execSync(`find "${ANIME_PATH}" -type f -name "*.mp4" | wc -l`)
-        .toString()
-        .trim()}`,
-      `Number of ass files: ${child_process
-        .execSync(`find "${ANIME_PATH}" -type f -name "*.ass" | wc -l`)
-        .toString()
-        .trim()}`,
-      `Number of txt files: ${child_process
-        .execSync(`find "${ANIME_PATH}" -type f -name "*.txt" | wc -l`)
         .toString()
         .trim()}`,
       `Number of files: ${child_process
@@ -221,19 +213,27 @@ app.get("/list", async (req, res) => {
         .execSync(`du -h -d 0 -BGB "${ANIME_PATH}" | cut -d$'\t' -f1`)
         .toString()
         .trim()}`,
-      `Disk space: ${child_process
-        .execSync(`df -h -BGB /dev/md127 | tail -1 | tr -s ' ' | cut -d' ' -f2`)
-        .toString()
-        .trim()}`,
       `Disk free space: ${child_process
         .execSync(`df -h -BGB /dev/md127 | tail -1 | tr -s ' ' | cut -d' ' -f4`)
         .toString()
+        .trim()} / ${child_process
+        .execSync(`df -h -BGB /dev/md127 | tail -1 | tr -s ' ' | cut -d' ' -f2`)
+        .toString()
         .trim()}`,
       "",
-      ...(await knex("anime").select("season", "title").orderBy(["season", "title"])).map(
-        (e) => `${e.season}/${e.title}`
-      ),
-    ].join("\n")
+      "",
+    ]
+      .join("\n")
+      .concat(fs.readFileSync(path.join(__dirname, "www", "msg.txt"), "utf8"))
+  );
+});
+
+app.get("/list", async (req, res) => {
+  res.type("text/plain");
+  return res.send(
+    (await knex("anime").select("season", "title").orderBy(["season", "title"]))
+      .map((e) => `${e.season}/${e.title}`)
+      .join("\n")
   );
 });
 
