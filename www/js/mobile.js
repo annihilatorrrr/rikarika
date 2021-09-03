@@ -358,7 +358,7 @@ document.addEventListener(
     startTouchAtTop = !Ø(".list").scrollTop;
     startTouchAtLeftEdge = startTouchX < 30 && startTouchY > 65;
     startTouchOnMenu = startTouchX < 250 && !Ø(".overlay").classList.contains("hidden");
-    if (startTouchAtLeftEdge) {
+    if (startTouchAtLeftEdge && navigator.userAgent.includes("Mac")) {
       e.preventDefault();
     }
   },
