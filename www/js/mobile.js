@@ -118,7 +118,7 @@ const appendChunk = (chunk) => {
         div1.innerText = name.slice(0, -4);
       } else {
         div0.onclick = async (event) => {
-          ØØ(".item").forEach((e) => (e.onclick = null));
+          ØØ(".list .item").forEach((e) => (e.onclick = null));
           scrollTop[window.location.pathname.split("/").length - 2] = Ø(".list").scrollTop;
           history.pushState(
             null,
@@ -265,7 +265,7 @@ const renderSearchResult = async (results, keyword) => {
     const div0 = document.createElement("div");
     div0.classList.add("item");
     div0.onclick = async (event) => {
-      ØØ(".item").forEach((e) => (e.onclick = null));
+      ØØ(".list .item").forEach((e) => (e.onclick = null));
       history.pushState(null, null, `/${season}/${encodeURIComponent(title)}/`);
       await render();
     };
@@ -305,7 +305,7 @@ let typing = null;
   }, 500);
 };
 Ø("button").onclick = () => {
-  ØØ(".item").forEach((e) => (e.onclick = null));
+  ØØ(".list .item").forEach((e) => (e.onclick = null));
   const keyword = Ø(".search").value;
   if (location.pathname.split("/").filter((e) => e)[0] === "search") {
     if (keyword.trim()) {
@@ -503,7 +503,7 @@ const closeMenu = async () => {
 Ø(".home").onclick = () => (location.href = "/");
 Ø(".toDesktop").onclick = () => (location.href = "/?view=desktop");
 Ø(".fullList").onclick = async () => {
-  ØØ(".item").forEach((e) => (e.onclick = null));
+  ØØ(".list .item").forEach((e) => (e.onclick = null));
   Ø(".list").innerHTML = "";
   closeMenu();
   history.pushState(null, null, "/list/");
