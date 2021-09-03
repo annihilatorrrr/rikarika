@@ -95,7 +95,9 @@ const appendChunk = (chunk) => {
             event.target.parentNode.parentNode.classList.add("watched");
           }
           localStorage.setItem(decodeURIComponent(href), 1);
-
+          Ø(".history").innerText = `🗑️ 清除播放紀錄 (${
+            Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
+          } 個)`;
           if (href.slice(-4) === ".mp4") {
             if (localStorage.getItem("player") === "external") {
               window.open(href, "_blank");
