@@ -1700,4 +1700,6 @@ window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
 });
 
-navigator.serviceWorker.register("/sw.js");
+if (navigator.userAgent.includes("Mac") && "ontouchend" in document) {
+  navigator.serviceWorker.register("/sw.js");
+}
