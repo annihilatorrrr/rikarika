@@ -647,8 +647,10 @@ const unsubscribe = async (event) => {
   }
   Ø(".notification input").disabled = false;
 };
+
 (async () => {
   if (!navigator.serviceWorker) return;
+  if (navigator.userAgent.includes("Mac") && "ontouchend" in document) return;
   const registration = await navigator.serviceWorker.ready;
   if (registration) {
     const subscription = await registration?.pushManager?.getSubscription();
