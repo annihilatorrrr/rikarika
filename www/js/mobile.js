@@ -133,7 +133,7 @@ const appendChunk = (chunk) => {
       div2.className = "details";
       const div3 = document.createElement("div");
       div3.className = "left";
-      div3.innerText = ""; // formatFileSize(size)
+      div3.innerText = window.location.pathname.split("/")[1] === "Latest" ? season : "";
       const div4 = document.createElement("div");
       div4.className = "right";
       div4.style.opacity = getDateTimeOpacity(modified);
