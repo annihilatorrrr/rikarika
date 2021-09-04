@@ -29,6 +29,7 @@ if (!cluster.isMaster) {
     }
     process.send(output);
   });
+  await new Promise((resolve) => {});
   process.exit();
 }
 
