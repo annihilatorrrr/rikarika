@@ -211,10 +211,10 @@ chokidar
       });
 
       const rows = await knex("subscriber").select("*");
-      for (let i = 0; i < rows.length; i += 1) {
+      for (const row of rows) {
         await webpush // do this one-by-one to avoid spamming
           .sendNotification(
-            JSON.parse(rows[i].json),
+            JSON.parse(row.json),
             JSON.stringify({
               title,
               body: fileName,
@@ -227,8 +227,8 @@ chokidar
           )
           .catch(async (e) => {
             if (e.statusCode === 403 || e.statusCode === 410) {
-              await knex("subscriber").where("endpoint", rows[i].endpoint).delete();
-              console.log(`Deleted  ${rows[i].endpoint}`);
+              await knex("subscriber").where("endpoint", row.endpoint).delete();
+              console.log(`Deleted  ${row.endpoint}`);
             } else {
               console.log(e);
             }
