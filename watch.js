@@ -2,7 +2,6 @@ import "dotenv/config.js";
 import v8 from "v8";
 import cluster from "cluster";
 import fs from "fs-extra";
-import os from "os";
 import path from "path";
 import { URLSearchParams } from "url";
 import chokidar from "chokidar";
@@ -51,6 +50,7 @@ const {
   TELEGRAM_ID,
   TELEGRAM_TOKEN,
   WEB_HOST,
+  NUM_WORKERS,
 } = process.env;
 
 const knex = Knex({
@@ -72,8 +72,7 @@ webpush.setVapidDetails(WEBPUSH_SUBJECT, WEBPUSH_PUBLIC_KEY, WEBPUSH_PRIVATE_KEY
 console.log("Scanning folder...");
 const taskList = [];
 const workerList = [];
-const concurrency = Math.ceil(os.cpus().length / 2);
-for (let i = 0; i < concurrency; i++) {
+for (let i = 0; i < NUM_WORKERS; i++) {
   const worker = cluster.fork();
   worker.on("message", (filePath) => {
     if (typeof filePath === "object") return;
