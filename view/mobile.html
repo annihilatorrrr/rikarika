@@ -29,6 +29,9 @@
     <input class="search hidden" type="text" placeholder="搜尋" autocomplete="off" />
     <button>清除</button>
   </div>
+  <div class="player hidden">
+    <video controls autoplay></video>
+  </div>
   <div class="reload hidden disabled"></div>
   <div class="overlay dragging hidden"></div>
   <div class="menu dragging hidden">
@@ -55,9 +58,7 @@
     </label>
     <div class="item defaultPlayer">
       <div>📽️ 影片播放器</div>
-      <select>
-        <option value="">瀏覽器內置</option>
-      </select>
+      <select></select>
     </div>
     <div class="item history"></div>
     <div class="item toDesktop">💻 切換至桌面版網頁</div>

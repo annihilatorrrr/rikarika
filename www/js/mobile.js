@@ -99,7 +99,9 @@ const appendChunk = (chunk) => {
             Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
           } 個)`;
           if (href.slice(-4) === ".mp4") {
-            if (localStorage.getItem("player") === "external") {
+            if (localStorage.getItem("player") === "internal") {
+              location.href = href;
+            } else if (localStorage.getItem("player") === "external") {
               window.open(href, "_blank");
             } else if (localStorage.getItem("player")) {
               const a = document.createElement("a");
@@ -108,7 +110,10 @@ const appendChunk = (chunk) => {
               }#Intent;package=${localStorage.getItem("player")};end`;
               a.click();
             } else {
-              location.href = href;
+              Ø(".player video").src = href;
+              Ø(".player").classList.remove("hidden");
+              Ø(".progress").classList.remove("hidden");
+              resize();
             }
           } else if (localStorage.getItem("player") === "external") {
             window.open(href, "_blank");
@@ -150,6 +155,13 @@ const appendChunk = (chunk) => {
 let lazyLoadHandleList = [];
 
 const render = async (scrollTo) => {
+  Ø(".player video").src = "";
+  Ø(".player").classList.add("hidden");
+  Ø(".list").style.width = "100%";
+  Ø(".bar").style.width = "100%";
+  Ø(".list").style.top = 0;
+  Ø(".bar").style.top = 0;
+
   for (const handle of lazyLoadHandleList) {
     clearTimeout(handle);
   }
@@ -333,6 +345,49 @@ let typing = null;
   }
 };
 
+let playerSize = {};
+const resize = async () => {
+  if (Ø(".player").classList.contains("hidden")) return;
+  let safeAreaInsetBottom = 0;
+  if (navigator.userAgent.includes("Mac") && "ontouchend" in document) {
+    await new Promise((resolve) => setTimeout(resolve), 500);
+    safeAreaInsetBottom = Number(
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--safe-area-inset-bottom")
+        .replace("px", "")
+    );
+  }
+  const videoAspectRatio = Ø(".player video").videoWidth / Ø(".player video").videoHeight || 16 / 9;
+  if (window.innerWidth > window.innerHeight) {
+    const listWidth = window.innerWidth - window.innerHeight * videoAspectRatio;
+    const minListWidth = listWidth < 320 ? 320 : listWidth;
+    Ø(".player").style.width = `${window.innerWidth - minListWidth}px`;
+    Ø(".player").style.height = `${window.innerHeight}px`;
+    Ø(".player video").style.height = `${window.innerHeight - safeAreaInsetBottom}px`;
+    Ø(".player").style.left = `${minListWidth}px`;
+    Ø(".list").style.width = `${minListWidth}px`;
+    Ø(".bar").style.width = `${minListWidth}px`;
+    Ø(".list").style.top = 0;
+    Ø(".bar").style.top = 0;
+  } else {
+    Ø(".player").style.width = "100%";
+    Ø(".player").style.height = `${window.innerWidth / videoAspectRatio}px`;
+    Ø(".player video").style.height = "100%";
+    Ø(".player").style.left = 0;
+    Ø(".list").style.width = "100%";
+    Ø(".bar").style.width = "100%";
+    Ø(".list").style.top = `${Math.ceil(Ø(".player").style.height.replace("px", ""))}px`;
+    Ø(".bar").style.top = `${Math.ceil(Ø(".player").style.height.replace("px", ""))}px`;
+  }
+  playerSize = Ø(".player").getBoundingClientRect();
+};
+window.addEventListener("resize", resize);
+
+Ø(".player video").addEventListener("loadedmetadata", () => {
+  Ø(".progress").classList.add("hidden");
+  resize();
+});
+
 const activation = 50;
 const pullThreshold = activation + 200;
 const swipeThreshold = activation + 50;
@@ -370,6 +425,13 @@ document.addEventListener(
   "touchmove",
   (e) => {
     if (e.touches.length > 1) return;
+    if (
+      startTouchX >= playerSize.x &&
+      startTouchX <= playerSize.x + playerSize.width &&
+      startTouchY >= playerSize.y &&
+      startTouchY <= playerSize.y + playerSize.height
+    )
+      return;
     const diffX = e.changedTouches[0].clientX - startTouchX;
     const diffY = e.changedTouches[0].clientY - startTouchY;
     const isVertical = Math.abs(diffY) > Math.abs(diffX);
@@ -586,7 +648,11 @@ updateNSFW();
   await render();
 };
 
-const supportedPlayers = [["external", "外部應用程式"]];
+const supportedPlayers = [
+  ["", "內置播放器 (預設)"],
+  ["internal", "直接開啟連結"],
+  ["external", "在新視窗開啟連結"],
+];
 if (navigator.userAgent.includes("Android")) {
   supportedPlayers.push(["com.mxtech.videoplayer.ad", "MX Player"]);
   supportedPlayers.push(["com.mxtech.videoplayer.pro", "MX Player Pro"]);
