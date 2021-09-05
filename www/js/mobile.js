@@ -89,9 +89,14 @@ const appendChunk = (chunk) => {
         }
         div0.onclick = async (event) => {
           const href = `/${anime_id}/${encodeURIComponent(name)}`;
+          for (const item of document.querySelectorAll(".item")) {
+            item.classList.remove("highlight");
+          }
           if (event.target.parentNode.classList.contains("item")) {
+            event.target.parentNode.classList.add("highlight");
             event.target.parentNode.classList.add("watched");
           } else {
+            event.target.parentNode.parentNode.classList.add("highlight");
             event.target.parentNode.parentNode.classList.add("watched");
           }
           localStorage.setItem(decodeURIComponent(href), 1);
