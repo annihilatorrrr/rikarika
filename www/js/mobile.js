@@ -384,7 +384,14 @@ const resize = async () => {
     Ø(".list").style.top = `${Math.ceil(Ø(".player").style.height.replace("px", ""))}px`;
     Ø(".bar").style.top = `${Math.ceil(Ø(".player").style.height.replace("px", ""))}px`;
   }
+  const prevWidth = playerSize.width;
   playerSize = Ø(".player").getBoundingClientRect();
+  if (playerSize.width !== prevWidth) {
+    Ø(".item.highlight")?.scrollIntoView();
+    if (Ø(".list").scrollTop + 4.2 * 16 < Ø(".list").scrollHeight - Ø(".list").clientHeight) {
+      Ø(".list").scrollBy(0, -4.2 * 16);
+    }
+  }
 };
 window.addEventListener("resize", resize);
 

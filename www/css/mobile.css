@@ -13,6 +13,7 @@
   --bg-sub-color: rgb(255, 247, 252);
 
   --highlight-color: var(--coat-color);
+  --text-high-color: var(--eye-mid-color);
   --text-main-color: var(--cloth-color);
   --text-weak-color: var(--hair-mid-color);
   --text-disabled-color: rgb(192, 192, 192);
@@ -33,6 +34,7 @@
     --bg-sub-color: rgb(33, 33, 38);
     --theme-color-glass: rgba(0, 0, 0, 0.5);
     --highlight-color: var(--coat-color);
+    --text-high-color: var(--eye-mid-color);
     --text-main-color: var(--theme-color);
     --text-weak-color: var(--hair-dark-color);
     --text-disabled-color: rgb(96, 96, 96);
@@ -323,9 +325,8 @@ body {
   color: var(--text-disabled-color);
 }
 .list .item.highlight {
-  text-shadow: 0 0 0.3rem var(--bg-main-color);
-  color: var(--bg-main-color);
-  background-color: var(--theme-color);
+  text-shadow: 0 0 0.3rem var(--text-high-color);
+  color: var(--text-high-color);
 }
 .list .item .details {
   font-size: 0.75rem;
