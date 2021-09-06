@@ -425,7 +425,7 @@ document.addEventListener(
     startTouchX = e.touches[0].clientX;
     startTouchY = e.touches[0].clientY;
     startTouchAtTop = !Ø(".list").scrollTop;
-    startTouchAtLeftEdge = startTouchX < 30 && startTouchY > 65;
+    startTouchAtLeftEdge = startTouchX < 30 && startTouchY > (playerSize.height || 0) + 65;
     startTouchOnMenu = startTouchX < 250 && !Ø(".overlay").classList.contains("hidden");
     if (startTouchAtLeftEdge && navigator.userAgent.includes("Mac")) {
       e.preventDefault();
