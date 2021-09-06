@@ -133,6 +133,14 @@ app.get(/.*\/$/, (req, res) => {
         .replace("WEBPUSH_PUBLIC_KEY", WEBPUSH_PUBLIC_KEY)
         .replace(/DONATE_URL/g, DONATE_URL)
         .replace(/TELEGRAM_JOIN_URL/g, TELEGRAM_JOIN_URL)
+        .replace(
+          "mobile.js",
+          req.headers["user-agent"].match(/ 12_\d.+Mac/g) ? "mobile.safari12.js" : "mobile.js"
+        )
+        .replace(
+          "desktop.js",
+          req.headers["user-agent"].match(/ 12_\d.+Mac/g) ? "desktop.safari12.js" : "desktop.js"
+        )
     );
   } else {
     res.send(

@@ -5,6 +5,8 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
+    "build-mobile": "esbuild www/js/mobile.js --target=safari12 --outfile=www/js/mobile.safari12.js",
+    "build-desktop": "esbuild www/js/desktop.js --target=safari12 --outfile=www/js/desktop.safari12.js",
     "start": "pm2 start ecosystem.config.js",
     "stop": "pm2 stop ecosystem.config.js",
     "restart": "pm2 restart ecosystem.config.js",
@@ -32,6 +34,7 @@
     "chokidar": "^3.5.2",
     "cookie-parser": "^1.4.5",
     "dotenv": "^10.0.0",
+    "esbuild": "^0.12.25",
     "express": "^4.17.1",
     "express-rate-limit": "^5.3.0",
     "fs-extra": "^10.0.0",
