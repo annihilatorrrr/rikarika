@@ -162,10 +162,12 @@ let lazyLoadHandleList = [];
 const render = async (scrollTo) => {
   Ø(".player video").src = "";
   Ø(".player").classList.add("hidden");
-  Ø(".list").style.width = "100%";
-  Ø(".bar").style.width = "100%";
-  Ø(".list").style.top = 0;
-  Ø(".bar").style.top = 0;
+  Ø(".list").style.removeProperty("width");
+  Ø(".bar").style.removeProperty("width");
+  Ø(".list").style.removeProperty("top");
+  Ø(".bar").style.removeProperty("top");
+  Ø(".list").classList.remove("thin");
+  Ø(".bar").classList.remove("thin");
 
   for (const handle of lazyLoadHandleList) {
     clearTimeout(handle);
@@ -353,7 +355,11 @@ let typing = null;
 let playerSize = {};
 const resize = async () => {
   if (Ø(".player").classList.contains("hidden")) return;
-  let safeAreaInsetBottom = 0;
+  let safeAreaInsetBottom = Number(
+    getComputedStyle(document.documentElement)
+      .getPropertyValue("--safe-area-inset-bottom")
+      .replace("px", "")
+  );
   if (navigator.userAgent.includes("Mac") && "ontouchend" in document) {
     await new Promise((resolve) => setTimeout(resolve), 500);
     safeAreaInsetBottom = Number(
@@ -372,17 +378,21 @@ const resize = async () => {
     Ø(".player").style.left = `${minListWidth}px`;
     Ø(".list").style.width = `${minListWidth}px`;
     Ø(".bar").style.width = `${minListWidth}px`;
-    Ø(".list").style.top = 0;
-    Ø(".bar").style.top = 0;
+    Ø(".list").style.removeProperty("top");
+    Ø(".bar").style.removeProperty("top");
+    Ø(".list").classList.add("thin");
+    Ø(".bar").classList.add("thin");
   } else {
     Ø(".player").style.width = "100%";
     Ø(".player").style.height = `${window.innerWidth / videoAspectRatio}px`;
     Ø(".player video").style.height = "100%";
     Ø(".player").style.left = 0;
-    Ø(".list").style.width = "100%";
-    Ø(".bar").style.width = "100%";
+    Ø(".list").style.removeProperty("width");
+    Ø(".bar").style.removeProperty("width");
     Ø(".list").style.top = `${Math.ceil(Ø(".player").style.height.replace("px", ""))}px`;
     Ø(".bar").style.top = `${Math.ceil(Ø(".player").style.height.replace("px", ""))}px`;
+    Ø(".list").classList.remove("thin");
+    Ø(".bar").classList.remove("thin");
   }
   const prevWidth = playerSize.width;
   playerSize = Ø(".player").getBoundingClientRect();
