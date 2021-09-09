@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/soruly/rikarika#readme",
   "dependencies": {
-    "aniep": "^0.2.1",
+    "aniep": "^0.2.2",
     "body-parser": "^1.19.0",
     "chokidar": "^3.5.2",
     "cookie-parser": "^1.4.5",
