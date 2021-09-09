@@ -3,6 +3,7 @@
 .gitignore
 .prettierignore
 *.sh
+.github/
 www/*.jpg
 www/*.png
 www/*.txt
