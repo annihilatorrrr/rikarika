@@ -262,7 +262,7 @@ const render = async (scrollTo) => {
             Ø(".list").scrollTo(0, scrollTo);
           }
           resolve();
-        }, 50)
+        }, 0)
       )
     );
   }
