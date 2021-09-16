@@ -90,9 +90,18 @@ app.use(cookieParser());
 // path with .img extension
 app.get(/[^\/]+\.img$/, (req, res) => {
   const supportedFormat = new Map([
-    ["image/avif", path.join(ANIME_AVIF_PATH, req.path.replace(/\.img$/, ".avif"))],
-    ["image/webp", path.join(ANIME_WEBP_PATH, req.path.replace(/\.img$/, ".webp"))],
-    ["image/png", path.join(ANIME_PNG_PATH, req.path.replace(/\.img$/, ".png"))],
+    [
+      "image/avif",
+      path.join(ANIME_AVIF_PATH, decodeURIComponent(req.path).replace(/\.img$/, ".avif")),
+    ],
+    [
+      "image/webp",
+      path.join(ANIME_WEBP_PATH, decodeURIComponent(req.path).replace(/\.img$/, ".webp")),
+    ],
+    [
+      "image/png",
+      path.join(ANIME_PNG_PATH, decodeURIComponent(req.path).replace(/\.img$/, ".png")),
+    ],
   ]);
   const preferredFormatList = req.headers["accept"]
     .split(",")
