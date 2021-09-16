@@ -24,6 +24,7 @@ const {
   ANIME_NEW_PATH,
   ANIME_WEBP_PATH,
   ANIME_AVIF_PATH,
+  ANIME_PNG_PATH,
   RUTORRENT_HOST,
   RUTORRENT_HOST_2,
   WEB_PORT,
@@ -85,6 +86,27 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
+
+// path with .img extension
+app.get(/[^\/]+\.img$/, (req, res) => {
+  const supportedFormat = new Map([
+    ["image/avif", path.join(ANIME_AVIF_PATH, req.path.replace(/\.img$/, ".avif"))],
+    ["image/webp", path.join(ANIME_WEBP_PATH, req.path.replace(/\.img$/, ".webp"))],
+    ["image/png", path.join(ANIME_PNG_PATH, req.path.replace(/\.img$/, ".png"))],
+  ]);
+  const preferredFormatList = req.headers["accept"]
+    .split(",")
+    .filter((e) => e.startsWith("image/"))
+    .map((e) => e.split(";").shift());
+  for (const preferredFormat of preferredFormatList) {
+    if (supportedFormat.has(preferredFormat)) {
+      res.type(preferredFormat);
+      return res.send(fs.readFileSync(supportedFormat.get(preferredFormat)));
+    }
+  }
+  res.type("image/png");
+  return res.send(fs.readFileSync(supportedFormat.get("image/png")));
+});
 
 // path with extension
 app.get(/[^\/]+\.[^\/]+$/, express.static(path.join(__dirname, "www")));
