@@ -3,7 +3,6 @@ import fs from "fs-extra";
 import path from "path";
 import express from "express";
 import rateLimit from "express-rate-limit";
-import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import crypto from "crypto";
 import child_process from "child_process";
@@ -83,8 +82,8 @@ app.use(
   })
 );
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(cookieParser());
 
 // path with .img extension
