@@ -341,16 +341,6 @@ app.get("/ls", async (req, res) => {
         name: file,
         modified: fs.lstatSync(path.join(ANIME_PATH, `${id}`, file)).mtime,
         size: fs.lstatSync(path.join(ANIME_PATH, `${id}`, file)).size,
-        webp: fs.existsSync(
-          path.join(ANIME_WEBP_PATH, `${id}`, `${path.basename(file, ".mp4")}.webp`)
-        )
-          ? `${path.basename(file, ".mp4")}.webp`
-          : null,
-        avif: fs.existsSync(
-          path.join(ANIME_AVIF_PATH, `${id}`, `${path.basename(file, ".mp4")}.avif`)
-        )
-          ? `${path.basename(file, ".mp4")}.avif`
-          : null,
       }));
     return res.send(path_series);
   }

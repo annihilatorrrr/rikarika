@@ -4,14 +4,6 @@ const AudioContext = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
 let mediaSource = null;
 let compressor = null;
-let supportAVIF = false;
-
-const avifImg = new Image();
-avifImg.onload = function () {
-  supportAVIF = Boolean(avifImg.width > 0 && avifImg.height > 0);
-};
-avifImg.src =
-  "data:image/avif;base64,AAAAHGZ0eXBtaWYxAAAAAG1pZjFhdmlmbWlhZgAAAPJtZXRhAAAAAAAAACtoZGxyAAAAAAAAAABwaWN0AAAAAAAAAAAAAAAAZ28tYXZpZiB2MAAAAAAOcGl0bQAAAAAAAQAAAB5pbG9jAAAAAARAAAEAAQAAAAABFgABAAAAFgAAAChpaW5mAAAAAAABAAAAGmluZmUCAAAAAAEAAGF2MDFJbWFnZQAAAABnaXBycAAAAEhpcGNvAAAAFGlzcGUAAAAAAAAAAQAAAAEAAAAQcGFzcAAAAAEAAAABAAAADGF2MUOBAAwAAAAAEHBpeGkAAAAAAwgICAAAABdpcG1hAAAAAAAAAAEAAQQBAoOEAAAAHm1kYXQSAAoFGAAOwCAyCxAAAAAHx1IMokpg";
 
 const center = (element) => {
   element.style.position = "absolute";
@@ -892,84 +884,66 @@ const playfile = function (event, file = null) {
     document.querySelector("#downloadLink").href = href;
     document.querySelector("#downloadLink").download = decodeURIComponent(href).split("/")[2];
     showOSD("fa-play", decodeURIComponent(href).split("/")[2], 3000);
-    if (
-      document.querySelector(".file.highlight a").dataset.avif ||
-      document.querySelector(".file.highlight a").dataset.webp
-    ) {
-      const map = [];
-      const size = 12;
-      for (let i = 0; i < size * size; i++) {
-        const row = Math.floor(i / size);
-        const col = i % size;
-        const x = col * 160;
-        const y = row * 90;
-        map[i] = `-${x}px -${y}px`;
-      }
-      const thumbDIV = document.createElement("div");
-      thumbDIV.className = "vjs-thumbnail";
-      if (supportAVIF && Boolean(document.querySelector(".file.highlight a").dataset.avif)) {
-        thumbDIV.style.backgroundImage = `url("${
-          document.querySelector(".file.highlight a").dataset.avif
-        }")`;
-      } else if (Boolean(document.querySelector(".file.highlight a").dataset.webp)) {
-        thumbDIV.style.backgroundImage = `url("${
-          document.querySelector(".file.highlight a").dataset.webp
-        }")`;
-      }
-      setTimeout(() => {
-        thumbDIV.style.display = "none";
-      }, 0);
-      thumbDIV.style.position = "absolute";
-      thumbDIV.style.width = "160px";
-      thumbDIV.style.height = "90px";
-      thumbDIV.style.bottom = "6em";
-      thumbDIV.style.boxShadow = "0 0 1em #000";
-      window.vjs.controlBar.el().appendChild(thumbDIV);
 
-      window.div = thumbDIV;
-
-      const moveListener = function (e) {
-        const clientRect = document.querySelector(".vjs-control-bar").getBoundingClientRect();
-        const clientRectX = clientRect.x || 0;
-        const progressRect = document
-          .querySelector(".vjs-progress-control.vjs-control")
-          .getBoundingClientRect();
-        let left = e.pageX;
-        const progressRectX = progressRect.x || 0;
-        let i = Math.round(((left - progressRectX) / progressRect.width) * size * size);
-
-        if (i < 0) {
-          i = 0;
-        }
-        if (i > size * size - 1) {
-          i = size * size - 1;
-        }
-
-        if (map[i] && thumbDIV.style.backgroundPosition !== map[i]) {
-          thumbDIV.style.backgroundPosition = map[i];
-        }
-        const width = 160;
-        left -= width / 2;
-
-        if (left < clientRectX) {
-          left = clientRectX;
-        } else if (left > clientRectX + clientRect.width - width) {
-          left = clientRectX + clientRect.width - width;
-        }
-        left -= clientRectX;
-        thumbDIV.style.display = "block";
-        thumbDIV.style.left = `${left}px`;
-      };
-
-      window.vjs.controlBar.progressControl.on("mousemove", moveListener);
-
-      const moveCancel = function () {
-        thumbDIV.style.display = "none";
-      };
-
-      document.querySelector(".vjs-control-bar").addEventListener("mouseout", moveCancel);
-      window.vjs.on("userinactive", moveCancel);
+    const map = [];
+    const size = 12;
+    for (let i = 0; i < size * size; i++) {
+      const row = Math.floor(i / size);
+      const col = i % size;
+      const x = col * 160;
+      const y = row * 90;
+      map[i] = `-${x}px -${y}px`;
     }
+    const thumbDIV = document.createElement("div");
+    thumbDIV.className = "vjs-thumbnail";
+    thumbDIV.style.backgroundImage = `url("${href.replace(/\.mp4/, ".img")}")`;
+    setTimeout(() => {
+      thumbDIV.style.display = "none";
+    }, 0);
+    thumbDIV.style.position = "absolute";
+    thumbDIV.style.width = "160px";
+    thumbDIV.style.height = "90px";
+    thumbDIV.style.bottom = "6em";
+    thumbDIV.style.boxShadow = "0 0 1em #000";
+    window.vjs.controlBar.el().appendChild(thumbDIV);
+
+    window.div = thumbDIV;
+    window.vjs.controlBar.progressControl.on("mousemove", (e) => {
+      const clientRect = document.querySelector(".vjs-control-bar").getBoundingClientRect();
+      const clientRectX = clientRect.x || 0;
+      const progressRect = document
+        .querySelector(".vjs-progress-control.vjs-control")
+        .getBoundingClientRect();
+      let left = e.pageX;
+      const progressRectX = progressRect.x || 0;
+      let i = Math.round(((left - progressRectX) / progressRect.width) * size * size);
+      if (i < 0) {
+        i = 0;
+      }
+      if (i > size * size - 1) {
+        i = size * size - 1;
+      }
+      if (map[i] && thumbDIV.style.backgroundPosition !== map[i]) {
+        thumbDIV.style.backgroundPosition = map[i];
+      }
+      const width = 160;
+      left -= width / 2;
+      if (left < clientRectX) {
+        left = clientRectX;
+      } else if (left > clientRectX + clientRect.width - width) {
+        left = clientRectX + clientRect.width - width;
+      }
+      left -= clientRectX;
+      thumbDIV.style.display = "block";
+      thumbDIV.style.left = `${left}px`;
+    });
+
+    const moveCancel = function () {
+      thumbDIV.style.display = "none";
+    };
+
+    document.querySelector(".vjs-control-bar").addEventListener("mouseout", moveCancel);
+    window.vjs.on("userinactive", moveCancel);
   }
 };
 
@@ -1439,12 +1413,6 @@ window.getListing = async (scroll) => {
         }
         div7.className = `file ${watched}`;
         a4.href = `/${entry.anime_id}/${encodeURIComponent(entry.name)}`;
-        if (entry.webp) {
-          a4.dataset.webp = `/${entry.anime_id}/${encodeURIComponent(entry.webp)}`;
-        }
-        if (entry.avif) {
-          a4.dataset.avif = `/${entry.anime_id}/${encodeURIComponent(entry.avif)}`;
-        }
         i5.className = "fa fa-toggle-right";
         a4.appendChild(i5);
         a4.appendChild(document.createTextNode(entry.name.slice(0, -4)));
