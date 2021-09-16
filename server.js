@@ -155,7 +155,7 @@ app.get(/.*\/$/, (req, res) => {
       : /(Android|iPad|iPhone|iPod)/g.test(req.headers["user-agent"])
       ? "mobile"
       : "desktop";
-    res.setHeader("Link", `</js/${view}.js>; as=script; rel=preload`);
+    res.setHeader("Link", `</js/${view}.es2016.js>; as=script; rel=preload`);
     res.append("Link", `</css/${view}.css>; as=style; rel=preload`);
     res.send(
       fs
@@ -163,14 +163,6 @@ app.get(/.*\/$/, (req, res) => {
         .replace("WEBPUSH_PUBLIC_KEY", WEBPUSH_PUBLIC_KEY)
         .replace(/DONATE_URL/g, DONATE_URL)
         .replace(/TELEGRAM_JOIN_URL/g, TELEGRAM_JOIN_URL)
-        .replace(
-          "mobile.js",
-          req.headers["user-agent"].match(/ 12_\d.+Mac/g) ? "mobile.safari12.js" : "mobile.js"
-        )
-        .replace(
-          "desktop.js",
-          req.headers["user-agent"].match(/ 12_\d.+Mac/g) ? "desktop.safari12.js" : "desktop.js"
-        )
     );
   } else {
     res.send(
