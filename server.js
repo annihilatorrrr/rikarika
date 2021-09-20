@@ -107,7 +107,10 @@ app.get(/[^\/]+\.img$/, (req, res) => {
     .filter((e) => e.startsWith("image/"))
     .map((e) => e.split(";").shift());
   for (const preferredFormat of preferredFormatList) {
-    if (supportedFormat.has(preferredFormat)) {
+    if (
+      supportedFormat.has(preferredFormat) &&
+      fs.existsSync(supportedFormat.get(preferredFormat))
+    ) {
       res.type(preferredFormat);
       return res.send(fs.readFileSync(supportedFormat.get(preferredFormat)));
     }
