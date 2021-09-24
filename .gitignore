@@ -60,4 +60,4 @@ typings/
 www/message.txt
 www/msg.txt
 www/donate-code.jpg
-www/js/*.es2016.js
+www/js/*.es2016.*
