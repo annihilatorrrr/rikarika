@@ -1,0 +1,94 @@
+.icon {
+  width: 4rem;
+  height: 4rem;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  margin-left: env(safe-area-inset-left, 0);
+}
+.icon img {
+  width: 3rem;
+  height: 3rem;
+  box-shadow: 0 0 0px 1px var(--line-main-color), 0 0 0 2px var(--bg-main-color),
+    0 0 0 3px var(--line-main-color);
+  box-sizing: border-box;
+  border-radius: 6px;
+}
+
+.bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  background-color: var(--bg-main-color);
+  box-shadow: 0 0 0.2rem 0.2rem var(--bg-main-color);
+}
+.bar .title {
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  height: 3rem;
+  width: 10rem;
+  flex-grow: 1;
+  color: var(--text-main-color);
+}
+.bar .title.hidden,
+.bar .search.hidden {
+  display: none;
+}
+.bar .search {
+  padding: 0;
+  margin: 0;
+  -webkit-appearance: none;
+  outline: 0;
+  border: none;
+  background: transparent;
+  border-radius: 0;
+  border-bottom: 1px dashed var(--line-main-color);
+  font-size: 1rem;
+  height: 3rem;
+  width: 10rem;
+  flex-grow: 1;
+  color: var(--text-main-color);
+}
+
+::placeholder {
+  color: var(--text-weak-color);
+  font-family: system-ui, Meiryo, sans-serif, Arial;
+}
+.bar button {
+  width: 3rem;
+  height: 4rem;
+  font-size: 0.75rem;
+  color: var(--text-weak-color);
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+  border-radius: 0.2rem;
+  margin: 0;
+  padding: 0;
+  margin-right: env(safe-area-inset-right, 0);
+}
+.bar.thin button {
+  margin-right: 0;
+}
+.bar button:disabled {
+  color: transparent;
+}
+@supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+  .bar {
+    backdrop-filter: blur(0.25rem);
+    -webkit-backdrop-filter: blur(0.25rem);
+    background-color: var(--theme-color-glass);
+    box-shadow: 0 0 0.2rem 0.2rem var(--theme-color-glass);
+  }
+  .bar {
+    border-bottom: 1px solid var(--bg-main-color);
+  }
+}

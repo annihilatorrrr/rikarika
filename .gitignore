@@ -61,3 +61,7 @@ www/message.txt
 www/msg.txt
 www/donate-code.jpg
 www/js/*.es2016.*
+www/js/*.map
+www/css/*.min.css
+www/css/*.jpg
+www/css/*.map
