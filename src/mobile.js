@@ -1,16 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App.jsx";
-import {
-  Ø,
-  ØØ,
-  formatFileSize,
-  formatDateTime,
-  getDateTimeOpacity,
-  urlBase64ToUint8Array,
-} from "./lib.js";
+import { Ø, ØØ, formatDateTime, getDateTimeOpacity } from "./lib.js";
 
-ReactDOM.render(React.createElement(App, { name: "World" }), document.getElementById("root"));
+ReactDOM.render(React.createElement(App), document.getElementById("root"));
 
 const scrollTop = [];
 
@@ -96,7 +89,7 @@ const appendChunk = (chunk) => {
 
 let lazyLoadHandleList = [];
 
-const render = async (scrollTo) => {
+export const render = async (scrollTo) => {
   Ø(".player video").src = "";
   Ø(".player").classList.add("hidden");
   Ø(".list").style.removeProperty("width");
@@ -248,45 +241,6 @@ render();
 
 window.onpopstate = async () => {
   await render(scrollTop[window.location.pathname.split("/").length - 2] || 0);
-};
-
-let typing = null;
-Ø(".search").oninput = (e) => {
-  clearTimeout(typing);
-  typing = setTimeout(() => {
-    if (e.target.value.trim()) {
-      history.replaceState(null, null, `/search/${encodeURIComponent(e.target.value)}/`);
-    } else {
-      history.replaceState(null, null, "/search/");
-    }
-    render();
-  }, 500);
-};
-Ø("button").onclick = () => {
-  ØØ(".list .item").forEach((e) => (e.onclick = null));
-  const keyword = Ø(".search").value;
-  if (location.pathname.split("/").filter((e) => e)[0] === "search") {
-    if (keyword.trim()) {
-      history.pushState(null, null, "/search/");
-    } else {
-      history.pushState(null, null, "/");
-    }
-  } else {
-    if (keyword.trim()) {
-      history.pushState(null, null, `/search/${encodeURIComponent(keyword)}/`);
-    } else {
-      history.pushState(null, null, "/search/");
-    }
-  }
-  render();
-  return;
-};
-
-Ø(".search").onfocus = (e) => {
-  if (e.target.value.trim()) {
-    history.pushState(null, null, `/search/${encodeURIComponent(e.target.value)}/`);
-    render();
-  }
 };
 
 let playerSize = {};
@@ -498,189 +452,11 @@ document.addEventListener("touchend", async (e) => {
       Ø(".menu").classList.add("hidden");
       Ø(".overlay").classList.add("hidden");
     }
+  } else {
+    // reset everything
   }
   activatedGesture = "";
 });
-
-const closeMenu = async () => {
-  Ø(".menu").classList.add("hidden");
-  Ø(".list").classList.remove("blur");
-  Ø(".bar").classList.remove("blur");
-  Ø(".overlay").classList.add("hide");
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  Ø(".overlay").classList.remove("hide");
-  Ø(".overlay").classList.add("hidden");
-};
-
-Ø(".overlay").onclick = async (e) => {
-  if (e.target !== Ø(".overlay")) return;
-  await closeMenu();
-};
-
-Ø(".bar .icon").onclick = async () => {
-  Ø(".menu").classList.remove("dragging");
-  Ø(".menu").classList.remove("hidden");
-  Ø(".overlay").classList.remove("dragging");
-  Ø(".overlay").classList.remove("hidden");
-};
-Ø(".home").onclick = () => (location.href = "/");
-Ø(".toDesktop").onclick = () => (location.href = "/?view=desktop");
-Ø(".msg").onclick = async () => {
-  ØØ(".list .item").forEach((e) => (e.onclick = null));
-  Ø(".list").innerHTML = "";
-  closeMenu();
-  history.pushState(null, null, "/msg/");
-  await render();
-};
-Ø(".fullList").onclick = async () => {
-  ØØ(".list .item").forEach((e) => (e.onclick = null));
-  Ø(".list").innerHTML = "";
-  closeMenu();
-  history.pushState(null, null, "/list/");
-  await render();
-};
-Ø(".telegram").onclick = () =>
-  window.open(Ø("meta[name=telegram-url]").getAttribute("content"), "_blank");
-Ø(".donate").onclick = () =>
-  window.open(Ø("meta[name=donate-url]").getAttribute("content"), "_blank");
-Ø(".logout").onclick = () => (location.href = "/logout");
-
-if (document.body.requestFullscreen) {
-  Ø(".fullscreen").classList.remove("hidden");
-  Ø(".fullscreen input").checked = false;
-  document.addEventListener("fullscreenchange", (event) => {
-    if (document.fullscreenElement) {
-      Ø(".fullscreen input").checked = true;
-    } else {
-      Ø(".fullscreen input").checked = false;
-    }
-  });
-  Ø(".fullscreen input").onchange = async () => {
-    if (!document.fullscreenElement) {
-      await document.body.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
-  };
-}
-
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  Ø(".install").classList.remove("hidden");
-  Ø(".install").onclick = () => e.prompt();
-});
-
-Ø(".history").innerText = `🗑️ 清除播放紀錄 (${
-  Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
-} 個)`;
-Ø(".history").onclick = (event) => {
-  if (confirm("你確定要刪除所有播放紀錄嗎？")) {
-    for (const key in localStorage) {
-      if (key.startsWith("/")) {
-        localStorage.removeItem(key);
-      }
-    }
-    event.target.innerText = `🗑️ 清除播放紀錄 (${
-      Object.entries(localStorage).filter((e) => e[0].startsWith("/")).length
-    } 個)`;
-    ØØ(".watched").forEach((each) => {
-      each.classList.remove("watched");
-    });
-  }
-};
-
-const updateNSFW = () => {
-  if (localStorage.getItem("nsfw")) {
-    Ø(".sukebei input").checked = true;
-  } else {
-    Ø(".sukebei input").checked = false;
-  }
-};
-updateNSFW();
-Ø(".sukebei input").onchange = async (event) => {
-  if (localStorage.getItem("nsfw")) {
-    localStorage.removeItem("nsfw");
-  } else {
-    localStorage.setItem("nsfw", "nsfw");
-  }
-  updateNSFW();
-  await render();
-};
-
-const supportedPlayers = [
-  ["", "內置播放器 (預設)"],
-  ["internal", "直接開啟連結"],
-  ["external", "在新視窗開啟連結"],
-];
-if (navigator.userAgent.includes("Android")) {
-  supportedPlayers.push(["com.mxtech.videoplayer.ad", "MX Player"]);
-  supportedPlayers.push(["com.mxtech.videoplayer.pro", "MX Player Pro"]);
-  supportedPlayers.push(["org.videolan.vlc", "VLC Player"]);
-}
-for (const supportedPlayer of supportedPlayers) {
-  const option = document.createElement("option");
-  option.value = supportedPlayer[0];
-  option.innerText = supportedPlayer[1];
-  option.selected = localStorage.getItem("player") === supportedPlayer[0];
-  Ø(".defaultPlayer select").appendChild(option);
-}
-
-Ø(".defaultPlayer select").onchange = (e) => {
-  const selectedPlayer = e.target.options[e.target.selectedIndex].value;
-  if (selectedPlayer) {
-    localStorage.setItem("player", selectedPlayer);
-  } else {
-    localStorage.removeItem("player");
-  }
-};
-
-const subscribe = async (event) => {
-  const registration = await navigator.serviceWorker.ready;
-  if (!registration) return false;
-  const subscription =
-    (await registration?.pushManager?.getSubscription()) ??
-    (await registration?.pushManager
-      ?.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(
-          Ø("meta[name=webpush-public-key]").getAttribute("content")
-        ),
-      })
-      .catch(async (e) => {
-        await registration.unregister();
-        alert(e);
-      }));
-  if (!subscription) return false;
-  const res = await fetch("/subscribe/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(subscription),
-  });
-  return res.status < 400;
-};
-
-const unsubscribe = async (event) => {
-  const registration = await navigator.serviceWorker.ready;
-  if (!registration) return false;
-  const subscription = await registration?.pushManager?.getSubscription();
-  if (!subscription) return false;
-  const res = await fetch("/unsubscribe/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(subscription),
-  });
-  return res.status < 400;
-};
-
-Ø(".notification input").onchange = async () => {
-  Ø(".notification input").disabled = true;
-  if (Ø(".notification input").checked) {
-    Ø(".notification input").checked = await subscribe();
-  } else {
-    Ø(".notification input").checked = !(await unsubscribe());
-  }
-  Ø(".notification input").disabled = false;
-};
 
 (async () => {
   if (!navigator.serviceWorker) return;

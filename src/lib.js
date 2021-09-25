@@ -1,6 +1,17 @@
 export const Ø = document.querySelector.bind(document);
 export const ØØ = document.querySelectorAll.bind(document);
 
+export const debounce = (fn, ms) => {
+  let timer;
+  return function () {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      timer = null;
+      fn.apply(this, arguments);
+    }, ms);
+  };
+};
+
 export const formatFileSize = (bytes) => {
   let size = parseInt(bytes, 10);
   if (bytes > 1000000000) {
