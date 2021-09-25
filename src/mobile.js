@@ -1,3 +1,6 @@
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App.jsx";
 import {
   Ø,
   ØØ,
@@ -6,6 +9,8 @@ import {
   getDateTimeOpacity,
   urlBase64ToUint8Array,
 } from "./lib.js";
+
+ReactDOM.render(React.createElement(App, { name: "World" }), document.getElementById("root"));
 
 const scrollTop = [];
 
