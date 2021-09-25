@@ -158,8 +158,7 @@ app.get(/.*\/$/, (req, res) => {
       : /(Android|iPad|iPhone|iPod)/g.test(req.headers["user-agent"])
       ? "mobile"
       : "desktop";
-    res.setHeader("Link", `</js/${view}.es2016.js>; as=script; rel=preload`);
-    res.append("Link", `</css/${view}.css>; as=style; rel=preload`);
+
     res.send(
       fs
         .readFileSync(path.join(__dirname, `view/${view}.html`), "utf8")
