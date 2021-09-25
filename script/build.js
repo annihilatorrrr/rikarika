@@ -1,7 +1,7 @@
 import esbuild from "esbuild";
 
 esbuild.build({
-  entryPoints: ["./www/js/mobile.js"],
+  entryPoints: ["./src/mobile.js"],
   outfile: "./www/js/mobile.es2016.js",
   minify: process.argv.includes("--release"),
   bundle: true,
