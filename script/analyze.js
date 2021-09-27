@@ -2,13 +2,19 @@ import "dotenv/config.js";
 
 import child_process from "child_process";
 import cluster from "cluster";
-import path from "path";
-import fs from "fs-extra";
-import { fileURLToPath } from "url";
+import Knex from "knex";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const { ANIME_PATH, DB_NAME, DB_USER, DB_PASS, DB_HOST } = process.env;
 
-const { ANIME_PATH } = process.env;
+const knex = Knex({
+  client: "mysql",
+  connection: {
+    host: DB_HOST,
+    user: DB_USER,
+    password: DB_PASS,
+    database: DB_NAME,
+  },
+});
 
 if (cluster.isMaster) {
   console.log("Reading file list...");
@@ -29,14 +35,19 @@ if (cluster.isMaster) {
   let mark = fileList.length;
   let total = fileList.length;
 
-  fs.outputFileSync(path.join(__dirname, "db.json"), "[\n");
   for (let i = 0; i < concurrency; i++) {
     const worker = cluster.fork();
-    worker.on("message", (message) => {
+    worker.on("message", async (message) => {
       if (message) {
-        fs.appendFileSync(
-          path.join(__dirname, "db.json"),
-          `${JSON.stringify(JSON.parse(message))},\n`
+        const { filePath, result } = JSON.parse(message);
+        await knex.raw(
+          knex("mediainfo")
+            .insert({
+              path: filePath,
+              json: result,
+            })
+            .toString()
+            .replace(/^insert/i, "insert ignore")
         );
         if (Date.now() - time > displayInterval) {
           const speed = (mark - fileList.length) / (displayInterval / 1000);
@@ -65,8 +76,8 @@ if (cluster.isMaster) {
     worker.on("exit", (code) => {
       finished += 1;
       if (finished === concurrency) {
-        fs.appendFileSync(path.join(__dirname, "db.json"), "\n]");
         console.log("all done");
+        process.exit();
       }
     });
   }
@@ -86,7 +97,7 @@ if (cluster.isMaster) {
           ].join(" ")
         )
         .toString();
-      process.send(result);
+      process.send(JSON.stringify({ filePath: message, result: result }));
     } catch (e) {
       console.log(e, message);
     }
