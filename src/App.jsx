@@ -1,4 +1,12 @@
 import React, { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useRouteMatch,
+  useParams,
+} from "react-router-dom";
 import { reducer, initialState } from "./reducer";
 
 import Menu from "./Menu";
@@ -18,14 +26,16 @@ export default () => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
   return (
-    <AppContext.Provider value={[state, dispatch]}>
-      <List></List>
-      <Bar></Bar>
-      <Player></Player>
-      <Reload></Reload>
-      <Overlay></Overlay>
-      <Menu></Menu>
-      <Progress></Progress>
-    </AppContext.Provider>
+    <Router>
+      <AppContext.Provider value={[state, dispatch]}>
+        <List></List>
+        <Bar></Bar>
+        <Player></Player>
+        <Reload></Reload>
+        <Overlay></Overlay>
+        <Menu></Menu>
+        <Progress></Progress>
+      </AppContext.Provider>
+    </Router>
   );
 };

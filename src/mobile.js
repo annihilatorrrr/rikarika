@@ -108,26 +108,6 @@ export const render = async (scrollTo) => {
     .map((e) => decodeURIComponent(e));
 
   document.title = title || (season !== "search" ? season : "") || "カリ(仮)";
-  Ø(".title").innerText = title || season || "カリ(仮)";
-
-  Ø(".title").classList.remove("hidden");
-  Ø(".search").classList.add("hidden");
-  Ø("button").innerText = "搜尋";
-  if (season === "search") {
-    Ø(".title").classList.add("hidden");
-    Ø(".search").classList.remove("hidden");
-    if (!Ø(".search").value) {
-      Ø(".search").focus();
-    }
-    if (title) {
-      Ø("input").value = title;
-      Ø("button").innerText = "清除";
-    } else {
-      Ø("input").value = "";
-      Ø("button").innerText = "取消";
-      Ø(".search").focus();
-    }
-  }
 
   Ø(".progress").classList.remove("hidden");
   if (season === "list" || season === "msg") {
