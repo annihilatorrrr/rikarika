@@ -14,7 +14,7 @@
 
   --highlight-color: var(--coat-color);
   --text-high-color: var(--eye-mid-color);
-  --text-main-color: var(--cloth-color);
+  --text-main-color: var(--eye-dark-color);
   --text-weak-color: var(--hair-mid-color);
   --text-disabled-color: rgb(192, 192, 192);
   --line-main-color: var(--hair-mid-color);
