@@ -660,6 +660,15 @@ const render = async (scrollTo) => {
       });
   }
 
+  if (!dirEntries.length) {
+    Ø(".progress").classList.add("hidden");
+    const div15 = document.createElement("div");
+    div15.classList.add("placeholder");
+    div15.innerText = "此目錄沒有任何檔案";
+    Ø(".list").appendChild(div15);
+    return;
+  }
+
   const chunkList = filteredEntries.reduce(
     (acc, cur, index, array) => (index % 100 ? acc : [...acc, array.slice(index, index + 100)]),
     []
