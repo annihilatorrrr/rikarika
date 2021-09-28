@@ -630,8 +630,7 @@ const render = async (scrollTo) => {
     Ø(".progress").classList.add("hidden");
     const div15 = document.createElement("div");
     div15.classList.add("placeholder");
-    div15.onclick = render;
-    div15.innerText = `似乎出現了一點問題\n(${dirEntries})\n\n點擊頁面重試`;
+    div15.innerText = `出現了一點問題poi\n(${dirEntries})\n\n住下拉頁面重試`;
     Ø(".list").appendChild(div15);
     return;
   }
