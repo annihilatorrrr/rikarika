@@ -75,6 +75,409 @@ const urlBase64ToUint8Array = (base64String) => {
   return outputArray;
 };
 
+const animeTypeMap = {
+  TV: "電視",
+  TV_SHORT: "電視短篇",
+  OVA: "OVA",
+  SPECIAL: "特別",
+  ONA: "網絡",
+  MOVIE: "劇場版",
+  MUSIC: "音樂",
+};
+
+const animeGenreMap = {
+  Action: "動作",
+  Adventure: "冒險",
+  Cars: "賽車",
+  Comedy: "喜劇",
+  Dementia: "壞掉",
+  Demons: "惡魔",
+  Drama: "戲劇",
+  Ecchi: "Ecchi",
+  Fantasy: "奇幻",
+  Game: "遊戲",
+  Harem: "後宮",
+  Hentai: "紳士",
+  Historical: "歷史",
+  Horror: "恐怖",
+  Josei: "女性",
+  Kids: "兒童",
+  Magic: "魔法",
+  "Martial Arts": "武術",
+  Mecha: "機戰",
+  Military: "軍事",
+  Music: "音樂",
+  Mystery: "懸疑",
+  Parody: "搞笑",
+  Police: "警察",
+  Psychological: "心理",
+  Romance: "愛情",
+  Samurai: "武士",
+  School: "校園",
+  "Sci-Fi": "科幻",
+  Seinen: "青年",
+  Shoujo: "少女",
+  "Shoujo Ai": "少女愛",
+  Shounen: "少年",
+  "Shounen Ai": "少年愛",
+  "Slice of Life": "日常",
+  Space: "太空",
+  Sports: "運動",
+  "Super Power": "超能力",
+  Supernatural: "超自然",
+  Thriller: "驚悚",
+  Vampire: "吸血鬼",
+  Yaoi: "Yaoi",
+  Yuri: "百合",
+};
+
+const staffRoleMap = {
+  Director: "監督",
+  "Assistant Director": "副監督",
+  "Animation Director": "作畫監督",
+  "Chief Animation Director": "總作畫監督",
+  Music: "音樂",
+  "Sound Director": "音響監督",
+  "Series Composition": "系列構成",
+  "Original Creator": "原作",
+  "Character Design": "人物設計",
+  "Original Character Design": "人物原案",
+  "Art Director": "美術監督",
+  "Theme Song Performance": "主題曲主唱",
+  Script: "劇本",
+  "Original Story": "原著",
+};
+
+const getSummaryText = (src) => {
+  let air_verb = "放送";
+  if (src.format === "MOVIE") {
+    air_verb = "上映";
+  }
+  let air_status = "";
+  if (src.status === "RELEASING" || src.status === "NOT_YET_RELEASED") {
+    air_status = "開始";
+  }
+  let text = "";
+  const strStartDate =
+    src.startDate && src.startDate.year && src.startDate.month && src.startDate.day
+      ? `${src.startDate.year}年${src.startDate.month}月${src.startDate.day}日`
+      : null;
+  const strEndDate =
+    src.endDate && src.endDate.year && src.endDate.month && src.endDate.day
+      ? `${src.endDate.year}年${src.endDate.month}月${src.endDate.day}日`
+      : null;
+  if (strStartDate && strEndDate) {
+    if (strStartDate === strEndDate) {
+      text += `${strStartDate + air_verb}的`;
+    } else {
+      text += `${strStartDate} 至 ${strEndDate}${air_verb}的`;
+    }
+  } else if (strStartDate) {
+    text += `${strStartDate + air_status + air_verb}的`;
+  }
+
+  if (src.format) {
+    text += animeTypeMap[src.format];
+  }
+  text += "動畫";
+  if (src.episodes) {
+    if (src.format !== "Movie") {
+      text += `，共${src.episodes}集`;
+    }
+  }
+  if (src.duration) {
+    if (src.episodes === 1) {
+      text += `，全長${src.duration}分鐘`;
+    } else {
+      text += `，每集${src.duration}分鐘`;
+    }
+  }
+  text += "。";
+  return text;
+};
+
+const renderInfo = function (root, src) {
+  root.innerHTML = "";
+  const container = document.createElement("div");
+  root.append(container);
+  if (!src) {
+    const placeholder = document.createElement("div");
+    placeholder.classList.add("placeholder");
+    placeholder.textContent = "沒有相關資料";
+    container.append(placeholder);
+    return;
+  }
+  const titles = new Set([src.title.native ?? src.title.romaji, src.title.chinese]);
+  container.append(
+    ...Array.from(titles)
+      .filter((e) => e)
+      .map((title) => {
+        const div = document.createElement("div");
+        div.classList.add("subtitle");
+        div.textContent = title;
+        return div;
+      })
+  );
+
+  const divider1 = document.createElement("div");
+  divider1.classList.add("divider");
+  container.appendChild(divider1);
+
+  const group1 = document.createElement("div");
+  group1.classList.add("group");
+  container.appendChild(group1);
+
+  if (src.coverImage.large) {
+    const a1 = document.createElement("a");
+    a1.href = `//anilist.co/anime/${src.id}`;
+    a1.target = "_blank";
+    a1.rel = "noreferrer";
+    const poster = document.createElement("div");
+    poster.classList.add("poster");
+    poster.style = `background-image:url(${src.coverImage.large.replace("http:", "")})`;
+    a1.appendChild(poster);
+    group1.appendChild(a1);
+  }
+
+  const summary = document.createElement("div");
+  summary.classList.add("summary");
+  summary.textContent = getSummaryText(src);
+  container.appendChild(summary);
+
+  const basic = document.createElement("table");
+  basic.classList.add("basic");
+
+  const tr1 = document.createElement("tr");
+  const td1 = document.createElement("td");
+  td1.textContent = "評分";
+  tr1.appendChild(td1);
+  const td2 = document.createElement("td");
+  td2.textContent = src.averageScore > 0 ? parseFloat(src.averageScore).toFixed(1) : "-";
+  tr1.appendChild(td2);
+  basic.appendChild(tr1);
+
+  const tr2 = document.createElement("tr");
+  const td3 = document.createElement("td");
+  td3.textContent = "人氣";
+  tr2.appendChild(td3);
+  const td4 = document.createElement("td");
+  td4.textContent = src.popularity;
+  tr2.appendChild(td4);
+  basic.appendChild(tr2);
+
+  const tr3 = document.createElement("tr");
+  const td5 = document.createElement("td");
+  td5.textContent = "棄番率";
+  tr3.appendChild(td5);
+  const td6 = document.createElement("td");
+  td6.textContent =
+    src.popularity > 0
+      ? `${(
+          (src.stats.statusDistribution.filter((e) => e.status === "DROPPED")[0].amount /
+            src.popularity) *
+          100
+        ).toFixed(1)}%`
+      : "-";
+  tr3.appendChild(td6);
+  basic.appendChild(tr3);
+
+  if (src.genres.length > 0) {
+    const tr4 = document.createElement("tr");
+    const td7 = document.createElement("td");
+    td7.textContent = "類型";
+    tr4.appendChild(td7);
+    const td8 = document.createElement("td");
+    td8.textContent = src.genres.map((each) => animeGenreMap[each]).join(", ");
+    tr4.appendChild(td8);
+    basic.appendChild(tr4);
+  }
+
+  if (src.studios?.edges?.length > 0) {
+    const tr5 = document.createElement("tr");
+    const td9 = document.createElement("td");
+    td9.textContent = "動畫制作";
+    tr5.appendChild(td9);
+    const td10 = document.createElement("td");
+    src.studios.edges.forEach((entry) => {
+      if (entry.node.siteUrl) {
+        const a2 = document.createElement("a");
+        a2.href = entry.node.siteUrl;
+        a2.target = "_blank";
+        a2.rel = "noreferrer";
+        a2.textContent = entry.node.name;
+        td10.appendChild(a2);
+      } else {
+        const span1 = document.createElement("span");
+        span1.textContent = entry.node.name;
+        td10.appendChild(span1);
+      }
+      td10.appendChild(document.createElement("br"));
+    });
+    tr5.appendChild(td10);
+    basic.appendChild(tr5);
+  }
+
+  if (src.synonyms_chinese?.length > 0) {
+    const tr6 = document.createElement("tr");
+    const td11 = document.createElement("td");
+    td11.textContent = "其他譯名";
+    tr6.appendChild(td11);
+    const td12 = document.createElement("td");
+    td12.append(
+      ...src.synonyms_chinese.map((e) => {
+        const a = document.createElement("div");
+        a.textContent = e;
+        return a;
+      })
+    );
+    tr6.appendChild(td12);
+    basic.appendChild(tr6);
+  }
+
+  if (src.externalLinks?.length > 0) {
+    const tr7 = document.createElement("tr");
+    const td13 = document.createElement("td");
+    td13.textContent = "外部連結";
+    tr7.appendChild(td13);
+    const td14 = document.createElement("td");
+    td14.append(
+      ...src.externalLinks.map((e) => {
+        const div = document.createElement("div");
+        const a = document.createElement("a");
+        a.href = e.url;
+        a.target = "_blank";
+        a.rel = "noreferrer";
+        a.textContent = e.site;
+        div.append(a);
+        return div;
+      })
+    );
+    tr7.appendChild(td14);
+    basic.appendChild(tr7);
+  }
+  group1.appendChild(basic);
+
+  const description = document.createElement("div");
+  description.classList.add("description");
+  description.innerHTML = src.description;
+  group1.appendChild(description);
+
+  container.appendChild(group1);
+
+  if (src.characters?.edges?.length > 0) {
+    const heading4 = document.createElement("div");
+    heading4.classList.add("heading");
+    heading4.textContent = "登場角色";
+    container.appendChild(heading4);
+    const divider4 = document.createElement("div");
+    divider4.classList.add("divider");
+    container.appendChild(divider4);
+
+    const characterDIV = document.createElement("div");
+    characterDIV.classList.add("characters");
+    characterDIV.append(
+      ...src.characters.edges.map((entry) => {
+        const charDIV = document.createElement("div");
+        charDIV.classList.add("character");
+        const charImgDiv = document.createElement("div");
+        if (entry.node.image.large === "//anilist.co") {
+          entry.node.image.large = "//anilist.co/img/dir/anime/reg/noimg.jpg";
+        }
+        if (entry.node.image.medium === "//anilist.co") {
+          entry.node.image.medium = "//anilist.co/img/dir/anime/med/noimg.jpg";
+        }
+        const charIMG = document.createElement("a");
+        charIMG.href = entry.node.image.large.replace("http:", "");
+        charIMG.target = "_blank";
+        charIMG.rel = "noreferrer";
+        charImgDiv.appendChild(charIMG);
+        const charBgDIV = document.createElement("div");
+        charBgDIV.style = `background-image:url(${entry.node.image.medium.replace("http:", "")})`;
+        charIMG.appendChild(charBgDIV);
+        charDIV.appendChild(charImgDiv);
+        const charName = document.createElement("div");
+        let char_name = entry.node.name.native;
+        if (!char_name && entry.node.name.first && entry.node.name.last) {
+          char_name = `${entry.node.name.last} ${entry.node.name.first}`;
+        }
+        const charA = document.createElement("a");
+        charA.classList.add(`character_${entry.node.id}`);
+        charA.href = `//anilist.co/character/${entry.node.id}`;
+        charA.target = "_blank";
+        charA.rel = "noreferrer";
+        charA.textContent = char_name;
+        charName.appendChild(charA);
+        if (entry.voiceActors?.length > 0) {
+          charName.appendChild(document.createElement("br"));
+
+          let name = entry.voiceActors[0].name.native;
+          if (!name && entry.voiceActors[0].name.first && entry.voiceActors[0].name.last) {
+            name = `${entry.voiceActors[0].name.last} ${entry.voiceActors[0].name.first}`;
+          }
+          charName.appendChild(document.createTextNode("(CV: "));
+          const charCVA = document.createElement("a");
+          charCVA.classList.add(`staff_${entry.voiceActors[0].id}`);
+          charCVA.href = `//anilist.co/staff/${entry.voiceActors[0].id}`;
+          charCVA.target = "_blank";
+          charCVA.rel = "noreferrer";
+          charCVA.textContent = name;
+          charName.appendChild(charCVA);
+          charName.appendChild(document.createTextNode(")"));
+        }
+        charDIV.appendChild(charName);
+        return charDIV;
+      })
+    );
+    container.appendChild(characterDIV);
+  }
+
+  if (src.staff?.edges?.length > 0) {
+    const heading3 = document.createElement("div");
+    heading3.classList.add("heading");
+    heading3.textContent = "製作人員";
+    container.appendChild(heading3);
+    const divider3 = document.createElement("div");
+    divider3.classList.add("divider");
+    container.appendChild(divider3);
+
+    const staff = document.createElement("table");
+    staff.classList.add("staff");
+    staff.append(
+      ...src.staff.edges.map((entry) => {
+        const row = document.createElement("tr");
+        let name = entry.node.name.native;
+        if (!name && entry.node.name.first && entry.node.name.last) {
+          name = `${entry.node.name.last} ${entry.node.name.first}`;
+        }
+        const col = document.createElement("td");
+        col.textContent = staffRoleMap[entry.role]
+          ? staffRoleMap[entry.role]
+          : entry.role.replace("Theme Song Performance", staffRoleMap["Theme Song Performance"]);
+        row.appendChild(col);
+
+        const nameTD = document.createElement("td");
+        const a4 = document.createElement("a");
+        a4.classList.add(`staff_${entry.node.id}`);
+        a4.href = `//anilist.co/staff/${entry.node.id}`;
+        a4.target = "_blank";
+        a4.rel = "noreferrer";
+        a4.textContent = name;
+        nameTD.appendChild(a4);
+        row.appendChild(nameTD);
+        return row;
+      })
+    );
+
+    container.appendChild(staff);
+  }
+  if (src.bannerImage) {
+    const banner = document.createElement("img");
+    banner.classList.add("banner");
+    banner.src = src.bannerImage.replace("http:", "");
+    root.appendChild(banner);
+  }
+};
+
 const scrollTop = [];
 
 const appendChunk = (chunk) => {
@@ -158,10 +561,11 @@ const appendChunk = (chunk) => {
 };
 
 let lazyLoadHandleList = [];
-
+let anilistInfo = null;
 const render = async (scrollTo) => {
   Ø(".player video").src = "";
   Ø(".player").classList.add("hidden");
+  Ø(".info").classList.add("hidden");
   Ø(".list").style.removeProperty("width");
   Ø(".bar").style.removeProperty("width");
   Ø(".list").style.removeProperty("top");
@@ -240,6 +644,22 @@ const render = async (scrollTo) => {
   const filteredEntries = localStorage.getItem("nsfw")
     ? dirEntries
     : dirEntries.filter((e) => e.name !== "Sukebei" && e.season !== "Sukebei");
+
+  if (window.location.pathname.split("/").length === 4) {
+    Ø(".info").innerHTML = "";
+    anilistInfo = null;
+    fetch(`/info?season=${season}&title=${encodeURIComponent(title)}`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json._source) {
+          anilistInfo = json._source;
+        }
+        if (navigator.connection?.type !== "cellular") {
+          renderInfo(Ø(".info"), anilistInfo);
+        }
+      });
+  }
+
   const chunkList = filteredEntries.reduce(
     (acc, cur, index, array) => (index % 100 ? acc : [...acc, array.slice(index, index + 100)]),
     []
@@ -313,6 +733,16 @@ window.onpopstate = async () => {
   await render(scrollTop[window.location.pathname.split("/").length - 2] || 0);
 };
 
+Ø(".title").onclick = () => {
+  if (window.location.pathname.split("/").length !== 4) return;
+  if (Ø(".info").classList.contains("hidden")) {
+    if (!Ø(".info").textContent) renderInfo(Ø(".info"), anilistInfo);
+    Ø(".info").classList.remove("hidden");
+  } else {
+    Ø(".info").classList.add("hidden");
+  }
+};
+
 let typing = null;
 Ø(".search").oninput = (e) => {
   clearTimeout(typing);
@@ -378,10 +808,13 @@ const resize = async () => {
     Ø(".player").style.left = `${minListWidth}px`;
     Ø(".list").style.width = `${minListWidth}px`;
     Ø(".bar").style.width = `${minListWidth}px`;
+    Ø(".info").style.width = `${minListWidth}px`;
     Ø(".list").style.removeProperty("top");
     Ø(".bar").style.removeProperty("top");
+    Ø(".info").style.removeProperty("top");
     Ø(".list").classList.add("thin");
     Ø(".bar").classList.add("thin");
+    Ø(".info").classList.add("thin");
   } else {
     Ø(".player").style.width = "100%";
     Ø(".player").style.height = `${window.innerWidth / videoAspectRatio}px`;
@@ -389,10 +822,13 @@ const resize = async () => {
     Ø(".player").style.left = 0;
     Ø(".list").style.removeProperty("width");
     Ø(".bar").style.removeProperty("width");
+    Ø(".info").style.removeProperty("width");
     Ø(".list").style.top = `${Math.ceil(Ø(".player").style.height.replace("px", ""))}px`;
     Ø(".bar").style.top = `${Math.ceil(Ø(".player").style.height.replace("px", ""))}px`;
+    Ø(".info").style.top = `${Math.ceil(Ø(".player").style.height.replace("px", ""))}px`;
     Ø(".list").classList.remove("thin");
     Ø(".bar").classList.remove("thin");
+    Ø(".info").classList.remove("thin");
   }
   const prevWidth = playerSize.width;
   playerSize = Ø(".player").getBoundingClientRect();
@@ -415,7 +851,8 @@ const pullThreshold = activation + 200;
 const swipeThreshold = activation + 50;
 let startTouchX = 0;
 let startTouchY = 0;
-let startTouchAtTop = false;
+let startTouchAtListTop = false;
+let startTouchAtInfoTop = false;
 let startTouchAtLeftEdge = false;
 let startTouchOnMenu = false;
 let activatedGesture = "";
@@ -434,7 +871,8 @@ document.addEventListener(
     activatedGesture = "";
     startTouchX = e.touches[0].clientX;
     startTouchY = e.touches[0].clientY;
-    startTouchAtTop = !Ø(".list").scrollTop;
+    startTouchAtListTop = !Ø(".list").scrollTop && Ø(".info").classList.contains("hidden");
+    startTouchAtInfoTop = !Ø(".info").scrollTop && !Ø(".info").classList.contains("hidden");
     startTouchAtLeftEdge = startTouchX < 30 && startTouchY > (playerSize.height || 0) + 65;
     startTouchOnMenu = startTouchX < 250 && !Ø(".overlay").classList.contains("hidden");
     if (startTouchAtLeftEdge && navigator.userAgent.includes("Mac")) {
@@ -470,8 +908,11 @@ document.addEventListener(
         Ø(".menu").classList.add("dragging");
         Ø(".overlay").classList.remove("hidden");
         Ø(".overlay").classList.add("dragging");
+      } else if (isVertical && diffY > 0 && startTouchAtInfoTop) {
+        activatedGesture = "pullInfo";
+        Ø(".info").classList.add("dragging");
       } else if (Math.abs(diffX) > activation || Math.abs(diffY) > activation) {
-        if (isVertical && diffY > 0 && startTouchAtTop) {
+        if (isVertical && diffY > 0 && startTouchAtListTop) {
           activatedGesture = "pull";
           Ø(".reload").classList.remove("hidden");
           Ø(".reload").classList.remove("active");
@@ -480,7 +921,10 @@ document.addEventListener(
         } else if (!isVertical && Math.abs(diffY) < activation && diffX < 0) {
           activatedGesture = "RTL";
         }
-        if (activatedGesture) Ø(".list").classList.add("dragging");
+        if (activatedGesture) {
+          Ø(".list").classList.add("dragging");
+          Ø(".info").classList.add("dragging");
+        }
       }
     }
     if (activatedGesture === "open") {
@@ -498,19 +942,20 @@ document.addEventListener(
       } else {
         Ø(".reload").classList.remove("active");
       }
+    } else if (activatedGesture === "pullInfo") {
+      const translate = diffY < 0 ? 0 : diffY;
+      Ø(".info").style.transform = `translate(0, ${translate}px)`;
     } else if (activatedGesture === "LTR") {
       let translate = diffX - activation;
       translate = translate < 0 ? 0 : translate;
       translate = translate > swipeThreshold - activation ? swipeThreshold - activation : translate;
-      Ø(".bar").style.transform = `translate(${translate / 4}px, 0)`;
-      Ø(".list").style.transform = `translate(${translate / 4}px, 0)`;
+      document.body.style.transform = `translate(${translate / 4}px, 0)`;
     } else if (activatedGesture === "RTL") {
       let translate = diffX + activation;
       translate = translate > 0 ? 0 : translate;
       translate =
         translate < -(swipeThreshold - activation) ? -(swipeThreshold - activation) : translate;
-      Ø(".bar").style.transform = `translate(${translate / 4}px, 0)`;
-      Ø(".list").style.transform = `translate(${translate / 4}px, 0)`;
+      document.body.style.transform = `translate(${translate / 4}px, 0)`;
     }
   },
   { passive: true }
@@ -521,6 +966,7 @@ document.addEventListener("touchend", async (e) => {
   const diffX = e.changedTouches[0].clientX - startTouchX;
   const diffY = e.changedTouches[0].clientY - startTouchY;
   Ø(".list").classList.remove("dragging");
+  Ø(".info").classList.remove("dragging");
   if (activatedGesture === "pull") {
     Ø(".reload").classList.add("hidden");
     Ø(".reload").classList.remove("active");
@@ -529,14 +975,12 @@ document.addEventListener("touchend", async (e) => {
       await render();
     }
   } else if (activatedGesture === "LTR") {
-    Ø(".bar").style.transform = `translate(${0}px, 0)`;
-    Ø(".list").style.transform = `translate(${0}px, 0)`;
+    document.body.style.removeProperty("transform");
     if (diffX > swipeThreshold) {
       history.back();
     }
   } else if (activatedGesture === "RTL") {
-    Ø(".bar").style.transform = `translate(${0}px, 0)`;
-    Ø(".list").style.transform = `translate(${0}px, 0)`;
+    document.body.style.removeProperty("transform");
     if (diffX < -swipeThreshold) {
       history.forward();
     }
@@ -560,6 +1004,12 @@ document.addEventListener("touchend", async (e) => {
     if (-diffX > 224 * 0.25) {
       Ø(".menu").classList.add("hidden");
       Ø(".overlay").classList.add("hidden");
+    }
+  } else if (activatedGesture === "pullInfo") {
+    Ø(".info").style.removeProperty("transform");
+    Ø(".info").classList.remove("dragging");
+    if (diffY > document.querySelector(".info").clientHeight * 0.25) {
+      Ø(".info").classList.add("hidden");
     }
   }
   activatedGesture = "";
