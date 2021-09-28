@@ -312,7 +312,7 @@ app.get("/ls", async (req, res) => {
           modified: row.updated,
         }))
         .sort((a, b) =>
-          ["2021-07", "2021-04", "Movie", "OVA", "Sukebei", "Latest"].includes(season)
+          ["2021-10", "2021-07", "2021-04", "Movie", "OVA", "Sukebei", "Latest"].includes(season)
             ? a.modified > b.modified
               ? -1
               : 1
