@@ -546,14 +546,7 @@ body {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-}
-.info.thin .group {
-  flex-wrap: wrap;
-}
-@media only screen and (min-width: 480px) {
-  .info .group {
-    flex-wrap: nowrap;
-  }
+  gap: 1rem 0.5rem;
 }
 .info .poster {
   width: 230px;
@@ -571,13 +564,14 @@ body {
   white-space: nowrap;
 }
 .basic td {
-  padding: 0.1rem 1rem;
+  padding: 0.1rem 0.5rem;
 }
 .info .summary {
   padding: 0.5rem 0;
 }
 .info .description {
   text-align: justify;
+  max-width: 450px;
 }
 .info .staff {
   padding-bottom: 1rem;
