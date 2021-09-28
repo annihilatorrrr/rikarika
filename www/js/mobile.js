@@ -563,6 +563,8 @@ const appendChunk = (chunk) => {
 let lazyLoadHandleList = [];
 let anilistInfo = null;
 const render = async (scrollTo) => {
+  anilistInfo = null;
+  Ø(".info").innerHTML = "";
   Ø(".player video").src = "";
   Ø(".player").classList.add("hidden");
   Ø(".info").classList.add("hidden");
@@ -646,8 +648,6 @@ const render = async (scrollTo) => {
     : dirEntries.filter((e) => e.name !== "Sukebei" && e.season !== "Sukebei");
 
   if (window.location.pathname.split("/").length === 4) {
-    Ø(".info").innerHTML = "";
-    anilistInfo = null;
     fetch(`/info?season=${season}&title=${encodeURIComponent(title)}`)
       .then((res) => res.json())
       .then((json) => {
