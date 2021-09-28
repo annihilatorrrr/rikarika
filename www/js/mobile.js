@@ -80,7 +80,7 @@ const scrollTop = [];
 const appendChunk = (chunk) => {
   Ø(".list").append(
     ...chunk.map(({ season, name, modified, size, anime_id }) => {
-      const div0 = document.createElement("div0");
+      const div0 = document.createElement("div");
       div0.classList.add("item");
       const div1 = document.createElement("div");
       if ([".mp4", ".txt", ".ass"].includes(name.slice(-4))) {
