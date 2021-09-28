@@ -1016,7 +1016,7 @@ document.addEventListener("touchend", async (e) => {
   } else if (activatedGesture === "pullInfo") {
     Ø(".info").style.removeProperty("transform");
     Ø(".info").classList.remove("dragging");
-    if (diffY > document.querySelector(".info").clientHeight * 0.25) {
+    if (diffY > 16 * 4.2) {
       Ø(".info").classList.add("hidden");
     }
   }
