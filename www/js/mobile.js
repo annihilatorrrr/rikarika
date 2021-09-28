@@ -570,10 +570,13 @@ const render = async (scrollTo) => {
   Ø(".info").classList.add("hidden");
   Ø(".list").style.removeProperty("width");
   Ø(".bar").style.removeProperty("width");
+  Ø(".info").style.removeProperty("width");
   Ø(".list").style.removeProperty("top");
   Ø(".bar").style.removeProperty("top");
+  Ø(".info").style.removeProperty("top");
   Ø(".list").classList.remove("thin");
   Ø(".bar").classList.remove("thin");
+  Ø(".info").classList.remove("thin");
 
   for (const handle of lazyLoadHandleList) {
     clearTimeout(handle);
