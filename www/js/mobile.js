@@ -943,10 +943,8 @@ document.addEventListener(
         activatedGesture = "pullInfo";
         Ø(".info").classList.add("dragging");
       } else if (Math.abs(diffX) > activation || Math.abs(diffY) > activation) {
-        if (isVertical && diffY > 0 && startTouchAtListTop) {
-          activatedGesture = "pull";
-          Ø(".reload").classList.remove("hidden");
-          Ø(".reload").classList.remove("active");
+        if (isVertical && Math.abs(diffX) < activation && diffY > 0 && startTouchAtListTop) {
+          activatedGesture = "TTB";
         } else if (!isVertical && Math.abs(diffY) < activation && diffX > 0) {
           activatedGesture = "LTR";
         } else if (!isVertical && Math.abs(diffY) < activation && diffX < 0) {
@@ -966,13 +964,11 @@ document.addEventListener(
       const translate = diffX > 0 ? 0 : diffX;
       Ø(".menu").style.transform = `translate(${translate}px, 0)`;
       Ø(".overlay").style.opacity = (translate + 224) / 224;
-    } else if (activatedGesture === "pull") {
-      Ø(".reload").style.width = `${((diffY - activation) / (pullThreshold - activation)) * 100}%`;
-      if (diffY > pullThreshold) {
-        Ø(".reload").classList.add("active");
-      } else {
-        Ø(".reload").classList.remove("active");
-      }
+    } else if (activatedGesture === "TTB") {
+      let translate = diffY - activation;
+      translate = translate < 0 ? 0 : translate;
+      translate = translate > swipeThreshold - activation ? swipeThreshold - activation : translate;
+      Ø(".icon").style.transform = `translate(0,${translate}px)`;
     } else if (activatedGesture === "pullInfo") {
       const translate = diffY < 0 ? 0 : diffY;
       Ø(".info").style.transform = `translate(0, ${translate}px)`;
@@ -980,13 +976,13 @@ document.addEventListener(
       let translate = diffX - activation;
       translate = translate < 0 ? 0 : translate;
       translate = translate > swipeThreshold - activation ? swipeThreshold - activation : translate;
-      Ø(".bar").style.transform = `translate(${translate}px, 0)`;
+      Ø(".icon").style.transform = `translate(${translate}px, 0)`;
     } else if (activatedGesture === "RTL") {
       let translate = diffX + activation;
       translate = translate > 0 ? 0 : translate;
       translate =
         translate < -(swipeThreshold - activation) ? -(swipeThreshold - activation) : translate;
-      Ø(".bar").style.transform = `translate(${translate}px, 0)`;
+      Ø(".icon").style.transform = `translate(${translate}px, 0)`;
     }
   },
   { passive: true }
@@ -998,11 +994,9 @@ document.addEventListener("touchend", async (e) => {
   const diffY = e.changedTouches[0].clientY - startTouchY;
   Ø(".list").classList.remove("dragging");
   Ø(".info").classList.remove("dragging");
-  if (activatedGesture === "pull") {
-    Ø(".reload").classList.add("hidden");
-    Ø(".reload").classList.remove("active");
-    Ø(".reload").style.width = "0%";
-    if (diffY > pullThreshold) {
+  if (activatedGesture === "TTB") {
+    Ø(".icon").style.removeProperty("transform");
+    if (diffY > swipeThreshold) {
       if (window.location.pathname.split("/").length === 4) {
         Ø(".info").classList.remove("hidden");
         Ø(".list").classList.add("dragging");
@@ -1011,12 +1005,12 @@ document.addEventListener("touchend", async (e) => {
       }
     }
   } else if (activatedGesture === "LTR") {
-    Ø(".bar").style.removeProperty("transform");
+    Ø(".icon").style.removeProperty("transform");
     if (diffX > swipeThreshold) {
       history.back();
     }
   } else if (activatedGesture === "RTL") {
-    Ø(".bar").style.removeProperty("transform");
+    Ø(".icon").style.removeProperty("transform");
     if (diffX < -swipeThreshold) {
       history.forward();
     }

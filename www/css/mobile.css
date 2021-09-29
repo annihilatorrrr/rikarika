@@ -362,20 +362,6 @@ body {
   box-sizing: border-box;
   border-radius: 6px;
 }
-.reload {
-  position: relative;
-  margin: auto;
-  visibility: visible;
-  width: 0%;
-  height: 0.125rem;
-  background-color: var(--text-disabled-color);
-}
-.reload.active {
-  background-color: var(--highlight-color);
-}
-.reload.hidden {
-  visibility: hidden;
-}
 .bar {
   position: fixed;
   top: 0;
