@@ -443,29 +443,31 @@ const renderInfo = function (root, src) {
     const staff = document.createElement("table");
     staff.classList.add("staff");
     staff.append(
-      ...src.staff.edges.map((entry) => {
-        const row = document.createElement("tr");
-        let name = entry.node.name.native;
-        if (!name && entry.node.name.first && entry.node.name.last) {
-          name = `${entry.node.name.last} ${entry.node.name.first}`;
-        }
-        const col = document.createElement("td");
-        col.textContent = staffRoleMap[entry.role]
-          ? staffRoleMap[entry.role]
-          : entry.role.replace("Theme Song Performance", staffRoleMap["Theme Song Performance"]);
-        row.appendChild(col);
+      ...src.staff.edges
+        .sort((a, b) => (a.role > b.role ? 1 : -1))
+        .map((entry) => {
+          const row = document.createElement("tr");
+          let name = entry.node.name.native;
+          if (!name && entry.node.name.first && entry.node.name.last) {
+            name = `${entry.node.name.last} ${entry.node.name.first}`;
+          }
+          const col = document.createElement("td");
+          col.textContent = staffRoleMap[entry.role]
+            ? staffRoleMap[entry.role]
+            : entry.role.replace("Theme Song Performance", staffRoleMap["Theme Song Performance"]);
+          row.appendChild(col);
 
-        const nameTD = document.createElement("td");
-        const a4 = document.createElement("a");
-        a4.classList.add(`staff_${entry.node.id}`);
-        a4.href = `//anilist.co/staff/${entry.node.id}`;
-        a4.target = "_blank";
-        a4.rel = "noreferrer";
-        a4.textContent = name;
-        nameTD.appendChild(a4);
-        row.appendChild(nameTD);
-        return row;
-      })
+          const nameTD = document.createElement("td");
+          const a4 = document.createElement("a");
+          a4.classList.add(`staff_${entry.node.id}`);
+          a4.href = `//anilist.co/staff/${entry.node.id}`;
+          a4.target = "_blank";
+          a4.rel = "noreferrer";
+          a4.textContent = name;
+          nameTD.appendChild(a4);
+          row.appendChild(nameTD);
+          return row;
+        })
     );
 
     container.appendChild(staff);
