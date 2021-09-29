@@ -578,6 +578,9 @@ const render = async (scrollTo) => {
   Ø(".info").innerHTML = "";
   Ø(".player video").src = "";
   Ø(".player").classList.add("hidden");
+  Ø(".player").style.removeProperty("width");
+  Ø(".player").style.removeProperty("height");
+  Ø(".player").style.removeProperty("left");
   Ø(".info").classList.add("hidden");
   Ø(".list").classList.remove("dragging");
   Ø(".list").style.removeProperty("width");
@@ -900,7 +903,7 @@ document.addEventListener(
     startTouchY = e.touches[0].clientY;
     startTouchAtListTop = !Ø(".list").scrollTop && Ø(".info").classList.contains("hidden");
     startTouchAtInfoTop = !Ø(".info").scrollTop && !Ø(".info").classList.contains("hidden");
-    startTouchAtLeftEdge = startTouchX < 30 && startTouchY > (playerSize.height || 0) + 65;
+    startTouchAtLeftEdge = startTouchX < 30 && startTouchY > 65;
     startTouchOnMenu = startTouchX < 250 && !Ø(".overlay").classList.contains("hidden");
     if (startTouchAtLeftEdge && navigator.userAgent.includes("Mac")) {
       e.preventDefault();
@@ -913,6 +916,7 @@ document.addEventListener(
   (e) => {
     if (e.touches.length > 1) return;
     if (
+      !Ø(".player").classList.contains("hidden") &&
       startTouchX >= playerSize.x &&
       startTouchX <= playerSize.x + playerSize.width &&
       startTouchY >= playerSize.y &&
