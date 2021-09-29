@@ -1067,7 +1067,7 @@ const getInfo = async function (dirEntries) {
       span3.className = "details_modified";
       span3.dataset.modified = datetime;
       span3.style.opacity = getDateTimeOpacity(datetime);
-      span3.innerText = formatDateTime(datetime);
+      span3.innerText = datetime ? formatDateTime(datetime) : "";
       tmp.appendChild(span3);
       div.appendChild(tmp);
       div.appendChild(document.createElement("br"));
@@ -1405,7 +1405,7 @@ window.getListing = async (scroll) => {
       div8.className = "details_modified";
       div8.dataset.modified = entry.modified;
       div8.style.opacity = getDateTimeOpacity(entry.modified);
-      div8.innerText = formatDateTime(entry.modified);
+      div8.innerText = entry.modified ? formatDateTime(entry.modified) : "";
       if (entry.name.slice(-4) === ".mp4") {
         let watched = "";
         if (localStorage.getItem(`/${entry.anime_id}/${encodeURIComponent(entry.name)}`)) {

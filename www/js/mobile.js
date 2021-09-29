@@ -563,7 +563,7 @@ const appendChunk = (chunk) => {
       const div4 = document.createElement("div");
       div4.className = "right";
       div4.style.opacity = getDateTimeOpacity(modified);
-      div4.innerText = formatDateTime(modified);
+      div4.innerText = modified ? formatDateTime(modified) : "";
       div2.append(div3, div4);
       div0.append(div1, div2);
       return div0;
@@ -742,7 +742,7 @@ const renderSearchResult = async (results, keyword) => {
     const div4 = document.createElement("div");
     div4.className = "right";
     div4.style.opacity = getDateTimeOpacity(updated);
-    div4.innerText = formatDateTime(updated);
+    div4.innerText = updated ? formatDateTime(updated) : "";
     div2.append(div3, div4);
     div0.append(div1, div2);
     Ø(".list").appendChild(div0);
