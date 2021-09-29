@@ -976,13 +976,13 @@ document.addEventListener(
       let translate = diffX - activation;
       translate = translate < 0 ? 0 : translate;
       translate = translate > swipeThreshold - activation ? swipeThreshold - activation : translate;
-      document.body.style.transform = `translate(${translate}px, 0)`;
+      Ø(".bar").style.transform = `translate(${translate}px, 0)`;
     } else if (activatedGesture === "RTL") {
       let translate = diffX + activation;
       translate = translate > 0 ? 0 : translate;
       translate =
         translate < -(swipeThreshold - activation) ? -(swipeThreshold - activation) : translate;
-      document.body.style.transform = `translate(${translate}px, 0)`;
+      Ø(".bar").style.transform = `translate(${translate}px, 0)`;
     }
   },
   { passive: true }
@@ -1002,12 +1002,12 @@ document.addEventListener("touchend", async (e) => {
       await render();
     }
   } else if (activatedGesture === "LTR") {
-    document.body.style.removeProperty("transform");
+    Ø(".bar").style.removeProperty("transform");
     if (diffX > swipeThreshold) {
       history.back();
     }
   } else if (activatedGesture === "RTL") {
-    document.body.style.removeProperty("transform");
+    Ø(".bar").style.removeProperty("transform");
     if (diffX < -swipeThreshold) {
       history.forward();
     }
