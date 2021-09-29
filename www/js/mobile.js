@@ -661,15 +661,14 @@ const render = async (scrollTo) => {
     : dirEntries.filter((e) => e.name !== "Sukebei" && e.season !== "Sukebei");
 
   if (window.location.pathname.split("/").length === 4) {
+    Ø(".info").innerHTML = "<div>正在載入動畫資料...</div>";
     fetch(`/info?season=${season}&title=${encodeURIComponent(title)}`)
       .then((res) => res.json())
       .then((json) => {
         if (json._source) {
           anilistInfo = json._source;
         }
-        if (navigator.connection?.type !== "cellular") {
-          renderInfo(Ø(".info"), anilistInfo);
-        }
+        renderInfo(Ø(".info"), anilistInfo);
       });
   }
 
@@ -758,7 +757,6 @@ window.onpopstate = async () => {
 Ø(".title").onclick = () => {
   if (window.location.pathname.split("/").length !== 4) return;
   if (Ø(".info").classList.contains("hidden")) {
-    if (!Ø(".info").textContent) renderInfo(Ø(".info"), anilistInfo);
     Ø(".info").classList.remove("hidden");
   } else {
     Ø(".info").classList.add("hidden");
