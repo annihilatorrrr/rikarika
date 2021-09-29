@@ -867,9 +867,9 @@ window.addEventListener("resize", resize);
   resize();
 });
 
-const activation = 50;
-const pullThreshold = activation + 200;
-const swipeThreshold = activation + 50;
+const activation = 20;
+const pullThreshold = activation + 150;
+const swipeThreshold = activation + 12;
 let startTouchX = 0;
 let startTouchY = 0;
 let startTouchAtListTop = false;
@@ -970,13 +970,13 @@ document.addEventListener(
       let translate = diffX - activation;
       translate = translate < 0 ? 0 : translate;
       translate = translate > swipeThreshold - activation ? swipeThreshold - activation : translate;
-      document.body.style.transform = `translate(${translate / 4}px, 0)`;
+      document.body.style.transform = `translate(${translate}px, 0)`;
     } else if (activatedGesture === "RTL") {
       let translate = diffX + activation;
       translate = translate > 0 ? 0 : translate;
       translate =
         translate < -(swipeThreshold - activation) ? -(swipeThreshold - activation) : translate;
-      document.body.style.transform = `translate(${translate / 4}px, 0)`;
+      document.body.style.transform = `translate(${translate}px, 0)`;
     }
   },
   { passive: true }
