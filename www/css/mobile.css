@@ -42,10 +42,6 @@
     --switch-on-color: var(--theme-color);
     --switch-off-color: rgb(64, 64, 64);
   }
-  .menu .logo .sfw,
-  .menu .logo .nsfw {
-    filter: brightness(0.7);
-  }
 }
 *:not(input) {
   user-select: none;
