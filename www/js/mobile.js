@@ -579,6 +579,7 @@ const render = async (scrollTo) => {
   Ø(".player video").src = "";
   Ø(".player").classList.add("hidden");
   Ø(".info").classList.add("hidden");
+  Ø(".list").classList.remove("dragging");
   Ø(".list").style.removeProperty("width");
   Ø(".bar").style.removeProperty("width");
   Ø(".info").style.removeProperty("width");
@@ -669,7 +670,10 @@ const render = async (scrollTo) => {
           anilistInfo = json._source;
         }
         renderInfo(Ø(".info"), anilistInfo);
-        if (!filteredEntries.length) Ø(".info").classList.remove("hidden");
+        if (!filteredEntries.length) {
+          Ø(".info").classList.remove("hidden");
+          Ø(".list").classList.add("dragging");
+        }
       });
   }
 
@@ -759,8 +763,10 @@ window.onpopstate = async () => {
   if (window.location.pathname.split("/").length !== 4) return;
   if (Ø(".info").classList.contains("hidden")) {
     Ø(".info").classList.remove("hidden");
+    Ø(".list").classList.add("dragging");
   } else {
     Ø(".info").classList.add("hidden");
+    Ø(".list").classList.remove("dragging");
   }
 };
 
@@ -1031,6 +1037,7 @@ document.addEventListener("touchend", async (e) => {
     Ø(".info").classList.remove("dragging");
     if (diffY > 16 * 4.2) {
       Ø(".info").classList.add("hidden");
+      Ø(".list").classList.remove("dragging");
     }
   }
   activatedGesture = "";

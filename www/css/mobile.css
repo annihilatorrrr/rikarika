@@ -97,7 +97,6 @@ body {
   top: 0;
   bottom: 0;
   overflow: auto;
-  -webkit-overflow-scrolling: touch;
   background-color: var(--bg-main-color);
   box-shadow: 0 0 0.2rem 0.2rem var(--theme-color-glass);
   transition: all 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -249,7 +248,6 @@ body {
   left: 0;
   right: 0;
   overflow: auto;
-  -webkit-overflow-scrolling: touch;
 }
 .list.dragging {
   overflow: hidden;
@@ -484,7 +482,6 @@ body {
     transform: scale(0.625, 1) translate(130%, 0);
   }
 }
-
 .info {
   font-size: 0.875rem;
   position: fixed;
@@ -494,16 +491,14 @@ body {
   right: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  overscroll-behavior: none;
-  -webkit-overflow-scrolling: touch;
   transition: all 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
   transform: translate(0, 0);
   padding: 0;
   background-color: var(--bg-main-color);
+  height: 100vh;
 }
 .info > div {
-  overscroll-behavior: none;
-  min-height: 100vh;
+  min-height: 100%;
   box-shadow: 0 0 1.2rem 1.2rem var(--theme-color-glass);
   background-color: var(--bg-main-color);
   color: var(--text-main-color);
@@ -514,13 +509,12 @@ body {
   padding-right: max(env(safe-area-inset-right, 0), 0.5rem);
 }
 .info.hidden {
-  transform: translate(0, 100%);
+  transform: translate(0, 100vh);
   transition: all 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .info.dragging {
   transition: none;
   overflow: hidden;
-  overscroll-behavior: none;
   background-color: transparent;
 }
 .info > div .placeholder {
