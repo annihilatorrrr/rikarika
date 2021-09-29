@@ -669,6 +669,7 @@ const render = async (scrollTo) => {
           anilistInfo = json._source;
         }
         renderInfo(Ø(".info"), anilistInfo);
+        if (!filteredEntries.length) Ø(".info").classList.remove("hidden");
       });
   }
 
