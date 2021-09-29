@@ -546,6 +546,8 @@ body {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+}
+.info .group.gap {
   gap: 1rem 0.5rem;
 }
 .info .poster {
@@ -572,9 +574,6 @@ body {
 .info .description {
   text-align: justify;
   max-width: 450px;
-}
-.info .staff {
-  padding-bottom: 1rem;
 }
 .info .staff td {
   padding: 0.1rem 1rem 0.1rem 0.1rem;
