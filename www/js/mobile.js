@@ -1003,7 +1003,12 @@ document.addEventListener("touchend", async (e) => {
     Ø(".reload").classList.remove("active");
     Ø(".reload").style.width = "0%";
     if (diffY > pullThreshold) {
-      await render();
+      if (window.location.pathname.split("/").length === 4) {
+        Ø(".info").classList.remove("hidden");
+        Ø(".list").classList.add("dragging");
+      } else {
+        await render();
+      }
     }
   } else if (activatedGesture === "LTR") {
     Ø(".bar").style.removeProperty("transform");
