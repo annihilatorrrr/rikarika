@@ -43,10 +43,6 @@
     --switch-off-color: rgb(64, 64, 64);
   }
 }
-*:not(input) {
-  user-select: none;
-  -webkit-user-select: none;
-}
 html {
   -webkit-text-size-adjust: 100%;
   height: 100vh;
@@ -62,6 +58,8 @@ body {
   background: var(--bg-main-color);
   overscroll-behavior: none;
   overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .overlay {
   visibility: visible;
@@ -392,6 +390,8 @@ body {
   width: 10rem;
   flex-grow: 1;
   color: var(--text-main-color);
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 ::placeholder {
@@ -467,6 +467,8 @@ body {
   overflow-x: hidden;
   overscroll-behavior: none;
   opacity: 1;
+  user-select: text;
+  -webkit-user-select: text;
 }
 .info.no-transition {
   transition: none;

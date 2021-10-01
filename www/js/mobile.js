@@ -132,20 +132,49 @@ const animeGenreMap = {
 };
 
 const staffRoleMap = {
-  Director: "監督",
-  "Assistant Director": "副監督",
+  "Advertising Producer": "宣傳制作",
   "Animation Director": "作畫監督",
-  "Chief Animation Director": "總作畫監督",
-  Music: "音樂",
-  "Sound Director": "音響監督",
-  "Series Composition": "系列構成",
-  "Original Creator": "原作",
-  "Character Design": "人物設計",
-  "Original Character Design": "人物原案",
+  "Art Design": "美術設定",
   "Art Director": "美術監督",
-  "Theme Song Performance": "主題曲主唱",
-  Script: "劇本",
+  "Assistant Animation Director": "副作畫監督",
+  "Assistant Director": "副導演",
+  "Assistant Producer": "助理制作",
+  "CG Animation": "CG 動畫",
+  "CG Director": "CG 導演",
+  "Character Design": "角色設計",
+  "Chief Animation Director": "總作畫監督",
+  "Chief Director": "總監督",
+  "Chief Producer": "總製作",
+  "Color Design": "色彩設定",
+  "Costume Design": "服裝設計",
+  Director: "導演",
+  "Director of Photography": "攝影監督",
+  Editing: "剪輯",
+  "Episode Director": "導演",
+  "Inserted Song Arrangement": "插入曲作曲",
+  "Inserted Song Composition": "插入曲編曲",
+  "Inserted Song Lyrics": "插入曲作詞",
+  "Inserted Song Performance": "插入曲主唱",
+  "Key Animation": "動畫師",
+  Music: "音樂",
+  "Music Producer": "音樂製作",
+  "Original Character Design": "人物原案",
+  "Original Creator": "原作",
   "Original Story": "原著",
+  Producer: "製作",
+  Production: "製作",
+  "Production Assistant": "助理製作",
+  Script: "劇本",
+  "Series Composition": "系列構成",
+  "Sound Director": "音響監督",
+  "Sound Effects": "音響效果",
+  "Sound Production Manager": "音響製作",
+  Storyboard: "分鏡",
+  "Sub Character Design": "角色設計",
+  "Theme Song Arrangement": "主題曲作曲",
+  "Theme Song Composition": "主題曲編曲",
+  "Theme Song Lyrics": "主題曲作詞",
+  "Theme Song Performance": "主題曲主唱",
 };
 
 const getSummaryText = (src) => {
@@ -440,17 +469,24 @@ const renderInfo = function (root, src) {
     container.appendChild(divider3);
 
     const staffNodes = src.staff.edges
+      .map((entry) => {
+        const [role, inCharge] = entry.role.split("(");
+        if (inCharge?.length < 10) {
+          entry.role = [staffRoleMap[role.trim()] ?? role.trim(), inCharge].join(" (");
+        } else {
+          entry.role = staffRoleMap[role.trim()] ?? role.trim();
+        }
+        return entry;
+      })
       .sort((a, b) => (a.role > b.role ? 1 : -1))
       .map((entry) => {
         const row = document.createElement("tr");
         let name = entry.node.name.native;
-        if (!name && entry.node.name.first && entry.node.name.last) {
-          name = `${entry.node.name.last} ${entry.node.name.first}`;
+        if (!name && (entry.node.name.first || entry.node.name.last)) {
+          name = [entry.node.name.last, entry.node.name.first].join(" ");
         }
         const col = document.createElement("td");
-        col.textContent = staffRoleMap[entry.role]
-          ? staffRoleMap[entry.role]
-          : entry.role.replace("Theme Song Performance", staffRoleMap["Theme Song Performance"]);
+        col.textContent = entry.role;
         row.appendChild(col);
 
         const nameTD = document.createElement("td");
