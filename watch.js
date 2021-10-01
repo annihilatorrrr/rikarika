@@ -114,6 +114,7 @@ const isSP = (fileName) =>
 const isRAW = (fileName) => fileName.match(/.*(?:Ohys-Raws|Leopard-Raws|ZhuixinFan).*/i);
 
 const isNewEP = (fileName, dirEntries) => {
+  if (!dirEntries.length) return true;
   const ep = aniep(fileName); // number, array or string
   let thisEP = Array.isArray(ep)
     ? ep.pop() // choose largest ep number
