@@ -502,18 +502,19 @@ const renderInfo = function (root, src) {
       });
 
     const group2 = document.createElement("div");
-    group2.classList.add("group");
+    group2.classList.add("group", "column");
 
-    const staff = document.createElement("table");
-    staff.classList.add("staff");
-    staff.append(...staffNodes.splice(0, Math.ceil(staffNodes.length / 2)));
-    group2.append(staff);
-
-    const staff2 = document.createElement("table");
-    staff2.classList.add("staff");
-    staff2.append(...staffNodes);
-    group2.append(staff2);
-
+    let staff;
+    for (let i = 0; i < staffNodes.length; i++) {
+      if (i % 4 === 0) {
+        staff = document.createElement("table");
+        staff.classList.add("staff");
+      }
+      staff.append(staffNodes[i]);
+      if (i % 4 === 0) {
+        group2.append(staff);
+      }
+    }
     container.append(group2);
   }
 
