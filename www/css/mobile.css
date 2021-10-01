@@ -111,23 +111,15 @@ body {
 }
 .menu .logo {
   height: 10rem;
-  position: relative;
-}
-.menu .logo div {
-  position: absolute;
-  width: 100%;
-  height: 100%;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center bottom;
-}
-.menu .logo .hidden {
-  visibility: hidden;
-}
-.menu .logo .sfw {
   background-image: url(/icon.jpg);
 }
-.menu .logo .nsfw {
+.menu .logo.hidden {
+  visibility: hidden;
+}
+.menu .logo.yandere {
   background-image: url(/ico.jpg);
   filter: contrast(1.5);
 }
