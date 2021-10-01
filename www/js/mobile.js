@@ -571,26 +571,31 @@ const appendChunk = (chunk) => {
   );
 };
 
-let lazyLoadHandleList = [];
-let anilistInfo = null;
-const render = async (scrollTo) => {
-  anilistInfo = null;
-  Ø(".info").innerHTML = "";
+const closePlayer = () => {
   Ø(".player video").src = "";
   Ø(".player").classList.add("hidden");
   Ø(".player").style.removeProperty("width");
   Ø(".player").style.removeProperty("height");
   Ø(".player").style.removeProperty("left");
-  Ø(".info").classList.add("hidden");
-  Ø(".list").style.removeProperty("width");
   Ø(".bar").style.removeProperty("width");
-  Ø(".info").style.removeProperty("width");
-  Ø(".list").style.removeProperty("top");
   Ø(".bar").style.removeProperty("top");
-  Ø(".info").style.removeProperty("top");
-  Ø(".list").classList.remove("thin");
   Ø(".bar").classList.remove("thin");
+  Ø(".list").style.removeProperty("width");
+  Ø(".list").style.removeProperty("top");
+  Ø(".list").classList.remove("thin");
+  Ø(".info").style.removeProperty("width");
+  Ø(".info").style.removeProperty("top");
   Ø(".info").classList.remove("thin");
+};
+
+let lazyLoadHandleList = [];
+let anilistInfo = null;
+const render = async (scrollTo) => {
+  anilistInfo = null;
+  Ø(".info").innerHTML = "";
+  Ø(".info").classList.add("hidden");
+  closePlayer();
+  Ø(".item.highlight")?.classList.remove("highlight");
 
   for (const handle of lazyLoadHandleList) {
     clearTimeout(handle);
@@ -858,9 +863,8 @@ const resize = async () => {
     Ø(".bar").classList.remove("thin");
     Ø(".info").classList.remove("thin");
   }
-  const prevWidth = playerSize.width;
   playerSize = Ø(".player").getBoundingClientRect();
-  if (Ø(".item.highlight") && playerSize.width !== prevWidth) {
+  if (Ø(".item.highlight")) {
     Ø(".list").scrollTo(0, Ø(".item.highlight").offsetTop - 4.2 * 16);
   }
 };
@@ -979,6 +983,8 @@ document.addEventListener("touchend", async (e) => {
   if (gesture === "LTR" && diffX > swipeThreshold) {
     if (!Ø(".info").classList.contains("hidden")) {
       Ø(".info").classList.add("hidden");
+    } else if (!Ø(".player").classList.contains("hidden")) {
+      closePlayer();
     } else history.back();
   } else if (gesture === "RTL" && diffX < -swipeThreshold) {
     if (
