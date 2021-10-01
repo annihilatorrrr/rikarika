@@ -539,7 +539,11 @@ body {
 }
 .info .description {
   text-align: justify;
-  max-width: 450px;
+}
+@media (min-width: 1000px) {
+  .info .description {
+    max-width: 450px;
+  }
 }
 .info .staff td {
   padding: 0.1rem 1rem 0.1rem 0.1rem;
