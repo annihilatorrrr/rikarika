@@ -158,9 +158,19 @@ app.get(/.*\/$/, (req, res) => {
       : /(Android|iPad|iPhone|iPod)/g.test(req.headers["user-agent"])
       ? "mobile"
       : "desktop";
+
+    const mobileJSmTime = fs.statSync(path.join(__dirname, "/www/js/mobile.min.js")).mtimeMs;
+    const mobileCSSmTime = fs.statSync(path.join(__dirname, "/www/css/mobile.css")).mtimeMs;
+    const desktopJSmTime = fs.statSync(path.join(__dirname, "/www/js/desktop.min.js")).mtimeMs;
+    const desktopCSSmTime = fs.statSync(path.join(__dirname, "/www/css/desktop.css")).mtimeMs;
+
     res.send(
       fs
         .readFileSync(path.join(__dirname, `view/${view}.html`), "utf8")
+        .replace("/css/mobile.css", `/css/mobile.css?${mobileJSmTime}`)
+        .replace("/js/mobile.min.js", `/js/mobile.min.js?${mobileCSSmTime}`)
+        .replace("/css/desktop.css", `/css/desktop.css?${desktopJSmTime}`)
+        .replace("/js/desktop.min.js", `/js/desktop.min.js?${desktopCSSmTime}`)
         .replace("WEBPUSH_PUBLIC_KEY", WEBPUSH_PUBLIC_KEY)
         .replace(/DONATE_URL/g, DONATE_URL)
         .replace(/TELEGRAM_JOIN_URL/g, TELEGRAM_JOIN_URL)
