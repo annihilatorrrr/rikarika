@@ -35,7 +35,7 @@
     "dotenv": "^10.0.0",
     "esbuild": "^0.13.3",
     "express": "^4.17.1",
-    "express-rate-limit": "^5.3.0",
+    "express-rate-limit": "^5.4.0",
     "fs-extra": "^10.0.0",
     "knex": "^0.95.10",
     "mysql": "^2.18.1",
