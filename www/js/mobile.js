@@ -582,7 +582,6 @@ const render = async (scrollTo) => {
   Ø(".player").style.removeProperty("height");
   Ø(".player").style.removeProperty("left");
   Ø(".info").classList.add("hidden");
-  Ø(".list").classList.remove("dragging");
   Ø(".list").style.removeProperty("width");
   Ø(".bar").style.removeProperty("width");
   Ø(".info").style.removeProperty("width");
@@ -675,7 +674,7 @@ const render = async (scrollTo) => {
         renderInfo(Ø(".info"), anilistInfo);
         if (!filteredEntries.length) {
           Ø(".info").classList.remove("hidden");
-          Ø(".list").classList.add("dragging");
+          Ø(".info").classList.remove("no-transition");
         }
       });
   }
@@ -766,10 +765,9 @@ window.onpopstate = async () => {
   if (window.location.pathname.split("/").length !== 4) return;
   if (Ø(".info").classList.contains("hidden")) {
     Ø(".info").classList.remove("hidden");
-    Ø(".list").classList.add("dragging");
+    Ø(".info").classList.remove("no-transition");
   } else {
     Ø(".info").classList.add("hidden");
-    Ø(".list").classList.remove("dragging");
   }
 };
 
@@ -862,11 +860,8 @@ const resize = async () => {
   }
   const prevWidth = playerSize.width;
   playerSize = Ø(".player").getBoundingClientRect();
-  if (playerSize.width !== prevWidth) {
-    Ø(".item.highlight")?.scrollIntoView();
-    if (Ø(".list").scrollTop + 4.2 * 16 < Ø(".list").scrollHeight - Ø(".list").clientHeight) {
-      Ø(".list").scrollBy(0, -4.2 * 16);
-    }
+  if (Ø(".item.highlight") && playerSize.width !== prevWidth) {
+    Ø(".list").scrollTo(0, Ø(".item.highlight").offsetTop - 4.2 * 16);
   }
 };
 window.addEventListener("resize", resize);
@@ -877,34 +872,26 @@ window.addEventListener("resize", resize);
 });
 
 const activation = 20;
-const pullThreshold = activation + 150;
 const swipeThreshold = activation + 12;
 let startTouchX = 0;
 let startTouchY = 0;
-let startTouchAtListTop = false;
-let startTouchAtInfoTop = false;
 let startTouchAtLeftEdge = false;
-let startTouchOnMenu = false;
-let activatedGesture = "";
-let isMenuScrolling = false;
-Ø(".menu").addEventListener(
-  "scroll",
-  () => {
-    isMenuScrolling = true;
-  },
-  { passive: true }
-);
+let gesture = "";
+let isSomethingScrolling = false;
+window.addEventListener("scroll", () => (isSomethingScrolling = true), { passive: true });
+Ø(".menu").addEventListener("scroll", () => (isSomethingScrolling = true), { passive: true });
+Ø(".info").addEventListener("scroll", () => (isSomethingScrolling = true), { passive: true });
+Ø(".list").addEventListener("scroll", () => (isSomethingScrolling = true), { passive: true });
+
 document.addEventListener(
   "touchstart",
   (e) => {
     if (e.touches.length > 1) return;
-    activatedGesture = "";
+    gesture = "";
+    isSomethingScrolling = false;
     startTouchX = e.touches[0].clientX;
     startTouchY = e.touches[0].clientY;
-    startTouchAtListTop = !Ø(".list").scrollTop && Ø(".info").classList.contains("hidden");
-    startTouchAtInfoTop = !Ø(".info").scrollTop && !Ø(".info").classList.contains("hidden");
     startTouchAtLeftEdge = startTouchX < 30 && startTouchY > 65;
-    startTouchOnMenu = startTouchX < 250 && !Ø(".overlay").classList.contains("hidden");
     if (startTouchAtLeftEdge && navigator.userAgent.includes("Mac")) {
       e.preventDefault();
     }
@@ -915,6 +902,7 @@ document.addEventListener(
   "touchmove",
   (e) => {
     if (e.touches.length > 1) return;
+    if (isSomethingScrolling) return;
     if (
       !Ø(".player").classList.contains("hidden") &&
       startTouchX >= playerSize.x &&
@@ -925,131 +913,97 @@ document.addEventListener(
       return;
     const diffX = e.changedTouches[0].clientX - startTouchX;
     const diffY = e.changedTouches[0].clientY - startTouchY;
-    const isVertical = Math.abs(diffY) > Math.abs(diffX);
-    if (!activatedGesture) {
-      if (!Ø(".overlay").classList.contains("hidden")) {
-        if (startTouchOnMenu && !isMenuScrolling && diffX < -10) {
-          activatedGesture = "close";
-          Ø(".menu").classList.add("dragging");
-          Ø(".overlay").classList.add("dragging");
-        }
-      } else if (startTouchAtLeftEdge) {
-        activatedGesture = "open";
+    if (!gesture) {
+      if (Ø(".menu").classList.contains("hidden") && startTouchAtLeftEdge) {
+        gesture = "open";
+      } else if (
+        !Ø(".menu").classList.contains("hidden") &&
+        (startTouchX > 224 || Math.abs(diffX) > activation)
+      ) {
+        gesture = "close";
+      } else if (Math.abs(diffX) > activation && Math.abs(diffY) < activation && diffX > 0) {
+        gesture = "LTR";
+      } else if (Math.abs(diffX) > activation && Math.abs(diffY) < activation && diffX < 0) {
+        gesture = "RTL";
+      }
+      if (gesture === "open") {
         Ø(".menu").classList.remove("hidden");
-        Ø(".menu").classList.add("dragging");
         Ø(".overlay").classList.remove("hidden");
-        Ø(".overlay").classList.add("dragging");
-      } else if (isVertical && diffY > 0 && startTouchAtInfoTop) {
-        activatedGesture = "pullInfo";
-        Ø(".info").classList.add("dragging");
-      } else if (Math.abs(diffX) > activation || Math.abs(diffY) > activation) {
-        if (isVertical && Math.abs(diffX) < activation && diffY > 0 && startTouchAtListTop) {
-          activatedGesture = "TTB";
-        } else if (!isVertical && Math.abs(diffY) < activation && diffX > 0) {
-          activatedGesture = "LTR";
-        } else if (!isVertical && Math.abs(diffY) < activation && diffX < 0) {
-          activatedGesture = "RTL";
-        }
-        if (activatedGesture) {
-          Ø(".list").classList.add("dragging");
-          Ø(".info").classList.add("dragging");
-        }
+      }
+      if (gesture === "open" || gesture === "close") {
+        Ø(".menu").classList.add("no-transition");
+        Ø(".overlay").classList.add("no-transition");
       }
     }
-    if (activatedGesture === "open") {
+    if (gesture) e.preventDefault();
+    if (
+      !Ø(".menu").classList.contains("hidden") &&
+      Ø(".menu").clientHeight >= Ø(".menu").scrollHeight
+    )
+      e.preventDefault();
+
+    if (gesture === "open") {
       const translate = diffX - 224 > 0 ? 0 : diffX - 224;
       Ø(".menu").style.transform = `translate(${translate}px, 0)`;
       Ø(".overlay").style.opacity = (translate + 224) / 224;
-    } else if (activatedGesture === "close") {
+    } else if (gesture === "close") {
       const translate = diffX > 0 ? 0 : diffX;
       Ø(".menu").style.transform = `translate(${translate}px, 0)`;
       Ø(".overlay").style.opacity = (translate + 224) / 224;
-    } else if (activatedGesture === "TTB") {
-      let translate = diffY - activation;
-      translate = translate < 0 ? 0 : translate;
-      translate = translate > swipeThreshold - activation ? swipeThreshold - activation : translate;
-      Ø(".icon").style.transform = `translate(0,${translate}px)`;
-    } else if (activatedGesture === "pullInfo") {
-      const translate = diffY < 0 ? 0 : diffY;
-      Ø(".info").style.transform = `translate(0, ${translate}px)`;
-    } else if (activatedGesture === "LTR") {
+    } else if (gesture === "LTR") {
       let translate = diffX - activation;
       translate = translate < 0 ? 0 : translate;
       translate = translate > swipeThreshold - activation ? swipeThreshold - activation : translate;
-      Ø(".icon").style.transform = `translate(${translate}px, 0)`;
-    } else if (activatedGesture === "RTL") {
+      Ø(".icon").style.transform = `translate(${translate / 2}px, 0)`;
+    } else if (gesture === "RTL") {
       let translate = diffX + activation;
       translate = translate > 0 ? 0 : translate;
       translate =
         translate < -(swipeThreshold - activation) ? -(swipeThreshold - activation) : translate;
-      Ø(".icon").style.transform = `translate(${translate}px, 0)`;
+      Ø(".icon").style.transform = `translate(${translate / 2}px, 0)`;
     }
   },
-  { passive: true }
+  { passive: false }
 );
 document.addEventListener("touchend", async (e) => {
   if (e.touches.length > 1) return;
-  isMenuScrolling = false;
+
+  Ø(".icon").style.removeProperty("transform");
+  Ø(".menu").style.removeProperty("transform");
+  Ø(".overlay").style.removeProperty("opacity");
+  Ø(".menu").classList.remove("no-transition");
+  Ø(".overlay").classList.remove("no-transition");
+  Ø(".info").classList.remove("no-transition");
+
   const diffX = e.changedTouches[0].clientX - startTouchX;
-  const diffY = e.changedTouches[0].clientY - startTouchY;
-  Ø(".list").classList.remove("dragging");
-  Ø(".info").classList.remove("dragging");
-  if (activatedGesture === "TTB") {
-    Ø(".icon").style.removeProperty("transform");
-    if (diffY > swipeThreshold) {
-      if (window.location.pathname.split("/").length === 4) {
-        Ø(".info").classList.remove("hidden");
-        Ø(".list").classList.add("dragging");
-      } else {
-        await render();
-      }
-    }
-  } else if (activatedGesture === "LTR") {
-    Ø(".icon").style.removeProperty("transform");
-    if (diffX > swipeThreshold) {
-      history.back();
-    }
-  } else if (activatedGesture === "RTL") {
-    Ø(".icon").style.removeProperty("transform");
-    if (diffX < -swipeThreshold) {
-      history.forward();
-    }
-  } else if (activatedGesture === "open") {
-    Ø(".menu").style.removeProperty("transform");
-    Ø(".menu").classList.remove("dragging");
-    Ø(".overlay").style.removeProperty("opacity");
-    Ø(".overlay").classList.remove("dragging");
-    if (diffX > 224 * 0.25) {
-      Ø(".menu").classList.remove("hidden");
-      Ø(".overlay").classList.remove("hidden");
-    } else {
-      Ø(".menu").classList.add("hidden");
-      Ø(".overlay").classList.add("hidden");
-    }
-  } else if (activatedGesture === "close") {
-    Ø(".menu").style.removeProperty("transform");
-    Ø(".menu").classList.remove("dragging");
-    Ø(".overlay").style.removeProperty("opacity");
-    Ø(".overlay").classList.remove("dragging");
-    if (-diffX > 224 * 0.25) {
-      Ø(".menu").classList.add("hidden");
-      Ø(".overlay").classList.add("hidden");
-    }
-  } else if (activatedGesture === "pullInfo") {
-    Ø(".info").style.removeProperty("transform");
-    Ø(".info").classList.remove("dragging");
-    if (diffY > 16 * 4.2) {
+  if (gesture === "LTR" && diffX > swipeThreshold) {
+    if (!Ø(".info").classList.contains("hidden")) {
       Ø(".info").classList.add("hidden");
-      Ø(".list").classList.remove("dragging");
+    } else history.back();
+  } else if (gesture === "RTL" && diffX < -swipeThreshold) {
+    if (
+      window.location.pathname.split("/").length === 4 &&
+      window.location.pathname.split("/")[1] !== "search"
+    ) {
+      Ø(".info").classList.remove("hidden");
+    } else history.forward();
+  } else if (gesture === "open") {
+    if (diffX < 224 * 0.25) {
+      await closeMenu();
+    }
+  } else if (gesture === "close") {
+    if (-diffX > 224 * 0.25) {
+      await closeMenu();
     }
   }
-  activatedGesture = "";
+  gesture = "";
+  isSomethingScrolling = false;
 });
 
 const closeMenu = async () => {
+  Ø(".menu").classList.remove("no-transition");
+  Ø(".overlay").classList.remove("no-transition");
   Ø(".menu").classList.add("hidden");
-  Ø(".list").classList.remove("blur");
-  Ø(".bar").classList.remove("blur");
   Ø(".overlay").classList.add("hide");
   await new Promise((resolve) => setTimeout(resolve, 300));
   Ø(".overlay").classList.remove("hide");
@@ -1062,9 +1016,9 @@ const closeMenu = async () => {
 };
 
 Ø(".bar .icon").onclick = async () => {
-  Ø(".menu").classList.remove("dragging");
+  Ø(".menu").classList.remove("no-transition");
+  Ø(".overlay").classList.remove("no-transition");
   Ø(".menu").classList.remove("hidden");
-  Ø(".overlay").classList.remove("dragging");
   Ø(".overlay").classList.remove("hidden");
 };
 Ø(".home").onclick = () => (location.href = "/");
