@@ -62,6 +62,20 @@ const formatDateTime = (timeStringUTC) => {
   return "剛剛更新";
 };
 
+const formatTime = (timeInSeconds) => {
+  const sec_num = parseInt(timeInSeconds, 10);
+  const hours = Math.floor(sec_num / 3600);
+  const minutes = Math.floor((sec_num - hours * 3600) / 60);
+  const seconds = sec_num - hours * 3600 - minutes * 60;
+  return [
+    hours < 10 ? `0${hours}` : hours,
+    minutes < 10 ? `0${minutes}` : minutes,
+    seconds < 10 ? `0${seconds}` : seconds,
+  ]
+    .slice(hours > 0 ? 0 : 1)
+    .join(":");
+};
+
 const urlBase64ToUint8Array = (base64String) => {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
@@ -916,6 +930,7 @@ let startTouchY = 0;
 let startTouchAtLeftEdge = false;
 let gesture = "";
 let isSomethingScrolling = false;
+let videoTimeAtTouch = 0;
 window.addEventListener("scroll", () => (isSomethingScrolling = true), { passive: true });
 Ø(".menu").addEventListener("scroll", () => (isSomethingScrolling = true), { passive: true });
 Ø(".info").addEventListener("scroll", () => (isSomethingScrolling = true), { passive: true });
@@ -930,6 +945,7 @@ document.addEventListener(
     startTouchX = e.touches[0].clientX;
     startTouchY = e.touches[0].clientY;
     startTouchAtLeftEdge = startTouchX < 30 && startTouchY > 65;
+    if (!Ø(".player").classList.contains("hidden")) videoTimeAtTouch = Ø("video").currentTime;
     if (startTouchAtLeftEdge && navigator.userAgent.includes("Mac")) {
       e.preventDefault();
     }
@@ -941,18 +957,18 @@ document.addEventListener(
   (e) => {
     if (e.touches.length > 1) return;
     if (isSomethingScrolling) return;
-    if (
-      !Ø(".player").classList.contains("hidden") &&
-      startTouchX >= playerSize.x &&
-      startTouchX <= playerSize.x + playerSize.width &&
-      startTouchY >= playerSize.y &&
-      startTouchY <= playerSize.y + playerSize.height
-    )
-      return;
     const diffX = e.changedTouches[0].clientX - startTouchX;
     const diffY = e.changedTouches[0].clientY - startTouchY;
     if (!gesture) {
-      if (Ø(".menu").classList.contains("hidden") && startTouchAtLeftEdge) {
+      if (
+        !Ø(".player").classList.contains("hidden") &&
+        startTouchX >= playerSize.x &&
+        startTouchX <= playerSize.x + playerSize.width &&
+        startTouchY >= playerSize.y &&
+        startTouchY <= playerSize.y + playerSize.height
+      ) {
+        gesture = "seek";
+      } else if (Ø(".menu").classList.contains("hidden") && startTouchAtLeftEdge) {
         gesture = "open";
       } else if (
         !Ø(".menu").classList.contains("hidden") &&
@@ -999,6 +1015,12 @@ document.addEventListener(
       translate =
         translate < -(swipeThreshold - activation) ? -(swipeThreshold - activation) : translate;
       Ø(".icon").style.transform = `translate(${translate / 2}px, 0)`;
+    } else if (gesture === "seek") {
+      Ø("video").pause();
+      Ø("video").currentTime = videoTimeAtTouch + diffX / 10;
+      Ø(".osd").textContent = `${diffX > 0 ? "+" : "-"}${formatTime(
+        Math.round(Math.abs(diffX / 10))
+      )} (${formatTime(Ø("video").currentTime)})`;
     }
   },
   { passive: false }
@@ -1035,6 +1057,9 @@ document.addEventListener("touchend", async (e) => {
     if (-diffX > 224 * 0.25) {
       await closeMenu();
     }
+  } else if (gesture === "seek") {
+    Ø("video").play();
+    Ø(".osd").textContent = "";
   }
   gesture = "";
   isSomethingScrolling = false;
