@@ -262,7 +262,7 @@ const renderInfo = function (root, src) {
     a1.rel = "noreferrer";
     const poster = document.createElement("div");
     poster.classList.add("poster");
-    poster.style = `background-image:url(${src.coverImage.large.replace("http:", "")})`;
+    poster.style = `background-image:url(${src.coverImage.large})`;
     a1.appendChild(poster);
     group1.appendChild(a1);
   }
@@ -408,19 +408,13 @@ const renderInfo = function (root, src) {
         const charDIV = document.createElement("div");
         charDIV.classList.add("character");
         const charImgDiv = document.createElement("div");
-        if (entry.node.image.large === "//anilist.co") {
-          entry.node.image.large = "//anilist.co/img/dir/anime/reg/noimg.jpg";
-        }
-        if (entry.node.image.medium === "//anilist.co") {
-          entry.node.image.medium = "//anilist.co/img/dir/anime/med/noimg.jpg";
-        }
         const charIMG = document.createElement("a");
-        charIMG.href = entry.node.image.large.replace("http:", "");
+        charIMG.href = entry.node.image.large;
         charIMG.target = "_blank";
         charIMG.rel = "noreferrer";
         charImgDiv.appendChild(charIMG);
         const charBgDIV = document.createElement("div");
-        charBgDIV.style = `background-image:url(${entry.node.image.medium.replace("http:", "")})`;
+        charBgDIV.style = `background-image:url(${entry.node.image.large})`;
         charIMG.appendChild(charBgDIV);
         charDIV.appendChild(charImgDiv);
         const charName = document.createElement("div");
@@ -521,7 +515,7 @@ const renderInfo = function (root, src) {
   if (src.bannerImage) {
     const banner = document.createElement("img");
     banner.classList.add("banner");
-    banner.src = src.bannerImage.replace("http:", "");
+    banner.src = src.bannerImage;
     root.appendChild(banner);
   }
 };

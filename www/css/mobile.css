@@ -518,7 +518,6 @@ body {
 }
 .info .group.column {
   align-items: flex-start;
-  justify-content: space-between;
 }
 .info .poster {
   width: 230px;
@@ -554,22 +553,21 @@ body {
   min-width: 5rem;
 }
 .info .characters {
+  margin-top: 0.5rem;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
-  align-items: center;
+  align-items: flex-start;
 }
 .info .character {
-  margin: 0.3rem;
   text-align: center;
-  word-break: break-all;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 .info .character > div:first-child div {
-  width: 100px;
-  height: 150px;
+  width: 120px;
+  height: 180px;
   background-position: 50% 0;
   background-size: cover;
   background-repeat: no-repeat;
