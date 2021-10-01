@@ -586,6 +586,9 @@ const closePlayer = () => {
   Ø(".info").style.removeProperty("width");
   Ø(".info").style.removeProperty("top");
   Ø(".info").classList.remove("thin");
+  if (Ø(".item.highlight")) {
+    Ø(".list").scrollTo(0, Ø(".item.highlight").offsetTop - 4.2 * 16);
+  }
 };
 
 let lazyLoadHandleList = [];
