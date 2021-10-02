@@ -180,6 +180,10 @@ app.get(/.*\/$/, (req, res) => {
       fs
         .readFileSync(path.join(__dirname, "view/login.html"), "utf8")
         .replace("REDIRECT", req.path.startsWith("/") ? req.path : "/")
+        .replace(
+          '<div class="msg"></div>',
+          "err" in req.query ? '<div class="msg">用戶或密碼錯誤</div>' : '<div class="msg"></div>'
+        )
     );
   }
 });
@@ -199,8 +203,9 @@ app.post("/login", (req, res) => {
         .update(WEB_SECRET)
         .digest("hex")}; Path=/; Expires=${date.toGMTString()}; Secure; HttpOnly; SameSite=Strict`
     );
+    return res.redirect(302, req.body.redirect ?? "/");
   }
-  return res.redirect(302, req.body.redirect ?? "/");
+  return res.redirect(302, `${req.body.redirect ?? "/"}?err`);
 });
 
 app.get("/logout", (req, res) => {
