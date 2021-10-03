@@ -148,8 +148,11 @@ app.get(/[^\/]+\.img$/, (req, res) => {
       return res.send(fs.readFileSync(supportedFormat.get(preferredFormat)));
     }
   }
-  res.type("image/png");
-  return res.send(fs.readFileSync(supportedFormat.get("image/png")));
+  if (fs.existsSync(supportedFormat.get("image/png"))) {
+    res.type("image/png");
+    return res.send(fs.readFileSync(supportedFormat.get("image/png")));
+  }
+  return res.sendStatus(404);
 });
 
 // path with extension
