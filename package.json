@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/soruly/rikarika#readme",
   "dependencies": {
+    "@maxmind/geoip2-node": "^3.2.0",
     "aniep": "^0.2.2",
     "chokidar": "^3.5.2",
     "cookie-parser": "^1.4.5",

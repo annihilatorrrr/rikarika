@@ -9,6 +9,7 @@ import child_process from "child_process";
 import fetch from "node-fetch";
 import Knex from "knex";
 import { fileURLToPath } from "url";
+import { WebServiceClient, Reader } from "@maxmind/geoip2-node";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -31,6 +32,8 @@ const {
   WEB_WHITELIST_IP,
   WEB_SECRET,
   WEBPUSH_PUBLIC_KEY,
+  MAXMIND_ACCOUNT_ID,
+  MAXMIND_LICENSE_KEY,
   DONATE_URL,
   TELEGRAM_JOIN_URL,
 } = process.env;
@@ -43,6 +46,10 @@ const knex = Knex({
     password: DB_PASS,
     database: DB_NAME,
   },
+});
+
+const maxMindWebClient = new WebServiceClient(MAXMIND_ACCOUNT_ID, MAXMIND_LICENSE_KEY, {
+  host: "geolite.info",
 });
 
 const app = express();
@@ -239,9 +246,21 @@ app.get("/motd", async (req, res) => {
 
 app.get("/msg", async (req, res) => {
   res.type("text/plain");
+
+  const maxMindReader = await Reader.open("/etc/GeoIP/GeoLite2-ASN.mmdb", {
+    cache: { max: 6000 },
+    watchForUpdates: true,
+  });
+  const ASN = maxMindReader.asn(req.ip);
+
   return res.send(
     [
       child_process.execSync("date").toString().trim(),
+      "",
+      `Your IP address: ${req.ip}`,
+      `Your ASN: AS${ASN.autonomousSystemNumber} (${ASN.network})`,
+      `Your ISP: ${ASN.autonomousSystemOrganization}`,
+      `Country Code: ${(await maxMindWebClient.country(req.ip)).country.isoCode}`,
       "",
       `Number of mp4 files: ${child_process
         .execSync(`find "${ANIME_PATH}" -type f -name "*.mp4" | wc -l`)
