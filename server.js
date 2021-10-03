@@ -25,6 +25,10 @@ const {
   ANIME_WEBP_PATH,
   ANIME_AVIF_PATH,
   ANIME_PNG_PATH,
+  CDN_HOST_1,
+  CDN_HOST_2,
+  CDN_HOST_3,
+  CDN_HOST_4,
   RUTORRENT_HOST,
   RUTORRENT_HOST_2,
   WEB_PORT,
@@ -50,6 +54,10 @@ const knex = Knex({
 
 const maxMindWebClient = new WebServiceClient(MAXMIND_ACCOUNT_ID, MAXMIND_LICENSE_KEY, {
   host: "geolite.info",
+});
+const maxMindCountry = await Reader.open("/etc/GeoIP/GeoLite2-Country.mmdb", {
+  cache: { max: 6000 },
+  watchForUpdates: true,
 });
 
 const app = express();
@@ -92,6 +100,24 @@ app.use(
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
+
+// path with .mp4 extension
+app.get(/[^\/]+\.(mp4|ass|txt)$/, (req, res) => {
+  const countryCode = maxMindCountry.country(req.ip).country.isoCode;
+  let selectedServer = "";
+  if (countryCode === "HK") {
+    selectedServer = CDN_HOST_1;
+  } else {
+    selectedServer = [CDN_HOST_2, CDN_HOST_3, CDN_HOST_4]
+      .filter((e) => e)
+      .sort(() => (Math.random() < 0.5 ? 1 : -1))[0];
+  }
+  if (selectedServer) {
+    return res.redirect(302, `${selectedServer}${req.path}`);
+  } else {
+    return res.status(503);
+  }
+});
 
 // path with .img extension
 app.get(/[^\/]+\.img$/, (req, res) => {
@@ -247,11 +273,11 @@ app.get("/motd", async (req, res) => {
 app.get("/msg", async (req, res) => {
   res.type("text/plain");
 
-  const maxMindReader = await Reader.open("/etc/GeoIP/GeoLite2-ASN.mmdb", {
+  const maxMindASN = await Reader.open("/etc/GeoIP/GeoLite2-ASN.mmdb", {
     cache: { max: 6000 },
     watchForUpdates: true,
   });
-  const ASN = maxMindReader.asn(req.ip);
+  const ASN = maxMindASN.asn(req.ip);
 
   return res.send(
     [
@@ -260,7 +286,7 @@ app.get("/msg", async (req, res) => {
       `Your IP address: ${req.ip}`,
       `Your ASN: AS${ASN.autonomousSystemNumber} (${ASN.network})`,
       `Your ISP: ${ASN.autonomousSystemOrganization}`,
-      `Country Code: ${(await maxMindWebClient.country(req.ip)).country.isoCode}`,
+      `Country Code: ${maxMindCountry.country(req.ip).country.isoCode}`,
       "",
       `Number of mp4 files: ${child_process
         .execSync(`find "${ANIME_PATH}" -type f -name "*.mp4" | wc -l`)
